@@ -8,6 +8,7 @@ This catalog explains when to use each BA-kit skill, what it produces, and which
 
 | Skill | When to Use | Related Templates | Related Agents | Typical Output |
 | --- | --- | --- | --- | --- |
+| `ba-kickoff` | Bootstrap a BA engagement from a raw file or pasted text | `intake-form-template.md` | All (routed per work plan) | Intake form, gap analysis, scoped work plan with skill chain |
 | `ba-discovery` | Early-stage scoping or ambiguous problem spaces | `stakeholder-register-template.md`, `process-map-template.md`, `feasibility-template.md` | `stakeholder-analyst`, `ba-researcher` | Discovery report, scope framing, next-step plan |
 | `ba-requirements` | Formal requirements capture and validation | `brd-template.md`, `frd-template.md`, `srs-template.md` | `requirements-engineer` | BRD, FRD, SRS, traceability view, Pencil-linked screen specs |
 | `ba-user-stories` | Agile backlog shaping and story decomposition | `user-story-template.md` | `requirements-engineer` | Story map, stories, acceptance criteria |
@@ -25,6 +26,10 @@ This catalog explains when to use each BA-kit skill, what it produces, and which
 | `ba-change-management` | Adoption planning and readiness analysis | `change-impact-template.md` | `stakeholder-analyst`, `ba-documentation-manager` | Change impact plan, readiness actions |
 
 ## Recommended Chains
+
+### Kickoff from Raw Input
+
+`ba-kickoff` -> `ba-discovery` -> `ba-stakeholder` -> `ba-requirements` -> `ba-process-mapping` -> `ba-compliance`
 
 ### Discovery to Formal Requirements
 
@@ -45,6 +50,7 @@ This catalog explains when to use each BA-kit skill, what it produces, and which
 ## Invocation Examples
 
 ```text
+/ba-kickoff
 /ba-discovery
 /ba-requirements
 /ba-process-mapping

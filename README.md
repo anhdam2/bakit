@@ -4,10 +4,10 @@ BA-kit is a business analysis toolkit for agentic coding environments. It packag
 
 ## What It Includes
 
-- 15 BA skills for discovery, requirements, process modeling, compliance, workshops, and strategy
+- 16 BA skills for discovery, requirements, process modeling, compliance, workshops, and strategy
 - 6 BA agent roles for structured delegation
 - 5 workflow and quality rule files
-- 12 reusable document templates
+- 13 reusable document templates
 - project instructions and configuration for BA engagements
 
 Start here for practical setup and usage: [docs/getting-started.md](./docs/getting-started.md)
@@ -52,7 +52,13 @@ See [docs/codex-setup.md](./docs/codex-setup.md) for prompt patterns and setup g
 
 ## Quick Start
 
-Use the flagship discovery skill first:
+To bootstrap a BA engagement from a raw requirements file:
+
+```text
+/ba-kickoff
+```
+
+Or use the flagship discovery skill first:
 
 ```text
 /ba-discovery
@@ -68,6 +74,7 @@ Typical follow-on flows:
 
 | Skill | Purpose |
 | --- | --- |
+| `ba-kickoff` | Parse raw requirements input and generate a scoped BA work plan |
 | `ba-discovery` | Run a structured discovery engagement from scoping through recommendations |
 | `ba-requirements` | Produce and validate BRD, FRD, SRS, and traceability outputs |
 | `ba-user-stories` | Write Agile stories, acceptance criteria, and story maps |

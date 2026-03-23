@@ -60,7 +60,38 @@ Include use cases, screen descriptions, and acceptance criteria.
 Reference any Pencil wireframes under designs/customer-portal/.
 ```
 
-## 5. Use BA-kit In Codex
+## 5. Kickoff From A File
+
+If you already have a requirements document (PDF, markdown, image, or pasted text), use the kickoff skill to bootstrap the entire BA engagement:
+
+```text
+/ba-kickoff
+```
+
+When prompted, provide the file path or paste your requirements text. The skill will:
+1. Parse and normalize the input into a structured intake form
+2. Identify gaps (missing stakeholders, unclear scope, no success criteria)
+3. Ask 3-8 clarifying questions
+4. Generate a scoped work plan with recommended skills, templates, and agents
+
+### Claude Example
+
+```text
+/ba-kickoff
+Here is our requirements doc: docs/raw/warehouse-rfp.pdf
+```
+
+### Codex Example
+
+```text
+Use AGENTS.md and skills/ba-kickoff/SKILL.md.
+Parse the requirements in docs/raw/warehouse-rfp.pdf.
+Produce an intake form and a scoped BA work plan.
+```
+
+The work plan output tells you exactly which skills to run next and in what order.
+
+## 6. Use BA-kit In Codex
 
 Codex does not need `install.sh`.
 
@@ -88,7 +119,7 @@ Focus on stakeholders, current-state pain points, risks, and recommended next st
 Use templates where relevant.
 ```
 
-## 6. Add Pencil Wireframes For SRS Work
+## 7. Add Pencil Wireframes For SRS Work
 
 Use Pencil only for wireframes in BA-kit.
 
@@ -111,7 +142,7 @@ Rules:
 - use the `.pen` file as the wireframe source of truth
 - keep the SRS focused on behavior, validation, states, navigation, and traceability
 
-## 7. Create A Typical BA Deliverable
+## 8. Create A Typical BA Deliverable
 
 ### Option A: Discovery Package
 
@@ -153,7 +184,7 @@ Expected outputs:
 - acceptance criteria
 - story-to-screen alignment notes when UI exists
 
-## 8. Know Where To Look
+## 9. Know Where To Look
 
 - runtime instructions for Codex: [AGENTS.md](../AGENTS.md)
 - Claude-oriented project instructions: [CLAUDE.md](../CLAUDE.md)
@@ -161,7 +192,7 @@ Expected outputs:
 - skill catalog: [skill-catalog.md](./skill-catalog.md)
 - Pencil naming convention: [designs/README.md](../designs/README.md)
 
-## 9. Practical Tips
+## 10. Practical Tips
 
 - Start with one artifact, not the whole BA lifecycle at once
 - Always tell the agent which playbook and template to use
@@ -169,7 +200,7 @@ Expected outputs:
 - Ask for assumptions and open questions before asking for finalization
 - Use Mermaid diagrams for process or data views
 
-## 10. Example End-To-End Prompt
+## 11. Example End-To-End Prompt
 
 ```text
 Use AGENTS.md and skills/ba-requirements/SKILL.md.
