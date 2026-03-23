@@ -1,7 +1,7 @@
 ---
 name: process-mapper
 description: Specialist in AS-IS and TO-BE process modeling, BPMN-style documentation, and flow optimization.
-model: opus
+model: sonnet
 memory: project
 tools: Read, Write, Edit, Glob, Grep
 ---

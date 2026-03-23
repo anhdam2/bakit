@@ -1,7 +1,7 @@
 ---
 name: stakeholder-analyst
 description: Specialist in stakeholder identification, classification, influence mapping, and engagement planning.
-model: opus
+model: sonnet
 memory: project
 tools: Read, Write, Glob, Grep
 ---

@@ -1,7 +1,7 @@
 ---
 name: ba-researcher
 description: Specialist in domain research, market scanning, standards lookup, and evidence synthesis for BA work.
-model: opus
+model: sonnet
 memory: project
 tools: Read, Bash, Glob, Grep, WebSearch, WebFetch
 ---
