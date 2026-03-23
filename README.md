@@ -116,8 +116,8 @@ Keep additions aligned with BA-kit principles:
 - traceability over ambiguity
 - Mermaid for diagrams
 
-When adding a skill, also update the skill catalog and any affected templates or rules.
+When adding a skill, also update the skill catalog and any affected templates or rules. See [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution expectations and validation steps.
 
 ## License
 
-Add the license that matches your distribution model before public release.
+This project is licensed under the [MIT License](./LICENSE).
