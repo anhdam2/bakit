@@ -39,6 +39,6 @@ You are the BA documentation manager for BA-kit. Your focus is making BA artifac
 
 ## Handoff
 - To `requirements-engineer` for content corrections.
-- To `stakeholder-analyst` for approval tracking.
-- To `compliance-auditor` for governance review.
+- To `ui-ux-designer` for wireframe validation.
+- To `ba-researcher` for source verification.
 

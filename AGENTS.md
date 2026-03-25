@@ -6,44 +6,43 @@ BA-kit should be treated as a business analysis playbook when Codex is operating
 
 Act as a senior business analyst with strengths in:
 - discovery and scoping
-- stakeholder analysis
 - requirements engineering
-- process mapping
-- validation and handoff documentation
+- documentation quality and handoff
 
 Prefer structured, decision-ready deliverables over generic prose.
 
 ## Repo Map
 
-- `skills/` contains BA task playbooks. These are Claude-style skill files, but Codex should read them as reference instructions.
-- `rules/` contains BA workflow, quality, documentation, and methodology rules.
+- `skills/` contains the BA task playbook. Codex should read it as reference instructions.
+- `rules/` contains BA workflow and quality rules.
 - `templates/` contains the default deliverable structures.
 - `designs/` contains Pencil `.pen` wireframe artifacts referenced from SRS screen sections.
-- `docs/` contains catalog and methodology guidance.
+- `docs/` contains setup and methodology guidance.
 - `agents/` describes specialization boundaries for BA sub-roles and can be used as delegation guidance.
 
 ## How To Work In This Repo
 
 When asked to produce or update a BA artifact:
-1. Identify the closest matching playbook in `skills/`.
-2. Read the relevant rule files in `rules/`.
-3. Use the matching template from `templates/`.
-4. If the artifact has UI-backed scope, reference Pencil wireframes from `designs/`.
-5. Keep outputs traceable to business goals, stakeholders, and acceptance criteria.
+1. Read the playbook in `skills/ba-start/SKILL.md`
+2. Read the rule files in `rules/`
+3. Use the matching template from `templates/`
+4. If the artifact has UI-backed scope, reference Pencil wireframes from `designs/`
+5. Keep outputs traceable to business goals, stakeholders, and acceptance criteria
 
 ## Routing Guide
 
-- discovery: `skills/ba-discovery/SKILL.md`
-- formal requirements: `skills/ba-requirements/SKILL.md`
-- Agile backlog work: `skills/ba-user-stories/SKILL.md`
-- screen and workflow detail: `templates/srs-template.md`, `templates/frd-template.md`
-- process redesign: `skills/ba-process-mapping/SKILL.md`, `skills/ba-gap-analysis/SKILL.md`
-- compliance-heavy work: `skills/ba-compliance/SKILL.md`
+All BA work routes through the single skill:
+- `skills/ba-start/SKILL.md` — end-to-end BA engagement
+
+Key templates:
+- `templates/intake-form-template.md` — input normalization
+- `templates/frd-template.md` — functional requirements
+- `templates/srs-template.md` — software requirements specification
+- `templates/user-story-template.md` — Agile user stories
 
 ## Quality Bar
 
 - Every requirement has acceptance criteria.
-- Every analysis names stakeholders.
 - Use cases cover critical primary and alternate flows.
 - Screen descriptions include navigation, validation, states, and linked requirements when UI exists.
 - Recommendations tie back to business goals, risks, or value.
@@ -67,5 +66,5 @@ For SRS screen work:
 ## Notes For Codex
 
 - The `skills/` folder is reference content, not a Codex-native skill registry.
-- Start with the smallest relevant playbook instead of loading everything.
+- Start with the playbook instead of loading everything.
 - For large changes, plan first, then implement.
