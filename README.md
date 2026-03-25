@@ -1,14 +1,14 @@
 # BA-kit
 
-BA-kit is a business analysis toolkit for agentic coding environments. It packages BA-specific skills, agent roles, workflow rules, and reusable templates so discovery, requirements, and handoff work follow a consistent operating model in Claude Code and Codex.
+BA-kit is a business analysis toolkit for agentic coding environments. It packages a single end-to-end BA skill, focused agent roles, workflow rules, and reusable templates so discovery, requirements, and handoff work follow a consistent operating model in Claude Code and Codex.
 
 ## What It Includes
 
-- 16 BA skills for discovery, requirements, process modeling, compliance, workshops, and strategy
-- 6 BA agent roles for structured delegation
-- 5 workflow and quality rule files
-- 13 reusable document templates
-- project instructions and configuration for BA engagements
+- 1 unified BA skill (`ba-start`) covering the full intake-to-deliverable lifecycle
+- 4 agent roles for structured delegation
+- 2 workflow and quality rule files
+- 4 reusable document templates
+- Project instructions and configuration for BA engagements
 
 Start here for practical setup and usage: [docs/getting-started.md](./docs/getting-started.md)
 
@@ -33,7 +33,7 @@ Start here for practical setup and usage: [docs/getting-started.md](./docs/getti
 3. Restart Claude Code if it is already running.
 
 The installer copies:
-- each BA skill directory under `skills/` to `~/.claude/skills/`
+- the BA skill directory under `skills/` to `~/.claude/skills/`
 - `agents/` to `~/.claude/agents/`
 - `rules/` to `~/.claude/rules/ba-kit/`
 - `templates/` to `~/.claude/templates/`
@@ -52,69 +52,46 @@ See [docs/codex-setup.md](./docs/codex-setup.md) for prompt patterns and setup g
 
 ## Quick Start
 
-To bootstrap a BA engagement from a raw requirements file:
+To run a full BA engagement from raw requirements:
 
 ```text
-/ba-kickoff
+/ba-start
 ```
 
-Or use the flagship discovery skill first:
+This single command handles:
+1. Parsing raw input into a structured intake form
+2. Gap analysis and clarifying questions
+3. Work plan generation
+4. FRD production
+5. SRS production (parallel delegation)
+6. User story generation
+7. Wireframe generation for SRS screens
+8. Quality review and packaging
 
-```text
-/ba-discovery
-```
-
-Typical follow-on flows:
-- discovery to requirements: `/ba-discovery` -> `/ba-requirements`
-- Agile delivery: `/ba-user-stories` -> `/ba-acceptance-criteria`
-- process redesign: `/ba-process-mapping` -> `/ba-gap-analysis`
-- regulated change: `/ba-compliance` -> `/ba-change-management`
-
-## Skill Catalog
+## Skill
 
 | Skill | Purpose |
 | --- | --- |
-| `ba-kickoff` | Parse raw requirements input and generate a scoped BA work plan |
-| `ba-discovery` | Run a structured discovery engagement from scoping through recommendations |
-| `ba-requirements` | Produce and validate BRD, FRD, SRS, and traceability outputs |
-| `ba-user-stories` | Write Agile stories, acceptance criteria, and story maps |
-| `ba-process-mapping` | Document AS-IS and TO-BE processes in Mermaid |
-| `ba-stakeholder` | Build stakeholder analysis, RACI, and engagement plans |
-| `ba-gap-analysis` | Identify gaps, impacts, priorities, and solution responses |
-| `ba-feasibility` | Assess technical, operational, economic, schedule, and risk feasibility |
-| `ba-data-modeling` | Produce ERD, DFD, data dictionary, and data governance outputs |
-| `ba-compliance` | Map requirements to regulations and audit obligations |
-| `ba-workshop` | Plan and run requirements or discovery workshops |
-| `ba-acceptance-criteria` | Create clear, testable acceptance criteria |
-| `ba-swot` | Run SWOT analysis and derive strategic options |
-| `ba-cost-benefit` | Estimate costs, benefits, ROI, and payback |
-| `ba-communication` | Produce communication plans, status reports, and executive summaries |
-| `ba-change-management` | Assess change impact, readiness, training, and adoption |
-
-Detailed usage guidance lives in [docs/skill-catalog.md](./docs/skill-catalog.md).
+| `ba-start` | End-to-end BA engagement: intake, FRD, user stories, SRS, wireframes, and quality review |
 
 ## Agent Roles
 
 | Agent | Focus |
 | --- | --- |
 | `requirements-engineer` | Requirements elicitation, structuring, validation |
-| `stakeholder-analyst` | Stakeholder mapping, communication, RACI |
-| `process-mapper` | BPMN, swimlanes, process optimization |
-| `ba-researcher` | Domain, market, and solution research |
-| `compliance-auditor` | Regulatory and governance review |
+| `ui-ux-designer` | Pencil wireframe generation from SRS screens |
 | `ba-documentation-manager` | Deliverable quality, consistency, and packaging |
+| `ba-researcher` | Domain, market, and solution research |
 
 ## Template Library
 
 Templates live in `./templates/` and cover:
-- BRD, FRD, SRS
-- user stories
-- RACI and stakeholder register
-- process maps and gap analysis
-- feasibility, SWOT, and cost/benefit adjacent planning
-- communication and change impact plans
+- SRS (software requirements specification)
+- FRD (functional requirements document)
+- User stories
+- Intake form
 
-Wireframe artifacts for SRS screen sections should live under `./designs/` as Pencil `.pen` files. See [designs/README.md](./designs/README.md) for the naming convention.
+Wireframe artifacts for SRS screen sections live under `./designs/` as Pencil `.pen` files. See [designs/README.md](./designs/README.md) for the naming convention.
 
 ## Configuration
 
@@ -124,15 +101,15 @@ BA-kit uses [`.ck.json`](./.ck.json) to define project paths, plan naming, metho
 
 ### New Product Discovery
 
-Use `ba-discovery` to scope the initiative, identify stakeholders, capture pain points, and recommend the next artifact set.
+Use `/ba-start` with a raw requirements document to produce an intake form, FRD, user stories with AC, SRS with screen descriptions, and wireframes.
 
 ### ERP Process Improvement
 
-Use `ba-process-mapping`, `ba-gap-analysis`, and `ba-change-management` to document current-state operations and drive a controlled transition plan.
+Use `/ba-start` with process descriptions as input. The skill produces FRD with workflows, user stories for the delivery team, and SRS with technical specs.
 
 ### Regulated Workflow Change
 
-Use `ba-requirements`, `ba-compliance`, and `ba-acceptance-criteria` to maintain traceability from regulation to requirement to validation.
+Use `/ba-start` with regulatory context. The SRS captures compliance constraints, the FRD covers business rules, and user stories include acceptance criteria tied to regulations.
 
 ## Contributing
 
@@ -142,7 +119,7 @@ Keep additions aligned with BA-kit principles:
 - traceability over ambiguity
 - Mermaid for diagrams
 
-When adding a skill, also update the skill catalog and any affected templates or rules. See [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution expectations and validation steps.
+When changing the skill, also update templates or rules if the workflow contract changes. See [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution expectations and validation steps.
 
 ## License
 

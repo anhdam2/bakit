@@ -8,12 +8,12 @@ BA-kit uses a hybrid business analysis approach. The toolkit can shift toward Ag
 
 | BABOK Knowledge Area | BA-kit Support |
 | --- | --- |
-| Business Analysis Planning and Monitoring | `ba-discovery`, `ba-stakeholder`, `ba-workshop` |
-| Elicitation and Collaboration | `ba-discovery`, `ba-requirements`, `ba-workshop`, `ba-communication` |
-| Requirements Life Cycle Management | `ba-requirements`, `ba-acceptance-criteria`, `ba-change-management` |
-| Strategy Analysis | `ba-swot`, `ba-gap-analysis`, `ba-feasibility`, `ba-cost-benefit` |
-| Requirements Analysis and Design Definition | `ba-requirements`, `ba-user-stories`, `ba-process-mapping`, `ba-data-modeling` |
-| Solution Evaluation | `ba-gap-analysis`, `ba-feasibility`, `ba-change-management`, `ba-compliance` |
+| Business Analysis Planning and Monitoring | Intake form, work plan generation |
+| Elicitation and Collaboration | Gap analysis, clarifying questions |
+| Requirements Life Cycle Management | FRD, user stories, SRS, traceability |
+| Strategy Analysis | Gap analysis, domain research |
+| Requirements Analysis and Design Definition | FRD, SRS (use cases, screens, NFRs), wireframes |
+| Solution Evaluation | Test cases, quality review |
 
 ## Agile BA Mode
 
@@ -23,14 +23,9 @@ Use Agile mode when:
 - documentation needs to stay lightweight
 
 Preferred artifact set:
-- discovery summary
-- story map
-- user stories
-- acceptance criteria
-- lightweight process flows
-
-Recommended skill chain:
-`ba-discovery` -> `ba-user-stories` -> `ba-acceptance-criteria` -> `ba-communication`
+- intake form
+- user stories with acceptance criteria
+- lightweight FRD
 
 ## Traditional BA Mode
 
@@ -40,54 +35,43 @@ Use Traditional mode when:
 - governance requires baseline documents
 
 Preferred artifact set:
-- BRD
+- intake form
 - FRD
-- SRS
-- RACI
-- stakeholder register
-- formal review log
+- SRS with full use cases, screens, NFRs, and test cases
+- traceability matrix
 
-Recommended skill chain:
-`ba-discovery` -> `ba-stakeholder` -> `ba-requirements` -> `ba-compliance`
-
-## Hybrid BA Mode
+## Hybrid BA Mode (Default)
 
 Hybrid mode fits most teams:
-- use structured discovery and formal scoping where ambiguity is high
-- switch to Agile stories and acceptance criteria for delivery execution
-- keep a traceability bridge between formal goals and backlog items
-
-Typical pattern:
-1. discovery and scope framing
-2. stakeholder alignment
-3. high-level BRD or initiative brief
-4. user story decomposition
-5. validation and compliance review
+- use structured intake and formal scoping where ambiguity is high
+- produce FRD and SRS for formal traceability
+- switch to user stories for delivery execution
+- keep a traceability bridge between formal requirements and backlog items
 
 ## Common Scenarios
 
-### Process Transformation
+### Greenfield Product
 
-Start with `ba-process-mapping` to establish the AS-IS baseline, then use `ba-gap-analysis` and `ba-change-management` to define the TO-BE shift and adoption path.
+Start with `/ba-start` and a raw requirements document. The skill produces intake, FRD, user stories with AC, SRS with screen descriptions, and wireframes.
 
-### Greenfield Product Discovery
+### ERP Process Improvement
 
-Start with `ba-discovery`, then move into `ba-feasibility`, `ba-user-stories`, and `ba-acceptance-criteria`.
+Start with `/ba-start` and process descriptions. Focus on the FRD workflows and SRS technical specs.
 
-### Audit or Regulatory Remediation
+### Regulated Change
 
-Use `ba-compliance` early. Pair it with `ba-requirements` so obligations flow into explicit requirements and testable criteria.
+Start with `/ba-start` with regulatory context. The SRS captures compliance constraints, the FRD covers business rules, and user stories include acceptance criteria tied to regulations.
 
 ## Modeling Standards
 
-- use Mermaid for diagrams
-- prefer one diagram per decision question
-- keep labels business-readable
-- distinguish current-state from future-state explicitly
+- Use Mermaid for diagrams
+- Prefer one diagram per decision question
+- Keep labels business-readable
+- Distinguish current-state from future-state explicitly
 
 ## Quality Rules
 
 - SMART for requirements
 - INVEST for user stories
-- one owner for each approval gate
-- every recommendation links to a business outcome, risk reduction, or cost effect
+- One owner for each approval gate
+- Every recommendation links to a business outcome, risk reduction, or cost effect

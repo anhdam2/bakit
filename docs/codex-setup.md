@@ -15,25 +15,25 @@ BA-kit can work with Codex as a repo-native BA operating guide. The root [AGENTS
 ## Recommended Codex Workflow
 
 1. Start with the business outcome or artifact you need.
-2. Tell Codex which BA playbook to use.
+2. Tell Codex to use the BA playbook.
 3. Point it at the target template.
 4. If UI is involved, point it at the relevant Pencil `.pen` files in `designs/`.
 5. Ask for assumptions, open questions, and a draft output.
 
 ## Prompt Patterns
 
-### Discovery
+### Full BA Engagement
 
 ```text
-Use AGENTS.md and skills/ba-discovery/SKILL.md.
-Create a discovery summary using the relevant templates.
-Focus on stakeholders, current-state pain points, and next-step recommendations.
+Use AGENTS.md and skills/ba-start/SKILL.md.
+Parse the requirements in docs/raw/warehouse-rfp.pdf.
+Produce an intake form, FRD, SRS, and user stories.
 ```
 
-### Formal Requirements
+### Formal Requirements Only
 
 ```text
-Use AGENTS.md and skills/ba-requirements/SKILL.md.
+Use AGENTS.md and skills/ba-start/SKILL.md.
 Draft an SRS from templates/srs-template.md.
 Include use cases, screen descriptions, and linked requirements.
 Reference Pencil files under designs/[initiative-slug]/.
@@ -42,8 +42,9 @@ Reference Pencil files under designs/[initiative-slug]/.
 ### Agile Story Breakdown
 
 ```text
-Use AGENTS.md and skills/ba-user-stories/SKILL.md.
+Use AGENTS.md and skills/ba-start/SKILL.md.
 Break this feature into epics, features, and stories.
+Use templates/user-story-template.md.
 Keep acceptance criteria testable and align any UI stories to the SRS screens.
 ```
 
@@ -64,6 +65,6 @@ Use Pencil only for wireframes in SRS-backed work:
 
 You are set up correctly when Codex can:
 - follow `AGENTS.md` without extra repo explanation
-- read a targeted BA playbook from `skills/`
+- read the BA playbook from `skills/ba-start/SKILL.md`
 - draft a structured artifact from `templates/`
 - reference Pencil wireframes from `designs/`

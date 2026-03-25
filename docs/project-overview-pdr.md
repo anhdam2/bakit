@@ -2,16 +2,16 @@
 
 ## Summary
 
-BA-kit is a reusable toolkit that equips Claude Code and Codex for professional business analysis work. It standardizes discovery, requirements, process design, compliance review, and document packaging through a curated set of skills, templates, rules, and agent roles.
+BA-kit is a reusable toolkit that equips Claude Code and Codex for professional business analysis work. It standardizes the full BA lifecycle from raw input to packaged deliverables through a single unified skill, focused agent roles, reusable templates, and workflow rules.
 
 ## Problem Statement
 
 Agent coding environments are usually optimized for software implementation. Business analysis work needs different defaults:
-- structured elicitation
-- formal and Agile requirement artifacts
-- process and stakeholder analysis
-- stronger traceability and sign-off discipline
+- structured elicitation and intake normalization
+- formal and Agile requirement artifacts (FRD, user stories, SRS)
+- traceability from business goals to test cases
 - reusable templates for recurring deliverables
+- wireframe generation for UI-backed scope
 
 BA-kit closes that gap with a BA-first operating model.
 
@@ -21,29 +21,29 @@ BA-kit closes that gap with a BA-first operating model.
 - Reduce time spent rebuilding templates and checklists
 - Improve consistency of requirement quality and acceptance criteria
 - Support Agile, Traditional, and Hybrid delivery styles
-- Keep deliverables easy to hand off to product, engineering, compliance, and operations teams
+- Keep deliverables easy to hand off to product, engineering, and operations teams
 
 ## Core Components
 
 | Component | Purpose |
 | --- | --- |
-| `skills/` | Task-specific BA operating instructions and Codex reference playbooks |
-| `agents/` | Specialized delegation roles for parallel execution |
-| `rules/` | Workflow, quality, methodology, and documentation standards |
-| `templates/` | Ready-to-fill BA deliverable structures |
+| `skills/ba-start/` | Single unified BA skill covering intake through packaging |
+| `agents/` | 4 specialized delegation roles for parallel execution |
+| `rules/` | Workflow and quality standards |
+| `templates/` | 4 ready-to-fill BA deliverable structures |
+| `designs/` | Pencil wireframe artifacts for SRS screens |
 | `AGENTS.md` | Persistent Codex repository instructions |
-| `docs/` | Project-level guidance and catalogs |
+| `CLAUDE.md` | Claude Code project instructions |
 
 ## Product Scope
 
 ### In Scope
 
-- Discovery and scoping
-- Requirements engineering
-- Stakeholder analysis
-- Process mapping
-- Gap, feasibility, SWOT, and cost-benefit analysis
-- Compliance-aware BA workflows
+- Intake normalization and gap analysis
+- Requirements engineering (FRD, SRS)
+- User story generation
+- Wireframe generation for SRS screens
+- Quality review and packaging
 - Template-driven documentation
 
 ### Out of Scope
@@ -55,39 +55,30 @@ BA-kit closes that gap with a BA-first operating model.
 
 ## Target Users
 
-- business analysts
-- product managers doing BA work
-- consulting teams running discovery engagements
-- solution analysts supporting implementation squads
+- Business analysts
+- Product managers doing BA work
+- Consulting teams running discovery engagements
+- Solution analysts supporting implementation squads
 
 ## Success Metrics
 
-- Users can start with `ba-discovery` and receive a coherent discovery workflow
-- Every requirement-oriented skill references acceptance criteria and templates
-- Rule files clearly guide lifecycle decisions without depending on software-dev assumptions
-- Installation takes less than five minutes in a standard Claude environment
-- Codex can use the repo immediately through `AGENTS.md` plus local playbooks
+- Users can start with `/ba-start` and receive a complete BA workflow
+- Every requirement has acceptance criteria
+- Installation takes less than five minutes
+- Codex can use the repo immediately through `AGENTS.md`
 
 ## Design Decisions
 
-1. BA-kit is a standalone toolkit, not a fork of another project.
-2. Skills are the primary unit of value; rules and agents reinforce them.
+1. BA-kit uses a single unified skill instead of 16 separate skills.
+2. Four focused agent roles handle delegation without overlap.
 3. Templates are first-class assets because BA deliverables are repeatable.
 4. Mermaid is the standard diagram syntax for portability in markdown.
-5. Hybrid methodology is the default, with Agile and Traditional branches available when needed.
-
-## Risks
-
-| Risk | Impact | Mitigation |
-| --- | --- | --- |
-| Skill sprawl creates overlap | Medium | Keep each skill focused and cross-reference related skills |
-| Templates become too generic | Medium | Include guidance prompts and related-template links |
-| Users bypass quality rules | High | Put mandatory checks into instructions and rules |
-| Regulatory guidance is interpreted as legal advice | High | Position compliance content as analysis support, not legal sign-off |
+5. Hybrid methodology is the default.
+6. SRS is included by default when UI screens or system interactions are present.
 
 ## Acceptance Criteria
 
 - Project structure exists and installs cleanly
-- Skill catalog and methodology docs are complete
-- Internal cross-references are consistent
+- Skill, agents, rules, and templates are internally consistent
+- Cross-references between files are valid
 - Core BA outputs can be generated from templates without rework

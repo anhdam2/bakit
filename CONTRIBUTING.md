@@ -9,15 +9,19 @@
 
 ## Change Areas
 
-When you add or change a skill:
-- update the relevant file under `skills/`
-- update [docs/skill-catalog.md](./docs/skill-catalog.md) if usage changes
+When you change the skill:
+- update `skills/ba-start/SKILL.md`
 - update templates or rules if the workflow contract changes
+- update `docs/getting-started.md` if usage changes
 
-When you add or change a template:
+When you change a template:
 - keep it ready-to-fill, not overexplained
 - keep related-template links current
-- ensure at least one skill clearly points to it
+- ensure the skill clearly points to it
+
+When you change an agent:
+- keep handoff references current across all agent files
+- update `CLAUDE.md` delegation section if ownership changes
 
 ## Verification
 

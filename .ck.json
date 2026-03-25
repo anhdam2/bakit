@@ -6,7 +6,8 @@
   "paths": {
     "docs": "docs",
     "plans": "plans",
-    "templates": "templates"
+    "templates": "templates",
+    "designs": "designs"
   },
   "project": {
     "type": "business-analysis",
@@ -15,8 +16,8 @@
   "assertions": [
     "All requirements must have acceptance criteria",
     "Use BABOK 3.0 knowledge areas as reference",
-    "Document stakeholders in every analysis",
     "Always validate requirements against business goals",
-    "Use Mermaid.js for all diagrams"
+    "Use Mermaid.js for all diagrams",
+    "SRS is default when UI screens or system interactions are present"
   ]
 }
