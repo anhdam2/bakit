@@ -82,7 +82,7 @@ Use AGENTS.md and skills/ba-start/SKILL.md.
 Parse the requirements in docs/raw/warehouse-rfp.pdf.
 Produce an intake form, FRD, user stories, SRS, and wireframes.
 Include use cases, screen descriptions, linked requirements, and test cases.
-Reference Pencil files under designs/customer-portal/.
+Reference Pencil artifacts under designs/customer-portal/ and map each SRS screen to its target frame.
 ```
 
 See [codex-setup.md](./codex-setup.md) for more prompt patterns.
@@ -100,12 +100,16 @@ designs/[initiative-slug]/
 Example:
 
 ```text
-designs/customer-portal/SCR-01-login.pen
-designs/customer-portal/SCR-02-dashboard.pen
+designs/customer-portal/auth-flow.pen
+designs/customer-portal/dashboard-core.pen
+designs/customer-portal/exports/auth-flow/SCR-01-login.png
+designs/customer-portal/exports/dashboard-core/SCR-02-dashboard.png
 ```
 
 Rules:
-- keep screen IDs aligned between the SRS and the Pencil filenames
+- a single `.pen` file may contain multiple frames
+- keep screen IDs aligned between the SRS and Pencil frame names
+- link each SRS screen to both the `.pen` artifact and the specific frame it uses
 - use the `.pen` file as the wireframe source of truth
 - keep the SRS focused on behavior, validation, states, navigation, and traceability
 
@@ -119,7 +123,7 @@ A full `/ba-start` engagement produces:
 | FRD | `frd-template.md` | `plans/reports/frd-{date}-{slug}.md` |
 | SRS | `srs-template.md` | `plans/reports/srs-{date}-{slug}.md` |
 | User stories | `user-story-template.md` | `plans/reports/user-stories-{date}-{slug}.md` |
-| Wireframes | Pencil MCP | `designs/{slug}/SCR-xx-{name}.pen` |
+| Wireframes | Pencil MCP | `designs/{slug}/{artifact-name}.pen` plus `designs/{slug}/exports/{artifact-name}/SCR-xx-{name}.png` |
 
 ## 8. Know Where To Look
 
@@ -134,6 +138,6 @@ A full `/ba-start` engagement produces:
 
 - Start with `/ba-start` and let the skill guide you through the lifecycle
 - Always provide raw input (file or text) when starting an engagement
-- For UI scope, provide the `.pen` path explicitly or let the skill generate wireframes
+- For UI scope, provide the `.pen` artifact path and target frames explicitly, or let the skill generate and map them
 - Ask for assumptions and open questions before asking for finalization
 - Use Mermaid diagrams for process or data views

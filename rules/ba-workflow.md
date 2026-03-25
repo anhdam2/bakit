@@ -50,7 +50,7 @@ Related rules:
 - FRD: `plans/reports/frd-{date}-{slug}.md`
 - SRS: `plans/reports/srs-{date}-{slug}.md`
 - User stories: `plans/reports/user-stories-{date}-{slug}.md`
-- Wireframes: `designs/{slug}/SCR-xx-{screen-name}.pen`
+- Wireframes: `designs/{slug}/{artifact-name}.pen` plus frame-level screen mapping in the SRS
 
 ## Methodology
 
@@ -65,4 +65,5 @@ Related rules:
 - Approve scope before deep analysis.
 - Approve requirements before downstream production.
 - **Cross-artifact consistency check before packaging:** UC steps, screen fields/actions, and wireframe labels must use identical terminology and describe the same behavior.
+- Wireframe linkage must be screen-to-frame, not screen-to-file only. A single `.pen` file may cover multiple screens.
 - Verify quality before handoff.

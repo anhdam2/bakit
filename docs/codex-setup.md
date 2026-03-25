@@ -17,7 +17,7 @@ BA-kit can work with Codex as a repo-native BA operating guide. The root [AGENTS
 1. Start with the business outcome or artifact you need.
 2. Tell Codex to use the BA playbook.
 3. Point it at the target template.
-4. If UI is involved, point it at the relevant Pencil `.pen` files in `designs/`.
+4. If UI is involved, point it at the relevant Pencil `.pen` artifacts and frame mappings in `designs/`.
 5. Ask for assumptions, open questions, and a draft output.
 
 ## Prompt Patterns
@@ -36,7 +36,7 @@ Produce an intake form, FRD, SRS, and user stories.
 Use AGENTS.md and skills/ba-start/SKILL.md.
 Draft an SRS from templates/srs-template.md.
 Include use cases, screen descriptions, and linked requirements.
-Reference Pencil files under designs/[initiative-slug]/.
+Reference Pencil artifacts under designs/[initiative-slug]/ and identify the target frame for each screen.
 ```
 
 ### Agile Story Breakdown
@@ -58,8 +58,9 @@ That means prompts should explicitly tell Codex which playbook to consult when t
 
 Use Pencil only for wireframes in SRS-backed work:
 - store `.pen` files under `designs/`
-- reference them directly from the SRS
-- keep screen IDs aligned across the SRS and Pencil files
+- allow one `.pen` file to contain multiple frames
+- reference both the artifact path and the target frame directly from the SRS
+- keep screen IDs aligned across the SRS and Pencil frame names
 
 ## Good Outcomes
 
@@ -67,4 +68,4 @@ You are set up correctly when Codex can:
 - follow `AGENTS.md` without extra repo explanation
 - read the BA playbook from `skills/ba-start/SKILL.md`
 - draft a structured artifact from `templates/`
-- reference Pencil wireframes from `designs/`
+- reference Pencil wireframes from `designs/` at both artifact and frame level

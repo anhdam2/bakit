@@ -31,7 +31,7 @@ BA-kit closes that gap with a BA-first operating model.
 | `agents/` | 4 specialized delegation roles for parallel execution |
 | `rules/` | Workflow and quality standards |
 | `templates/` | 4 ready-to-fill BA deliverable structures |
-| `designs/` | Pencil wireframe artifacts for SRS screens |
+| `designs/` | Pencil wireframe artifacts for SRS screens, with screen-to-frame mapping inside `.pen` files |
 | `AGENTS.md` | Persistent Codex repository instructions |
 | `CLAUDE.md` | Claude Code project instructions |
 

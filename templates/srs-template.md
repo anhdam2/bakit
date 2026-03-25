@@ -61,24 +61,28 @@ Capture screen-level behavior, navigation, fields, and validation expectations f
 
 ### Screen Detail
 **Screen ID:** [SCR-01]
-**Pencil Artifact:** `designs/[initiative-slug]/SCR-01-[screen-name].pen`
-**Artifact Scope:** [Single screen / multiple screens / end-to-end flow]
+**Pencil Artifact:** `designs/[initiative-slug]/[artifact-name].pen`
+**Pencil Frame:** [SCR-01 - Screen Name]
+**Artifact Scope:** [Single screen / multi-screen flow / module pack]
 **Layout Summary:** [Key regions, panels, or sections]
 **Navigation Rules:** [Menu, breadcrumbs, modal, back/next behavior]
 **Linked Use Cases:** [UC-01, UC-02]
 **Linked User Stories:** [US-001, US-002]
 
-> **Consistency rule:** This screen must implement the exact interactions described in its linked use cases. Field names, action labels, and flow sequences must match between UC steps and screen fields/actions. The Pencil wireframe must reflect this screen's field table and layout.
+> **Consistency rule:** This screen must implement the exact interactions described in its linked use cases. Field names, action labels, and flow sequences must match between UC steps and screen fields/actions. The referenced Pencil frame inside the artifact must reflect this screen's field table and layout.
 
 ## Wireframe / Mockup Reference
-- Pencil file: `designs/[initiative-slug]/SCR-01-[screen-name].pen`
-- Exported image: `designs/[initiative-slug]/SCR-01-[screen-name].png`
-- Covered screen IDs: [SCR-01, SCR-02]
+- Pencil file: `designs/[initiative-slug]/[artifact-name].pen`
+- Target frame: [SCR-01 - Screen Name]
+- Exported image: `designs/[initiative-slug]/exports/[artifact-name]/SCR-01-[screen-name].png`
+- Covered screen IDs in artifact: [SCR-01, SCR-02]
 - Last updated: [YYYY-MM-DD]
+
+> A single `.pen` artifact may contain multiple frames. Each SRS screen must point to the exact frame that represents it.
 
 > In the final HTML export, the PNG image below is embedded inline automatically.
 
-![SCR-01 Wireframe](designs/[initiative-slug]/SCR-01-[screen-name].png)
+![SCR-01 Wireframe](designs/[initiative-slug]/exports/[artifact-name]/SCR-01-[screen-name].png)
 
 ## Wireframe Intent
 Explain what the wireframe is optimizing for, such as data entry speed, guided completion, review-before-submit, or dashboard scanning.
@@ -91,7 +95,7 @@ Explain what the wireframe is optimizing for, such as data entry speed, guided c
 | Action Area | [Purpose] | [Primary and secondary actions] |
 
 ## Low-Fidelity Wireframe
-Use the Pencil `.pen` artifact as the primary wireframe. Add a lightweight text sketch here only when it improves clarity for reviewers who are reading the markdown alone.
+Use the referenced frame inside the Pencil `.pen` artifact as the primary wireframe. Add a lightweight text sketch here only when it improves clarity for reviewers who are reading the markdown alone.
 
 ```text
 +--------------------------------------------------+

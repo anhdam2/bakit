@@ -21,7 +21,7 @@ This catalog explains the single BA-kit skill, what it produces, and which agent
 5. FRD production
 6. User story generation (stories + AC feed into SRS and downstream)
 7. SRS production (parallel delegation across 5 groups, driven by user stories)
-8. Wireframe generation for SRS screens
+8. Wireframe generation for SRS screens, grouped into `.pen` artifacts with frame-level mapping
 9. Quality review and packaging
 
 ## Invocation

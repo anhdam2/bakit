@@ -27,6 +27,7 @@ Related rules:
 - UC system responses must match screen field Behaviour Rules.
 - UC alternate flows must be reflected in screen Error/States.
 - Field names must be identical across UC steps, screen field tables, and wireframe labels.
+- Each SRS screen must reference the correct Pencil artifact and the exact frame representing that screen.
 - User story acceptance criteria must be covered by UC postconditions and screen Validation Rules.
 - FRD features must be fully traceable through user stories into SRS requirements.
 - When inconsistency is found, the upstream artifact (user story > use case > screen > wireframe) is the source of truth.

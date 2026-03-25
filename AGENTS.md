@@ -26,7 +26,7 @@ When asked to produce or update a BA artifact:
 1. Read the playbook in `skills/ba-start/SKILL.md`
 2. Read the rule files in `rules/`
 3. Use the matching template from `templates/`
-4. If the artifact has UI-backed scope, reference Pencil wireframes from `designs/`
+4. If the artifact has UI-backed scope, reference Pencil wireframes from `designs/` at artifact and frame level
 5. Keep outputs traceable to business goals, stakeholders, and acceptance criteria
 
 ## Routing Guide
@@ -51,8 +51,10 @@ Key templates:
 ## Pencil Wireframes
 
 For SRS screen work:
-- use `designs/[initiative-slug]/SCR-xx-[screen-name].pen`
-- keep screen IDs aligned between the SRS and the Pencil artifact
+- store `.pen` files under `designs/[initiative-slug]/` by flow, module, or artifact scope
+- allow one `.pen` file to contain multiple frames; each frame should represent one screen or state/view
+- link each SRS screen to both the Pencil artifact path and the specific frame name or ID
+- keep screen IDs aligned between the SRS and Pencil frame names, not only filenames
 - treat the `.pen` file as the low-fidelity wireframe source of truth
 - keep the markdown SRS focused on behavior, validation, roles, states, and traceability
 

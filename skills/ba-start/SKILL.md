@@ -55,6 +55,7 @@ Flag each gap explicitly.
 ### Step 4 — Ask Clarifying Questions
 
 Present the identified gaps to the user as 3-8 targeted questions using `AskUserQuestion`. Focus on:
+- Output language
 - Missing stakeholders or decision makers
 - Ambiguous scope boundaries
 - Unstated success criteria
@@ -74,7 +75,7 @@ Based on the normalized intake, produce a scoped work plan covering:
 | Detailed functional spec needed | FRD | `frd-template.md` |
 | Agile team needs stories | User stories | `user-story-template.md` |
 | System spec with screens, use cases, or test cases | SRS | `srs-template.md` |
-| UI screens mentioned | Wireframes | `designs/{slug}/` via Pencil MCP |
+| UI screens mentioned | Wireframes | `designs/{slug}/` via Pencil MCP, grouped by flow/module with frame-level screen mapping |
 
 **SRS default routing** — SRS is included by default alongside FRD when the intake contains **any** of:
 - UI screens or screen descriptions
@@ -232,6 +233,7 @@ When SRS contains Screen Descriptions (SCR-xx entries), generate Pencil wirefram
 **Step 9.1 — Extract screen list**
 
 Parse the SRS for all SCR-xx entries and build a generation plan.
+Group related screens into one or more Pencil artifacts by flow, module, or journey.
 
 **Step 9.2 — Ask user for wireframe preferences**
 
@@ -244,28 +246,29 @@ Parse the SRS for all SCR-xx entries and build a generation plan.
 
 **Step 9.3 — Delegate to ui-ux-designer agent**
 
-For each approved screen:
+For each approved screen group:
 1. Read the Screen Detail from the SRS (field table, actions, states, linked UCs)
 2. Verify wireframe will match: same fields, same labels, same action buttons as screen description
 3. Get design guidelines: `get_guidelines(topic="web-app")` or `"mobile-app"`
 4. Get style guide: `get_style_guide_tags` then `get_style_guide(tags=[...])`
-5. Create `.pen` file via Pencil MCP tools
-6. Validate with `get_screenshot` — check field names and action labels match SRS screen description
-7. Save to `designs/{slug}/SCR-xx-{screen-name}.pen`
+5. Create or update one `.pen` artifact per approved screen group via Pencil MCP tools
+6. Create one frame per screen or state/view inside that artifact; name each frame with the screen ID prefix, e.g. `SCR-01 - Login`
+7. Validate with `get_screenshot` — check frame field names and action labels match the SRS screen description
+8. Save artifact to `designs/{slug}/{artifact-name}.pen`
 
-**Sub-agent batching for wireframes:** When the project has more than 5 screens, batch screens across multiple `ui-ux-designer` agents (3-5 screens per agent) to avoid context overflow. Each agent receives only its assigned screens' SRS details — not the full SRS. Style guide and guidelines are fetched once and passed as context to all agents.
+**Sub-agent batching for wireframes:** When the project has more than 5 screens, batch screen groups across multiple `ui-ux-designer` agents (about 3-5 screens per agent) to avoid context overflow. Each agent receives only its assigned screens' SRS details — not the full SRS. Style guide and guidelines are fetched once and passed as context to all agents.
 
 **Step 9.4 — Export wireframes to PNG**
 
-Export each `.pen` file to PNG for embedding in the final SRS document:
+Export each relevant frame node to PNG for embedding in the final SRS document:
 ```
-mcp__pencil__export_nodes(filePath="designs/{slug}/SCR-xx.pen", nodeIds=[...], outputDir="designs/{slug}/", format="png")
+mcp__pencil__export_nodes(filePath="designs/{slug}/{artifact-name}.pen", nodeIds=[frameNodeId], outputDir="designs/{slug}/exports/{artifact-name}/", format="png")
 ```
-This produces `designs/{slug}/SCR-xx-{name}.png` files alongside the `.pen` sources.
+Rename or map the exported files so each SRS screen points to a stable screen-level image path such as `designs/{slug}/exports/{artifact-name}/SCR-01-login.png`.
 
 **Step 9.5 — Link wireframes back to SRS**
 
-Update the SRS to fill in `Pencil Artifact:` paths and the Wireframe Reference section.
+Update the SRS to fill in `Pencil Artifact:`, `Pencil Frame:`, and the Wireframe Reference section for each screen.
 
 ### Step 10 — Quality Review
 
@@ -293,8 +296,7 @@ python scripts/md-to-html.py plans/reports/srs-{date}-{slug}.md
 ```
 
 This script:
-- Converts `.pen` references to `.png` references
-- Embeds exported wireframe PNGs as base64 images
+- Embeds explicitly referenced wireframe PNGs as base64 images
 - Generates a styled HTML document with table of contents
 - Supports page breaks for PDF printing (browser Print → Save as PDF)
 
@@ -315,10 +317,14 @@ plans/
     plan.md
 designs/
   {slug}/
-    SCR-01-{name}.pen                 # Editable wireframe source
-    SCR-01-{name}.png                 # Exported image for embedding
-    SCR-02-{name}.pen
-    SCR-02-{name}.png
+    auth-flow.pen                     # Editable wireframe source with multiple frames
+    checkout.pen                      # Another artifact if scope is large
+    exports/
+      auth-flow/
+        SCR-01-login.png              # Exported frame image for embedding
+        SCR-02-otp.png
+      checkout/
+        SCR-05-review-order.png
 ```
 
 The `.html` files are the **primary deliverables** for stakeholders. The `.md` files remain as editable sources for future revisions.
@@ -332,7 +338,7 @@ The `.html` files are the **primary deliverables** for stakeholders. The `.md` f
 - User stories with acceptance criteria
 - SRS (software requirements specification) with use cases, screens, NFRs, test cases
 - SRS as HTML with embedded wireframe images and rendered diagrams (primary stakeholder deliverable)
-- Pencil wireframes for SRS screens (`.pen` source + `.png` exports)
+- Pencil wireframes for SRS screens (`.pen` artifacts + frame-level `.png` exports)
 - Quality review summary
 
 ## Templates
@@ -363,8 +369,8 @@ The `.html` files are the **primary deliverables** for stakeholders. The `.md` f
 - **Cross-artifact consistency:** UC steps, screen fields/actions, and wireframe labels use identical terminology
 - **UC-Screen alignment:** every UC actor action has a matching screen User Action; every UC system response has a matching screen Behaviour Rule
 - **Wireframe fidelity:** wireframes match their SRS screen descriptions field-by-field
-- SRS screens have `.pen` wireframes (unless user skipped)
-- Screen IDs are aligned between SRS and `.pen` filenames
+- SRS screens have linked `.pen` artifacts and frame references (unless user skipped)
+- Screen IDs are aligned between SRS and Pencil frame names
 - Cross-references between FRD, user stories, and SRS are consistent
 
 ## Token Efficiency
