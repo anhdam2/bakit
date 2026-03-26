@@ -38,9 +38,12 @@ It also appends any missing Codex agent registrations into `~/.codex/config.toml
 2. Tell Codex to use the BA playbook.
 3. Point it at the target template.
 4. If UI is involved, point it at the relevant Pencil `.pen` artifacts and frame mappings in `designs/`.
-5. Ask for assumptions, open questions, and a draft output.
-6. If you installed the Codex conversion, ask Codex to use `ba-start` from `~/.codex/skills/ba-start/SKILL.md` and the registered BA agents from `~/.codex/agents`.
-7. Unless you explicitly override it, BA-kit should use Shadcn UI as the default design system for wireframes and UI handoff.
+5. Use `/ba-start` for full workflow runs and the matching subcommand for reruns.
+6. For rerun commands, pass `--slug <slug>` when more than one project may exist.
+7. If one slug has multiple dated artifact sets, Codex should stop and ask which date to use instead of silently taking the latest set.
+8. Ask for assumptions, open questions, and a draft output.
+9. If you installed the Codex conversion, ask Codex to use `ba-start` from `~/.codex/skills/ba-start/SKILL.md` and the registered BA agents from `~/.codex/agents`.
+10. Unless you explicitly override it, BA-kit should use Shadcn UI as the default design system for wireframes and UI handoff.
 
 ## Prompt Patterns
 
@@ -50,6 +53,33 @@ It also appends any missing Codex agent registrations into `~/.codex/config.toml
 Use AGENTS.md and skills/ba-start/SKILL.md.
 Parse the requirements in docs/raw/warehouse-rfp.pdf.
 Produce an intake form, FRD, user stories, use case specifications, Screen Contract Lite, wireframes, final screen descriptions, and a browser-editable HTML SRS.
+```
+
+### Step-Level Rerun
+
+```text
+Use AGENTS.md and skills/ba-start/SKILL.md.
+Run the equivalent of `/ba-start wireframes --slug warehouse-rfp`.
+Use the existing Screen Contract Lite artifacts only.
+If more than one dated set exists for `warehouse-rfp`, stop and ask me which date to use.
+Do not regenerate intake, FRD, or user stories.
+```
+
+### Package Only
+
+```text
+Use AGENTS.md and skills/ba-start/SKILL.md.
+Run the equivalent of `/ba-start package --slug warehouse-rfp`.
+If the wireframe state is `missing`, stop and tell me to rerun `wireframes`.
+If the wireframe state is `completed`, `skipped`, or `not-applicable`, continue to HTML packaging.
+```
+
+### Status Check
+
+```text
+Use AGENTS.md and skills/ba-start/SKILL.md.
+Run the equivalent of `/ba-start status --slug warehouse-rfp`.
+Print artifact names, exists or missing status, last-modified dates, and the explicit wireframe state.
 ```
 
 ### Codex Conversion
@@ -96,6 +126,8 @@ Use Pencil only for wireframes in SRS-backed work:
 ## HTML Deliverable
 
 The generated HTML is the editable stakeholder deliverable. Open it in a browser to update text, replace images, and add or remove blocks without editing the source HTML manually.
+
+`/ba-start status` should report wireframes using the explicit state marker: `completed`, `skipped`, `not-applicable`, or `missing`.
 
 ## Good Outcomes
 

@@ -4,7 +4,7 @@ BA-kit is a business analysis toolkit for agentic coding environments. It packag
 
 ## What It Includes
 
-- 1 unified BA skill (`ba-start`) covering the full intake-to-deliverable lifecycle
+- 1 unified BA skill (`ba-start`) covering the full intake-to-deliverable lifecycle with resumable subcommands
 - 4 agent roles for structured delegation
 - 2 workflow and quality rule files
 - 4 reusable document templates
@@ -60,29 +60,47 @@ See [docs/codex-setup.md](./docs/codex-setup.md) for prompt patterns and setup g
 
 ## Quick Start
 
-To run a full BA engagement from raw requirements:
+Full workflow:
 
 ```text
 /ba-start
 ```
 
-This single command handles:
+Resumable subcommands:
+
+```text
+/ba-start intake docs/raw/warehouse-rfp.pdf
+/ba-start frd --slug warehouse-rfp
+/ba-start stories --slug warehouse-rfp
+/ba-start srs --slug warehouse-rfp
+/ba-start wireframes --slug warehouse-rfp
+/ba-start package --slug warehouse-rfp
+/ba-start status --slug warehouse-rfp
+```
+
+Default `/ba-start` still runs the full lifecycle:
 1. Parsing raw input into a structured intake form
 2. Gap analysis and clarifying questions
 3. Work plan generation
 4. FRD production
 5. User story generation
-6. Use case specification production
-7. Screen Contract Lite production
-8. Wireframe generation from use cases and screen contract
-9. Final screen description production
-10. Unified browser-editable HTML packaging
+6. SRS production
+7. Wireframe generation from use cases and screen contract
+8. Final screen description production
+9. Unified browser-editable HTML packaging
+
+For rerun commands, resolution order is:
+1. Explicit `--slug <slug>`
+2. A single detected project in `plans/reports/`
+3. Otherwise stop and ask the user to choose
+
+If one slug has multiple dated artifact sets, `/ba-start` should stop and ask which dated set to use instead of silently taking the latest one.
 
 ## Skill
 
 | Skill | Purpose |
 | --- | --- |
-| `ba-start` | End-to-end BA engagement: intake, FRD, user stories, use cases, Screen Contract Lite, wireframes, final screen descriptions, and browser-editable HTML review |
+| `ba-start` | Single BA entry point with full workflow plus `intake`, `frd`, `stories`, `srs`, `wireframes`, `package`, and `status` subcommands |
 
 ## Agent Roles
 
@@ -107,6 +125,8 @@ For UI-backed work, BA-kit now defaults to the Shadcn UI design system for wiref
 
 The final HTML deliverable is the editable stakeholder copy. Open it in a browser to update text, replace images, and add or remove blocks without hand-editing the source HTML.
 
+`/ba-start status` reports regular artifacts as exists or missing with last-modified dates. Wireframes use explicit states: `completed`, `skipped`, `not-applicable`, or `missing`.
+
 ## Configuration
 
 BA-kit uses [`.ck.json`](./.ck.json) to define project paths, plan naming, methodology defaults, and quality assertions. The default methodology is `hybrid`.
@@ -115,7 +135,7 @@ BA-kit uses [`.ck.json`](./.ck.json) to define project paths, plan naming, metho
 
 ### New Product Discovery
 
-Use `/ba-start` with a raw requirements document to produce an intake form, FRD, user stories with AC, SRS with screen descriptions, and wireframes.
+Use `/ba-start` with a raw requirements document to produce an intake form, FRD, user stories with AC, SRS with screen descriptions, and wireframes. Use `/ba-start status --slug <slug>` to inspect progress after an interrupted session.
 
 ### ERP Process Improvement
 

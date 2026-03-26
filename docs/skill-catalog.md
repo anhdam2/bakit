@@ -8,11 +8,11 @@ This catalog explains the single BA-kit skill, what it produces, and which agent
 
 | Skill | When to Use | Related Templates | Related Agents | Typical Output |
 | --- | --- | --- | --- | --- |
-| `ba-start` | End-to-end BA engagement from raw input to packaged deliverables | `intake-form-template.md`, `frd-template.md`, `user-story-template.md`, `srs-template.md` | `requirements-engineer`, `ui-ux-designer`, `ba-documentation-manager`, `ba-researcher` | Intake form, FRD, user stories, use cases, Screen Contract Lite, wireframes, final browser-editable SRS HTML, quality review |
+| `ba-start` | Full BA engagement or resumable step-level reruns from raw input to packaged deliverables | `intake-form-template.md`, `frd-template.md`, `user-story-template.md`, `srs-template.md` | `requirements-engineer`, `ui-ux-designer`, `ba-documentation-manager`, `ba-researcher` | Intake form, FRD, user stories, grouped SRS artifacts, wireframes, final browser-editable SRS HTML, quality review, artifact status |
 
 ## Workflow
 
-`/ba-start` handles the entire lifecycle:
+`/ba-start` with no subcommand handles the entire lifecycle:
 
 1. Accept raw input (file or text)
 2. Parse and normalize into intake form
@@ -30,7 +30,33 @@ This catalog explains the single BA-kit skill, what it produces, and which agent
 
 ```text
 /ba-start
+/ba-start intake <file>
+/ba-start frd --slug <slug>
+/ba-start stories --slug <slug>
+/ba-start srs --slug <slug>
+/ba-start wireframes --slug <slug>
+/ba-start package --slug <slug>
+/ba-start status --slug <slug>
 ```
+
+## Subcommands
+
+| Command | Purpose | Prerequisite |
+| --- | --- | --- |
+| `intake` | Parse input, normalize intake, clarify gaps, and save the work plan | Raw file or pasted text |
+| `frd` | Produce the FRD and FRD HTML only | Matching intake artifact |
+| `stories` | Produce user stories only | Matching FRD artifact |
+| `srs` | Produce grouped SRS artifacts, wireframes, and merged SRS | Matching FRD and user stories |
+| `wireframes` | Re-run Step 9 from Screen Contract Lite only | Group C SRS fragment or merged SRS with Screen Contract Lite |
+| `package` | Run quality review and produce unified SRS HTML | Merged SRS and non-missing wireframe state |
+| `status` | Print artifact checklist with dates | Resolved slug and dated set |
+
+Subcommand targeting rules:
+
+- Use `--slug <slug>` first when rerunning an existing project.
+- If exactly one slug exists in `plans/reports/`, BA-kit may use it automatically.
+- If multiple slugs exist, BA-kit should stop and ask the user to choose.
+- If one slug has multiple dated artifact sets, BA-kit should stop and ask which dated set to use.
 
 ## Agent Delegation
 
@@ -44,6 +70,8 @@ This catalog explains the single BA-kit skill, what it produces, and which agent
 ## HTML Editing
 
 The final HTML deliverable is meant to be edited in the browser. Update copy, swap images, and add or remove blocks directly in the rendered HTML instead of hand-editing source HTML.
+
+`/ba-start status` reports regular artifacts as exists or missing with last-modified dates. Wireframes are reported as `completed`, `skipped`, `not-applicable`, or `missing` from the explicit wireframe-state marker.
 
 ## Expected Quality Bar
 

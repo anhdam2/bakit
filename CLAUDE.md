@@ -27,11 +27,20 @@ Use these rule files as the source of truth:
 
 ## Skills Activation
 
-BA-kit has one unified skill: `ba-start`. This is the single entry point for all BA engagements. It handles the full lifecycle from raw input to packaged deliverables.
+BA-kit has one unified skill: `ba-start`. This is the single entry point for all BA engagements. It handles the full lifecycle from raw input to packaged deliverables and also supports resumable subcommands.
 
 ```text
 /ba-start
+/ba-start intake <file>
+/ba-start frd --slug <slug>
+/ba-start stories --slug <slug>
+/ba-start srs --slug <slug>
+/ba-start wireframes --slug <slug>
+/ba-start package --slug <slug>
+/ba-start status --slug <slug>
 ```
+
+For rerun commands, resolve the project by explicit `--slug` first. If multiple slugs or multiple dated artifact sets exist, stop and ask the user to choose instead of selecting by mtime.
 
 ## Documentation Expectations
 
