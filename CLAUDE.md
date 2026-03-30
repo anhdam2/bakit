@@ -71,6 +71,12 @@ Preferred ownership:
 - quality and packaging: `ba-documentation-manager`
 - domain research: `ba-researcher`
 
+Delegation hardening:
+- Pass narrow artifact slices, not full upstream documents, to sub-agents.
+- Include objective, target path, write scope, exact excerpts, and trace IDs in the handoff.
+- If a delegated slice is too large to keep consistent, repartition before spawning.
+- If a sub-agent reports missing context or `NEEDS_REPARTITION`, stop and rerun only the affected slice with a smaller packet.
+
 ## Methodology
 
 Default to a hybrid BA approach:

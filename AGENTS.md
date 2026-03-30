@@ -78,4 +78,7 @@ For SRS screen work:
 - The `skills/` folder is reference content, not a Codex-native skill registry.
 - Start with the playbook instead of loading everything.
 - For BA work, the playbook is mandatory context, not an optional reference.
+- Use narrow handoff packets for delegated work: objective, target path, write scope, exact excerpts, and trace IDs.
+- Do not dump full merged artifacts, full templates, and full rules into every sub-agent call after the workflow has already been resolved.
+- If a delegated slice is too large or the worker lacks context, repartition and rerun only that slice instead of pushing through with partial context.
 - For large changes, plan first, then implement.

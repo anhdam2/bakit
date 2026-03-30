@@ -49,6 +49,9 @@ Prerequisite:
 10. Unless you explicitly override it, BA-kit should use Shadcn UI as the default design system for wireframes and UI handoff.
 11. Unless you explicitly override it, BA deliverables should be written in Vietnamese.
 12. Treat the dated artifact-set token as `YYMMDD-HHmm` across both report filenames and `plans/{date}-{slug}/plan.md`.
+13. When delegating, pass only narrow artifact slices and exact excerpts, not full upstream documents.
+14. If a delegated worker reports missing context or `NEEDS_REPARTITION`, split the scope and rerun only that slice.
+15. For non-trivial delegation, use the packet structure from `templates/sub-agent-handoff-template.md` or the equivalent snippet embedded in `ba-start`.
 
 ## Prompt Patterns
 
@@ -120,6 +123,7 @@ The `skills/` directory is written in Claude-style skill format. Codex should tr
 
 That means prompts should explicitly tell Codex which playbook to consult when the task is non-trivial.
 The root `AGENTS.md` carries the short non-negotiable defaults, but it does not replace the detailed routing and prerequisite logic in `skills/ba-start/SKILL.md`.
+For delegated BA work, resolve the workflow once in the orchestrator, then pass only the minimal handoff packet to each registered agent instead of replaying the entire playbook and merged artifact set every time.
 
 ## Pencil For Codex
 

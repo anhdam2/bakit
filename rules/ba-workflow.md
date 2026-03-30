@@ -36,6 +36,16 @@ Related rules:
 - Merge outputs through the documentation manager or orchestrator.
 - Escalate unresolved ambiguity before finalizing downstream work.
 
+## Delegation Hardening
+
+- Build delegated work as narrow handoff packets, not full-document dumps.
+- Each delegated packet should contain only the objective, target artifact, allowed write scope, exact upstream excerpts, trace IDs, and expected output sections.
+- Do not pass the full playbook, full rule set, and full template into every sub-agent call once the orchestrator has already resolved the workflow.
+- If the delegated packet still requires large merged artifacts to be understandable, repartition the work before spawning.
+- When a delegated scope grows too large to keep terminology and traceability consistent, split it into smaller groups and rerun only the affected slice.
+- If a worker lacks context or receives an overloaded scope, it must stop and return the exact missing inputs or a repartition request instead of guessing.
+- A repartition response should identify the overloaded section, the reason it is too large, the smallest viable split, and the exact upstream inputs needed for the rerun.
+
 ## Documentation Rules
 
 - Use templates from `templates/` whenever a matching template exists.

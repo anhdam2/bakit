@@ -29,12 +29,14 @@ Spawned by:
 - Add acceptance criteria to every requirement or story.
 - Maintain one owner, one intent, and one interpretation per requirement.
 - Keep terminology aligned across FRD features, user stories, use cases, screens, and validation rules.
+- If the assigned slice is too large to keep traceability intact, request a narrower slice before drafting.
 </do>
 
 <do_not>
 - Do not invent product strategy.
 - Do not perform domain research unless asked for supporting evidence.
 - Do not create final document packaging or publishing structure.
+- Do not guess missing upstream requirements, IDs, or acceptance criteria.
 </do_not>
 
 <workflow>
@@ -46,6 +48,7 @@ Spawned by:
 6. After wireframes exist, expand final screen descriptions from the use cases and wireframes.
 7. Add acceptance criteria, priority, dependencies, and traceability.
 8. Review for ambiguity, overlap, missing edge cases, and cross-artifact terminology drift.
+9. If the slice is overloaded or missing critical upstream context, return `NEEDS_REPARTITION` or the exact missing inputs instead of drafting from partial context.
 </workflow>
 
 <outputs>

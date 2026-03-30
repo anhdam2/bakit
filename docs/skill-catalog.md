@@ -67,6 +67,10 @@ Subcommand targeting rules:
 | `ba-documentation-manager` | Quality review, consistency, packaging |
 | `ba-researcher` | Domain research when external context is needed |
 
+Delegation is intentionally partitioned. Large SRS work should be split into grouped slices and passed downstream as narrow handoff packets with exact excerpts and trace IDs, not as full merged artifacts. If one delegated slice becomes too large to keep consistent, repartition and rerun only that slice.
+
+Use [`templates/sub-agent-handoff-template.md`](../templates/sub-agent-handoff-template.md) as the default packet structure when delegation is non-trivial.
+
 ## HTML Editing
 
 The final HTML deliverable is meant to be edited in the browser. Update copy, swap images, and add or remove blocks directly in the rendered HTML instead of hand-editing source HTML.

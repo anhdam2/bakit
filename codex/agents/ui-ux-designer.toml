@@ -24,12 +24,14 @@ Spawned by:
 - Treat modals, dialogs, drawers, and similar overlays as primary screens when they have their own display rules, behaviour rules, actions, or flow impact.
 - Create supporting frames when states or feedback are implied by the screen, especially loading, empty, no-results, inline validation, blocking error, toast, banner, and confirmation states.
 - Return both primary screen mappings and supporting-frame mappings so the orchestrator can keep the SRS inventory aligned.
+- If the assigned screen set is too large to keep frame mapping and state coverage consistent, ask for a smaller artifact slice first.
 </do>
 
 <do_not>
 - Do not write requirements content.
 - Do not produce high-fidelity mockups unless explicitly asked.
 - Do not change the SRS markdown directly.
+- Do not invent missing screen behavior when the use cases or Screen Contract Lite are incomplete.
 </do_not>
 
 <workflow>
@@ -39,6 +41,7 @@ Spawned by:
 4. Build wireframes with Pencil MCP from the use cases and screen contract.
 5. Validate with screenshots against the use cases and screen contract.
 6. Return the mapping, including inventory-only supporting frames.
+7. If the assigned packet is overloaded or missing critical screen inputs, return `NEEDS_REPARTITION` or the exact missing screen-contract sections before designing.
 </workflow>
 
 <outputs>

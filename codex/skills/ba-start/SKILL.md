@@ -425,6 +425,69 @@ Sub-agent context management:
 - Group F receives: FR IDs, UC IDs, SCR IDs, and the final group outputs.
 - When a group would produce more than 15 use cases or 10 screens, split into sub-groups.
 
+Sub-agent handoff packet:
+
+- Every delegated packet must include only:
+  - objective and target artifact path
+  - exact write scope
+  - exact upstream excerpts needed for that slice
+  - FR, UC, SCR, or story IDs needed for traceability
+  - expected output sections
+- Do not pass full merged artifacts when a section excerpt is sufficient.
+- Do not repeat the full playbook, full rules, and full templates inside every delegated call. The orchestrator should resolve the workflow first, then pass only the relevant constraints.
+- If the handoff packet cannot fit into one concise brief with a few targeted excerpts, repartition before spawning.
+
+Delegation fallback:
+
+- If a delegated worker lacks required context, it must stop and return the exact missing sections or IDs instead of inferring.
+- If a delegated worker receives a scope that is too large to keep consistent, it must return `NEEDS_REPARTITION` with:
+  - the overloaded artifact or section
+  - the reason the scope is too large
+  - the smallest viable split proposal
+  - the exact upstream sections needed for the rerun
+- On `NEEDS_REPARTITION`, rerun only the affected group or subgroup. Do not restart the whole SRS pipeline.
+
+Delegation packet template:
+
+```md
+# Delegation Packet
+
+- Owner: [requirements-engineer | ui-ux-designer | ba-documentation-manager | ba-researcher]
+- Objective: [single concrete goal]
+- Target Artifact: [exact path]
+- Allowed Write Scope: [exact section(s) or file(s)]
+- Trace IDs:
+  - FR: [...]
+  - UC: [...]
+  - SCR: [...]
+  - Stories: [...]
+- Required Upstream Excerpts:
+  - [artifact path + exact section]
+  - [artifact path + exact section]
+- Constraints:
+  - [template/rule/design-system constraint only if relevant]
+- Expected Output:
+  - [exact sections or deliverables]
+- Stop Conditions:
+  - stop if required upstream context is missing
+  - stop if scope is too large to keep terminology and traceability consistent
+```
+
+Repartition response template:
+
+```md
+NEEDS_REPARTITION
+
+- Overloaded Scope: [artifact/section]
+- Reason: [why the current slice is too large or underspecified]
+- Smallest Viable Split:
+  - [slice 1]
+  - [slice 2]
+- Required Upstream Inputs For Rerun:
+  - [exact path + section]
+  - [exact IDs]
+```
+
 #### Group A - Core
 
 Sections:
@@ -759,6 +822,7 @@ Status rules:
 - [frd-template.md](../../templates/frd-template.md)
 - [user-story-template.md](../../templates/user-story-template.md)
 - [srs-template.md](../../templates/srs-template.md)
+- [sub-agent-handoff-template.md](../../templates/sub-agent-handoff-template.md)
 
 ## Agent Delegation
 
@@ -799,3 +863,6 @@ Status rules:
 - Read templates once and pass only the relevant sections to each artifact owner.
 - Split large use case or screen sets into smaller groups when needed.
 - For wireframes, pass only the assigned screen slices rather than the full SRS.
+- Prefer slim handoff packets: objective, write scope, trace IDs, and a few quoted excerpts. If you are tempted to attach full upstream documents, repartition first.
+- Do not combine content generation, full cross-artifact audit, and packaging into the same delegated call when the artifact set is already large.
+- If one delegated slice still feels too large after summarization, stop and split it again rather than hoping the worker keeps the whole context consistent.
