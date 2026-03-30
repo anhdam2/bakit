@@ -253,7 +253,7 @@ print_delegation_status() {
   local repo="$1"
   local slug="$2"
   local date_token="$3"
-  local dir now found path base status threshold age_minutes display_status last_heartbeat note
+  local dir now found path base slice_status threshold age_minutes display_status last_heartbeat note
 
   dir="${repo}/plans/${date_token}-${slug}/delegation"
   [[ -d "${dir}" ]] || return 0
@@ -268,15 +268,15 @@ print_delegation_status() {
       found=1
     fi
     base="$(basename "${path}" .md)"
-    status="$(read_md_field "${path}" "Status")"
+    slice_status="$(read_md_field "${path}" "Status")"
     threshold="$(read_md_field "${path}" "Stall Threshold Minutes")"
     last_heartbeat="$(read_md_field "${path}" "Last Heartbeat At")"
     note="$(read_md_field "${path}" "Latest Milestone Or Blocker")"
-    [[ -n "${status}" ]] || status="unknown"
+    [[ -n "${slice_status}" ]] || slice_status="unknown"
     [[ "${threshold}" =~ ^[0-9]+$ ]] || threshold=10
     age_minutes="$(( (now - $(stat_mtime_epoch "${path}")) / 60 ))"
-    display_status="${status}"
-    if [[ ( "${status}" == "running" || "${status}" == "queued" ) && "${age_minutes}" -gt "${threshold}" ]]; then
+    display_status="${slice_status}"
+    if [[ ( "${slice_status}" == "running" || "${slice_status}" == "queued" ) && "${age_minutes}" -gt "${threshold}" ]]; then
       display_status="likely stalled"
     fi
 
