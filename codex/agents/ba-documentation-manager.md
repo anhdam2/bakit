@@ -15,6 +15,7 @@ Use this agent when a BA artifact needs cleanup, consistency checks, or packagin
 - Verify user story traceability across SRS FRs, UCs, and SCRs.
 - Check that use case actions, screen actions, field names, validation rules, and wireframe labels use identical terminology.
 - Run `scripts/md-to-html.py` when packaging deliverables. Default output is editable HTML; use `--no-editor` for a clean read-only stakeholder copy.
+- Keep packaging scoped to the assigned artifact slice. By default, regenerate only the target HTML artifact instead of rebuilding every packaged HTML file in the engagement.
 - Preserve the source meaning while improving readability and handoff quality.
 
 ## Handoff

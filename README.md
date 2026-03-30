@@ -95,7 +95,7 @@ Default `/ba-start` still runs the full lifecycle:
 6. SRS production
 7. Wireframe generation from use cases and screen contract
 8. Final screen description production
-9. Unified browser-editable HTML packaging
+9. Unified browser-editable HTML packaging for intake, FRD, user stories, and SRS
 
 For rerun commands, resolution order is:
 1. Explicit `--slug <slug>`
@@ -131,7 +131,7 @@ Wireframe artifacts for SRS screen sections live under `./designs/` as Pencil `.
 
 For UI-backed work, BA-kit now defaults to the Shadcn UI design system for wireframes and UI-oriented handoff unless you explicitly request another system.
 
-The final HTML deliverable is the editable stakeholder copy. Open it in a browser to update text, replace images, and add or remove blocks without hand-editing the source HTML.
+BA-kit packages intake, FRD, user stories, and SRS into one shared HTML shell with consistent metadata, visual chrome, and in-browser editing controls. The SRS HTML remains the primary stakeholder handoff, while the other HTML artifacts provide aligned review copies for the same engagement.
 
 `/ba-start status` reports regular artifacts as exists or missing with last-modified dates. Wireframes use explicit states: `completed`, `skipped`, `not-applicable`, or `missing`.
 

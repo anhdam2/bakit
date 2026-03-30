@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""Convert BA markdown documents to HTML with rendered Mermaid diagrams and embedded images.
+"""Convert BA markdown documents to unified BA-kit HTML with rendered Mermaid diagrams and embedded images.
 
 Usage:
     python scripts/md-to-html.py plans/reports/frd-260325-project.md
     python scripts/md-to-html.py plans/reports/srs-260325-project.md
 
-Works with any BA-kit document: FRD (Mermaid workflows), SRS (wireframe images + diagrams),
-user stories, or any markdown file.
+Works with any BA-kit document: intake, FRD (Mermaid workflows), user stories,
+SRS (wireframe images + diagrams), or any markdown file.
 
 Supports:
+    - Shared BA-kit HTML shell with metadata header and artifact-specific visual variants
     - Mermaid diagrams (rendered client-side via mermaid.js CDN)
     - Inline wireframe images from explicit PNG references in the markdown
     - In-browser editing without touching raw HTML code
@@ -20,6 +21,7 @@ import argparse
 import base64
 import re
 import sys
+from datetime import datetime
 from html import escape
 from pathlib import Path
 from typing import Optional
@@ -28,6 +30,206 @@ from typing import Optional
 # Handles: headings, tables, bold, italic, code blocks, nested lists, blockquotes, links, images.
 
 LIST_ITEM_RE = re.compile(r"^(?P<indent>[ \t]*)(?P<marker>[-*]|\d+\.)\s+(?P<content>.+)$")
+DATE_TOKEN_RE = r"\d{6}-\d{4}"
+
+ARTIFACT_VARIANTS = {
+    "generic": {
+        "badge": "BA-kit Document",
+        "label": "Business Analysis Deliverable",
+        "summary": "Structured BA output packaged in the shared BA-kit HTML shell.",
+    },
+    "intake": {
+        "badge": "Intake Form",
+        "label": "Discovery Intake",
+        "summary": "Normalized source intake used to anchor scope, stakeholders, and downstream BA routing.",
+    },
+    "frd": {
+        "badge": "FRD",
+        "label": "Functional Requirements Document",
+        "summary": "Functional scope, workflows, business rules, and acceptance criteria packaged in the shared stakeholder shell.",
+    },
+    "stories": {
+        "badge": "User Stories",
+        "label": "Agile Delivery Scope",
+        "summary": "Story-level backlog framing with traceable acceptance criteria and implementation intent.",
+    },
+    "srs": {
+        "badge": "SRS",
+        "label": "Software Requirements Specification",
+        "summary": "Unified system specification with traceability, use cases, screens, and embedded wireframe evidence.",
+    },
+}
+
+METADATA_ALIASES = {
+    "project": ("tên dự án", "project"),
+    "date": ("ngày", "date"),
+    "requester": ("người yêu cầu", "requester"),
+    "source": ("tài liệu gốc", "source file", "source"),
+    "owner": ("chủ sở hữu", "owner"),
+    "version": ("phiên bản", "version"),
+    "epic": ("epic",),
+    "feature": ("tính năng", "feature"),
+    "story_id": ("mã story", "story id"),
+}
+
+DISPLAY_LABELS = {
+    "project": "Project",
+    "slug": "Slug",
+    "date": "Date",
+    "requester": "Requester",
+    "source": "Source",
+    "owner": "Owner",
+    "version": "Version",
+    "epic": "Epic",
+    "feature": "Feature",
+    "story_id": "Story ID",
+}
+
+
+def normalize_label(label: str) -> Optional[str]:
+    """Map raw metadata labels to shared metadata keys."""
+    normalized = re.sub(r"\([^)]*\)", "", label).strip().lower()
+    for key, aliases in METADATA_ALIASES.items():
+        if any(alias in normalized for alias in aliases):
+            return key
+    return None
+
+
+def detect_artifact_type(md_path: Path) -> str:
+    """Infer the packaged artifact type from the markdown filename."""
+    stem = md_path.stem
+    if stem.startswith("intake-"):
+        return "intake"
+    if stem.startswith("frd-"):
+        return "frd"
+    if stem.startswith("user-stories-"):
+        return "stories"
+    if stem.startswith("srs-"):
+        return "srs"
+    return "generic"
+
+
+def extract_artifact_identity(md_path: Path) -> dict[str, str]:
+    """Extract slug and dated-set information from known BA-kit filenames."""
+    stem = md_path.stem
+    patterns = {
+        "intake": re.compile(rf"^intake-(?P<slug>.+)-(?P<date>{DATE_TOKEN_RE})$"),
+        "frd": re.compile(rf"^frd-(?P<date>{DATE_TOKEN_RE})-(?P<slug>.+)$"),
+        "stories": re.compile(rf"^user-stories-(?P<date>{DATE_TOKEN_RE})-(?P<slug>.+)$"),
+        "srs": re.compile(rf"^srs-(?P<date>{DATE_TOKEN_RE})-(?P<slug>.+?)(?:-group-[a-z0-9-]+)?$"),
+    }
+    doc_type = detect_artifact_type(md_path)
+    pattern = patterns.get(doc_type)
+    if not pattern:
+        return {}
+    match = pattern.match(stem)
+    return match.groupdict() if match else {}
+
+
+def extract_title(md: str, md_path: Path) -> str:
+    """Read the first markdown heading as the document title."""
+    for line in md.splitlines():
+        match = re.match(r"^#\s+(.+)", line.strip())
+        if match:
+            return match.group(1).strip()
+    return md_path.stem
+
+
+def parse_emphasis_metadata(md: str) -> dict[str, str]:
+    """Parse `**Label:** value` metadata lines commonly used in FRD/SRS/user stories."""
+    metadata = {}
+    for raw_line in md.splitlines():
+        line = raw_line.strip()
+        match = re.match(r"^\*\*(.+?)\*\*:\s*(.+)$", line)
+        if not match:
+            continue
+        key = normalize_label(match.group(1))
+        value = match.group(2).strip()
+        if key and value and value != "|":
+            metadata[key] = value
+    return metadata
+
+
+def parse_table_metadata(md: str) -> dict[str, str]:
+    """Parse two-column metadata tables such as the intake project information block."""
+    metadata = {}
+    for raw_line in md.splitlines():
+        line = raw_line.strip()
+        if not (line.startswith("|") and "|" in line[1:]):
+            continue
+        if re.fullmatch(r"\|?[\s:-]+(?:\|[\s:-]+)+\|?", line):
+            continue
+        cells = [cell.strip() for cell in line.strip("|").split("|")]
+        if len(cells) < 2:
+            continue
+        header_key = normalize_label(cells[0])
+        value = cells[1].strip()
+        if header_key and value and "giá trị" not in value.lower() and "value" not in value.lower():
+            metadata[header_key] = value
+    return metadata
+
+
+def extract_document_metadata(md: str, md_path: Path) -> dict[str, str]:
+    """Build a shared metadata map for the HTML shell."""
+    metadata = {}
+    metadata.update(parse_table_metadata(md))
+    metadata.update(parse_emphasis_metadata(md))
+    metadata.update(extract_artifact_identity(md_path))
+    return metadata
+
+
+def format_document_meta(doc_type: str, metadata: dict[str, str], md_path: Path) -> str:
+    """Build the metadata grid rendered above every HTML deliverable."""
+    ordered_keys = [
+        "project",
+        "slug",
+        "date",
+        "version",
+        "owner",
+        "requester",
+        "epic",
+        "feature",
+        "story_id",
+        "source",
+    ]
+    rows = [('Artifact', ARTIFACT_VARIANTS[doc_type]["label"])]
+    rows.extend((DISPLAY_LABELS[key], metadata[key]) for key in ordered_keys if metadata.get(key))
+    rows.append(("Source Markdown", str(md_path)))
+    rows.append(("Generated", datetime.now().astimezone().strftime("%Y-%m-%d %H:%M %Z")))
+    return "\n".join(
+        (
+            '      <div class="doc-meta-card">'
+            f'<dt>{escape(label)}</dt><dd>{escape(value)}</dd>'
+            "</div>"
+        )
+        for label, value in rows
+    )
+
+
+def render_document_shell(md: str, md_path: Path) -> tuple[str, str]:
+    """Render the shared HTML chrome for all BA-kit document types."""
+    doc_type = detect_artifact_type(md_path)
+    variant = ARTIFACT_VARIANTS[doc_type]
+    title = extract_title(md, md_path)
+    metadata = extract_document_metadata(md, md_path)
+    summary = variant["summary"]
+    if metadata.get("project"):
+        summary = f"{summary} Project context: {metadata['project']}."
+    shell = f"""  <section class="document-chrome">
+    <div class="doc-kicker">BA-kit Unified HTML Deliverable</div>
+    <div class="doc-hero">
+      <div class="doc-hero__content">
+        <div class="doc-type-badge">{escape(variant["badge"])}</div>
+        <h1 class="doc-hero__title">{escape(title)}</h1>
+        <p class="doc-hero__summary">{escape(summary)}</p>
+      </div>
+      <dl class="doc-meta-grid">
+{format_document_meta(doc_type, metadata, md_path)}
+      </dl>
+    </div>
+  </section>
+"""
+    return doc_type, shell
 
 
 def embed_image(img_path: str, base_dir: Path) -> str:
@@ -233,6 +435,8 @@ CSS = """
     --toolbar-bg: rgba(255, 255, 255, 0.96);
     --danger: #b42318;
     --success: #0f7b6c;
+    --hero-bg: linear-gradient(135deg, rgba(15, 52, 96, 0.08), rgba(217, 237, 247, 0.65));
+    --muted: #52627a;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -240,10 +444,108 @@ body {
     line-height: 1.6; color: var(--text); background: #f5f7fb;
     margin: 0; padding: 0;
 }
+body[data-doc-type="intake"] {
+    --primary: #134e4a;
+    --accent: #0f766e;
+    --accent-soft: #ccfbf1;
+    --hero-bg: linear-gradient(135deg, rgba(15, 118, 110, 0.12), rgba(204, 251, 241, 0.72));
+}
+body[data-doc-type="frd"] {
+    --primary: #1e3a8a;
+    --accent: #1d4ed8;
+    --accent-soft: #dbeafe;
+    --hero-bg: linear-gradient(135deg, rgba(29, 78, 216, 0.12), rgba(219, 234, 254, 0.74));
+}
+body[data-doc-type="stories"] {
+    --primary: #78350f;
+    --accent: #b45309;
+    --accent-soft: #fef3c7;
+    --hero-bg: linear-gradient(135deg, rgba(180, 83, 9, 0.12), rgba(254, 243, 199, 0.78));
+}
+body[data-doc-type="srs"] {
+    --primary: #115e59;
+    --accent: #0f766e;
+    --accent-soft: #d1fae5;
+    --hero-bg: linear-gradient(135deg, rgba(15, 118, 110, 0.12), rgba(209, 250, 229, 0.75));
+}
 .editor-shell {
     max-width: 1180px;
     margin: 0 auto;
     padding: 24px 20px 48px;
+}
+.document-chrome {
+    margin-bottom: 20px;
+}
+.doc-kicker {
+    margin-bottom: 10px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+.doc-hero {
+    display: grid;
+    gap: 18px;
+    padding: 24px;
+    border: 1px solid rgba(15, 52, 96, 0.12);
+    border-radius: 24px;
+    background: var(--hero-bg);
+    box-shadow: 0 16px 36px rgba(15, 52, 96, 0.06);
+}
+.doc-hero__content {
+    display: grid;
+    gap: 12px;
+}
+.doc-type-badge {
+    display: inline-flex;
+    width: fit-content;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(15, 52, 96, 0.12);
+    color: var(--accent);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+.doc-hero__title {
+    margin: 0;
+    font-size: 2rem;
+    line-height: 1.15;
+    color: var(--primary);
+}
+.doc-hero__summary {
+    margin: 0;
+    max-width: 70ch;
+    color: var(--muted);
+    font-size: 1rem;
+}
+.doc-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+.doc-meta-card {
+    min-width: 0;
+    padding: 14px 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(15, 52, 96, 0.1);
+    background: rgba(255, 255, 255, 0.82);
+}
+.doc-meta-card dt {
+    margin-bottom: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+}
+.doc-meta-card dd {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--text);
+    overflow-wrap: anywhere;
 }
 .editor-toolbar {
     position: sticky;
@@ -365,6 +667,8 @@ img.wireframe { max-width: 100%; border: 1px solid var(--border); border-radius:
 @media print {
     body { background: #fff; }
     .editor-shell { max-width: none; padding: 0; }
+    .document-chrome { margin-bottom: 18px; }
+    .doc-hero { padding: 20px; box-shadow: none; }
     .document-surface { max-width: none; padding: 0; border: none; border-radius: 0; box-shadow: none; }
     .editor-toolbar { display: none !important; }
     .toc { page-break-after: always; }
@@ -632,6 +936,8 @@ def convert(md_path: Path, *, base_dir: Optional[Path] = None, editor_enabled: b
     )
 
     body = md_to_html(md, base_dir)
+    doc_type, document_shell = render_document_shell(md, md_path)
+    title = extract_title(md, md_path)
 
     editor_script = f"<script>{EDITOR_JS}</script>" if editor_enabled else ""
     editor_toolbar = """  <div id="editor-toolbar" class="editor-toolbar">
@@ -653,19 +959,19 @@ def convert(md_path: Path, *, base_dir: Optional[Path] = None, editor_enabled: b
     editor_input = '  <input id="editor-image-input" class="editor-hidden" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml">\n' if editor_enabled else ""
 
     html = f"""<!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{md_path.stem}</title>
+<title>{escape(title)}</title>
 <style>{CSS}</style>
 <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 <script>mermaid.initialize({{startOnLoad:true}});</script>
 {editor_script}
 </head>
-<body>
+<body data-doc-type="{doc_type}">
 <div class="editor-shell">
-{editor_toolbar}{editor_input}  <main id="document-surface" class="document-surface">
+{document_shell}{editor_toolbar}{editor_input}  <main id="document-surface" class="document-surface">
 {body}
   </main>
 </div>

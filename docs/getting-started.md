@@ -64,7 +64,7 @@ Default `/ba-start` handles the full BA lifecycle:
 6. SRS production
 7. Wireframe generation from the use cases and screen contract
 8. Final screen description production
-9. HTML packaging for FRD and unified SRS deliverables
+9. HTML packaging for intake, FRD, user stories, and unified SRS deliverables
 
 ### Claude Example
 
@@ -158,7 +158,7 @@ Rules:
 - use the `.pen` file as the wireframe source of truth
 - use Shadcn UI as the default design system baseline unless you explicitly request another system
 - keep the SRS focused on behavior, validation, states, navigation, and traceability
-- treat the final HTML as the editable stakeholder copy: update text, swap images, and add or remove blocks directly in the browser without editing the source HTML
+- treat the packaged HTML suite as the editable stakeholder copy: update text, swap images, and add or remove blocks directly in the browser without editing the source HTML
 
 ## 7. Deliverables
 
@@ -167,13 +167,15 @@ A full `/ba-start` engagement produces:
 | Deliverable | Template | Location |
 | --- | --- | --- |
 | Intake form | `intake-form-template.md` | `plans/reports/intake-{slug}-{date}.md` |
+| Intake HTML | `scripts/md-to-html.py` | `plans/reports/intake-{slug}-{date}.html` in the shared BA-kit document shell |
 | FRD | `frd-template.md` | `plans/reports/frd-{date}-{slug}.md` |
 | FRD HTML | `scripts/md-to-html.py` | `plans/reports/frd-{date}-{slug}.html` with rendered Mermaid diagrams |
 | SRS | `srs-template.md` | `plans/reports/srs-{date}-{slug}.md` |
 | User stories | `user-story-template.md` | `plans/reports/user-stories-{date}-{slug}.md` |
+| User stories HTML | `scripts/md-to-html.py` | `plans/reports/user-stories-{date}-{slug}.html` in the shared BA-kit document shell |
 | Wireframes | Pencil MCP | `designs/{slug}/{artifact-name}.pen` plus `designs/{slug}/exports/{artifact-name}/SCR-xx-{name}.png` |
 | Wireframe state | BA-kit routing metadata | `plans/reports/wireframe-state-{date}-{slug}.md` |
-| SRS HTML | `scripts/md-to-html.py` | `plans/reports/srs-{date}-{slug}.html` as the browser-editable stakeholder copy |
+| SRS HTML | `scripts/md-to-html.py` | `plans/reports/srs-{date}-{slug}.html` as the primary browser-editable stakeholder copy |
 
 If you need a clean read-only stakeholder handoff, generate HTML with:
 

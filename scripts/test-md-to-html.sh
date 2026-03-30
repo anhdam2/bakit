@@ -19,8 +19,56 @@ png = (
 pathlib.Path(sys.argv[1]).write_bytes(base64.b64decode(png))
 PY
 
-cat >"$TMP_DIR/sample.md" <<'EOF'
+cat >"$TMP_DIR/intake-demo-portal-260330-1010.md" <<'EOF'
+# Phiếu tiếp nhận yêu cầu (Intake Form)
+
+## Thông tin dự án (Project Information)
+
+| Trường (Field) | Giá trị (Value) |
+| --- | --- |
+| Tên dự án (Project name) | Demo Portal |
+| Ngày (Date) | 2026-03-30 |
+| Người yêu cầu (Requester) | Operations Lead |
+| Tài liệu gốc (Source file) | docs/raw/demo-portal.md |
+EOF
+
+cat >"$TMP_DIR/frd-260330-1010-demo-portal.md" <<'EOF'
+# Tài liệu yêu cầu chức năng (Functional Requirements Document)
+
+**Dự án (Project):** Demo Portal
+**Phiên bản (Version):** v1.2
+**Chủ sở hữu (Owner):** Lead BA
+**Ngày (Date):** 2026-03-30
+
+## Luồng nghiệp vụ
+
+```mermaid
+flowchart TD
+  A[User submits] --> B{Valid?}
+  B -- Yes --> C[Continue]
+  B -- No --> D[Show error]
+```
+EOF
+
+cat >"$TMP_DIR/user-stories-260330-1010-demo-portal.md" <<'EOF'
+# Mẫu User Story (User Story Template)
+
+**Epic:** Partner Operations
+**Tính năng (Feature):** Bulk approvals
+**Mã Story (Story ID):** US-014
+**Chủ sở hữu (Owner):** Product Owner
+
+## Câu chuyện (Story)
+Với tư cách là quản lý vận hành, tôi muốn duyệt hàng loạt để giảm thao tác lặp lại.
+EOF
+
+cat >"$TMP_DIR/srs-260330-1010-demo-portal.md" <<'EOF'
 # Sample BA Output
+
+**Dự án (Project):** Demo Portal
+**Phiên bản (Version):** v1.2
+**Chủ sở hữu (Owner):** Lead BA
+**Ngày (Date):** 2026-03-30
 
 ## Risks & Constraints <Review>
 
@@ -54,12 +102,22 @@ echo "package"
 ```
 EOF
 
-python3 "$ROOT_DIR/scripts/md-to-html.py" --base-dir "$TMP_DIR" --no-editor "$TMP_DIR/sample.md"
+python3 "$ROOT_DIR/scripts/md-to-html.py" --base-dir "$TMP_DIR" --no-editor "$TMP_DIR/intake-demo-portal-260330-1010.md"
+python3 "$ROOT_DIR/scripts/md-to-html.py" --base-dir "$TMP_DIR" --no-editor "$TMP_DIR/frd-260330-1010-demo-portal.md"
+python3 "$ROOT_DIR/scripts/md-to-html.py" --base-dir "$TMP_DIR" --no-editor "$TMP_DIR/user-stories-260330-1010-demo-portal.md"
+python3 "$ROOT_DIR/scripts/md-to-html.py" --base-dir "$TMP_DIR" --no-editor "$TMP_DIR/srs-260330-1010-demo-portal.md"
 
-OUTPUT_HTML="$TMP_DIR/sample.html"
-test -f "$OUTPUT_HTML"
+INTAKE_HTML="$TMP_DIR/intake-demo-portal-260330-1010.html"
+FRD_HTML="$TMP_DIR/frd-260330-1010-demo-portal.html"
+STORIES_HTML="$TMP_DIR/user-stories-260330-1010-demo-portal.html"
+SRS_HTML="$TMP_DIR/srs-260330-1010-demo-portal.html"
 
-python3 - "$OUTPUT_HTML" <<'PY'
+test -f "$INTAKE_HTML"
+test -f "$FRD_HTML"
+test -f "$STORIES_HTML"
+test -f "$SRS_HTML"
+
+python3 - "$INTAKE_HTML" "$FRD_HTML" "$STORIES_HTML" "$SRS_HTML" <<'PY'
 from html.parser import HTMLParser
 from pathlib import Path
 import sys
@@ -70,6 +128,7 @@ class Probe(HTMLParser):
         super().__init__()
         self.stack = []
         self.ids = set()
+        self.classes = set()
         self.has_table = False
         self.has_blockquote = False
         self.has_mermaid = False
@@ -78,7 +137,6 @@ class Probe(HTMLParser):
         self.has_image = False
         self.has_nested_ol_ul = False
         self.has_nested_ul_ol = False
-        self.raw_html = ""
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
@@ -86,6 +144,9 @@ class Probe(HTMLParser):
         element_ids = attrs.get("id")
         if element_ids:
             self.ids.add(element_ids)
+        element_classes = attrs.get("class", "")
+        for name in element_classes.split():
+            self.classes.add(name)
         if tag == "table":
             self.has_table = True
         elif tag == "blockquote":
@@ -112,11 +173,33 @@ class Probe(HTMLParser):
                 break
 
 
-html = Path(sys.argv[1]).read_text(encoding="utf-8")
-probe = Probe()
-probe.feed(html)
+intake_html = Path(sys.argv[1]).read_text(encoding="utf-8")
+frd_html = Path(sys.argv[2]).read_text(encoding="utf-8")
+stories_html = Path(sys.argv[3]).read_text(encoding="utf-8")
+srs_html = Path(sys.argv[4]).read_text(encoding="utf-8")
 
-assert "editor-toolbar" not in probe.ids, "Unexpected editor toolbar found in read-only output"
+for html, doc_type in (
+    (intake_html, "intake"),
+    (frd_html, "frd"),
+    (stories_html, "stories"),
+    (srs_html, "srs"),
+):
+    probe = Probe()
+    probe.feed(html)
+    assert "editor-toolbar" not in probe.ids, f"Unexpected editor toolbar found in read-only output for {doc_type}"
+    assert "document-chrome" in probe.classes, f"Missing shared document chrome for {doc_type}"
+    assert "doc-meta-grid" in probe.classes, f"Missing shared document metadata grid for {doc_type}"
+    assert f'data-doc-type="{doc_type}"' in html, f"Missing doc type marker for {doc_type}"
+    assert "BA-kit Unified HTML Deliverable" in html, f"Missing shared shell label for {doc_type}"
+    assert "Source Markdown" in html, f"Missing source metadata row for {doc_type}"
+    assert "Generated" in html, f"Missing generated metadata row for {doc_type}"
+
+assert "Requester" in intake_html, "Missing intake requester metadata"
+assert "Demo Portal" in frd_html, "Missing FRD project metadata"
+assert "US-014" in stories_html, "Missing user story metadata"
+
+probe = Probe()
+probe.feed(srs_html)
 assert probe.has_nav, "Missing table of contents"
 assert probe.has_table, "Missing table"
 assert probe.has_blockquote, "Missing blockquote"
@@ -125,11 +208,11 @@ assert probe.has_bash, "Missing bash code block"
 assert probe.has_image, "Missing embedded image"
 assert probe.has_nested_ol_ul, "Missing ordered list with nested unordered list"
 assert probe.has_nested_ul_ol, "Missing unordered list with nested ordered list"
-assert html.count('<pre class="mermaid">') == 1, "Unexpected Mermaid block count"
-assert html.count('</code></pre>') == 1, "Unexpected fenced code closing count"
-assert 'Risks &amp; Constraints &lt;Review&gt;' in html, "TOC/body heading escaping regression"
+assert srs_html.count('<pre class="mermaid">') == 1, "Unexpected Mermaid block count"
+assert srs_html.count('</code></pre>') == 1, "Unexpected fenced code closing count"
+assert 'Risks &amp; Constraints &lt;Review&gt;' in srs_html, "TOC/body heading escaping regression"
 PY
 
-grep -q '<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>' "$OUTPUT_HTML"
+grep -q '<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>' "$SRS_HTML"
 
-echo "Smoke test passed: $OUTPUT_HTML"
+echo "Smoke test passed: $INTAKE_HTML $FRD_HTML $STORIES_HTML $SRS_HTML"

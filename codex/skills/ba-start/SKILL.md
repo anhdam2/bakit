@@ -48,9 +48,9 @@ Read this section first. Only continue to the detailed step sections when you ne
 | Command | Runs | Must read first | Produces |
 | --- | --- | --- | --- |
 | no subcommand | Full workflow | raw input | intake, FRD, stories, SRS, wireframes, package |
-| `intake` | Steps 1-5 | raw input | intake + plan |
+| `intake` | Steps 1-5 | raw input | intake + intake HTML + plan |
 | `frd` | Step 6 | intake | FRD + FRD HTML |
-| `stories` | Step 7 | FRD | user stories |
+| `stories` | Step 7 | FRD | user stories + user stories HTML |
 | `srs` | Steps 8-11 | FRD + user stories | grouped SRS + merged SRS + wireframes |
 | `wireframes` | Step 9 only | group-c SRS or merged SRS with Screen Contract Lite | `.pen`, exports, wireframe-state |
 | `package` | Step 12 only | merged SRS + non-missing wireframe-state | SRS HTML + delivery summary |
@@ -140,9 +140,9 @@ Use exact filename patterns, not broad `*-{slug}*` matching. Print the specific 
 
 | Command | Requires | Produces |
 | --- | --- | --- |
-| `intake` | Raw input (file or pasted text) | `plans/reports/intake-{slug}-{date}.md`, `plans/{date}-{slug}/plan.md` |
+| `intake` | Raw input (file or pasted text) | `plans/reports/intake-{slug}-{date}.md`, `plans/reports/intake-{slug}-{date}.html`, `plans/{date}-{slug}/plan.md` |
 | `frd` | `plans/reports/intake-{slug}-{date}.md` | `plans/reports/frd-{date}-{slug}.md`, `plans/reports/frd-{date}-{slug}.html` |
-| `stories` | `plans/reports/frd-{date}-{slug}.md` | `plans/reports/user-stories-{date}-{slug}.md` |
+| `stories` | `plans/reports/frd-{date}-{slug}.md` | `plans/reports/user-stories-{date}-{slug}.md`, `plans/reports/user-stories-{date}-{slug}.html` |
 | `srs` | `plans/reports/frd-{date}-{slug}.md`, `plans/reports/user-stories-{date}-{slug}.md` | `plans/reports/srs-{date}-{slug}.md` and any supporting `srs-{date}-{slug}-group-*.md` files |
 | `wireframes` | `plans/reports/srs-{date}-{slug}-group-c.md` or merged `plans/reports/srs-{date}-{slug}.md` with Screen Contract Lite already assembled | `designs/{slug}/*.pen`, `designs/{slug}/exports/**`, `plans/reports/wireframe-state-{date}-{slug}.md` |
 | `package` | `plans/reports/srs-{date}-{slug}.md`; wireframes may be completed, skipped, or not-applicable | `plans/reports/srs-{date}-{slug}.html`, delivery summary |
@@ -278,6 +278,14 @@ Present the identified gaps to the user as 3-8 targeted questions. Focus on:
 
 Incorporate the answers back into the intake form.
 
+Export the intake artifact to the shared BA-kit HTML shell:
+
+```bash
+python scripts/md-to-html.py plans/reports/intake-{slug}-{date}.md
+```
+
+Output: `plans/reports/intake-{slug}-{date}.html`
+
 ### Step 5 - Generate work plan
 
 Based on the normalized intake, produce a scoped work plan covering:
@@ -367,6 +375,7 @@ Run Step 7 only.
 ### Output
 
 - `plans/reports/user-stories-{date}-{slug}.md`
+- `plans/reports/user-stories-{date}-{slug}.html`
 
 ### Step 7 - Produce user stories
 
@@ -380,6 +389,14 @@ Generate Agile user stories from the FRD feature list using [user-story-template
 User stories with their acceptance criteria become the primary input for SRS, wireframes, and downstream artifacts. Every SRS functional requirement, use case, and screen description should trace back to one or more user stories.
 
 Save to `plans/reports/user-stories-{date}-{slug}.md`.
+
+Export user stories to HTML using the shared BA-kit shell:
+
+```bash
+python scripts/md-to-html.py plans/reports/user-stories-{date}-{slug}.md
+```
+
+Output: `plans/reports/user-stories-{date}-{slug}.html`
 
 ## Subcommand: srs
 
@@ -711,6 +728,8 @@ Run Step 12 only.
 
 Run a final packaging and quality pass:
 
+- Keep the default `package` scope narrow: validate the existing artifact set, then regenerate only `plans/reports/srs-{date}-{slug}.html`.
+- Do not treat `package` as a full rebuild of intake, FRD, user-stories, and SRS HTML in one delegated pass unless the user explicitly asks for a full HTML repack.
 - Verify all deliverables follow their templates.
 - Check cross-references between FRD, user stories, and SRS.
 - Verify user-story traceability: every SRS FR, UC, and SCR maps to at least one user story.
@@ -722,6 +741,7 @@ Run a final packaging and quality pass:
   - User story acceptance criteria are covered by UC postconditions and screen Validation Rules.
   - FRD features are fully covered by user stories and SRS requirements.
 - Validate naming conventions and file structure.
+- Verify the target SRS HTML, plus any already-existing intake/FRD/user-stories HTML artifacts, use the shared BA-kit HTML shell and document metadata header.
 - Flag broken links or missing sections.
 - Produce a delivery summary.
 
@@ -748,9 +768,11 @@ The final HTML should present:
 plans/
   reports/
     intake-{slug}-{date}.md
+    intake-{slug}-{date}.html
     frd-{date}-{slug}.md
     frd-{date}-{slug}.html
     user-stories-{date}-{slug}.md
+    user-stories-{date}-{slug}.html
     srs-{date}-{slug}.md
     srs-{date}-{slug}.html
     wireframe-state-{date}-{slug}.md
@@ -788,10 +810,12 @@ Project: {slug}
 Date set: {date}
 
 - [x] intake-{slug}-{date}.md — 2026-03-26
+- [x] intake-{slug}-{date}.html — 2026-03-26
 - [x] plans/{date}-{slug}/plan.md — 2026-03-26
 - [x] frd-{date}-{slug}.md — 2026-03-26
 - [x] frd-{date}-{slug}.html — 2026-03-26
 - [ ] user-stories-{date}-{slug}.md — missing
+- [ ] user-stories-{date}-{slug}.html — missing
 - [ ] srs-{date}-{slug}.md — missing
 - [!] wireframes — skipped — 2026-03-26
 ```
@@ -805,10 +829,11 @@ Status rules:
 ## Deliverables
 
 - Normalized intake form
+- Intake HTML in the shared BA-kit document shell
 - Gap analysis summary
 - Scoped BA work plan
 - FRD in Markdown and HTML
-- User stories with acceptance criteria
+- User stories in Markdown and HTML
 - SRS working fragments for grouped production
 - Unified SRS with use cases, wireframe-backed screen descriptions, NFRs, and test cases
 - SRS HTML with embedded wireframes and rendered diagrams

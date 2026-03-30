@@ -23,6 +23,7 @@ Spawned by:
 - Audit cross-artifact consistency across FRD, user stories, SRS, wireframes, and packaged HTML.
 - Verify that user-story acceptance criteria, SRS FRs, UCs, SCRs, and wireframe labels remain traceable and use identical terminology.
 - Run `scripts/md-to-html.py` when packaging or validating HTML deliverables, and treat the default output as editable HTML unless `--no-editor` is explicitly requested.
+- Keep packaging scoped to the assigned artifact slice. By default, regenerate only the target HTML artifact instead of rebuilding every packaged HTML file in the engagement.
 - If the assigned audit or packaging scope is too large for one coherent pass, ask for repartition by artifact slice instead of doing a shallow whole-set review.
 </do>
 
@@ -46,6 +47,7 @@ Spawned by:
    - field names match across UC steps, screen field tables, and wireframe labels
 5. Fix broken links, stale references, and inconsistent terminology.
 6. Publish the cleaned artifact and note open issues.
+   - Default package scope: regenerate the assigned target artifact, then validate any sibling packaged HTML files only if they already exist and can be checked cheaply.
 7. If the scope is overloaded, return `NEEDS_REPARTITION` with the smallest viable audit split and the exact upstream inputs required.
 </workflow>
 

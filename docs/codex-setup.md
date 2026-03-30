@@ -60,7 +60,7 @@ Prerequisite:
 ```text
 Use AGENTS.md and skills/ba-start/SKILL.md.
 Parse the requirements in docs/raw/warehouse-rfp.pdf.
-Produce an intake form, FRD, user stories, use case specifications, Screen Contract Lite, wireframes, final screen descriptions, and a browser-editable HTML SRS.
+Produce an intake form, FRD, user stories, use case specifications, Screen Contract Lite, wireframes, final screen descriptions, and the BA-kit HTML deliverable set for intake, FRD, user stories, and SRS.
 ```
 
 ### Step-Level Rerun
@@ -96,7 +96,7 @@ Print artifact names, exists or missing status, last-modified dates, and the exp
 Use the installed ba-start skill from ~/.codex/skills/ba-start/SKILL.md.
 Use the registered Codex BA agents from ~/.codex/agents when the skill delegates work.
 Parse the requirements in docs/raw/warehouse-rfp.pdf.
-Produce an intake form, FRD, user stories, use case specifications, Screen Contract Lite, wireframes, final screen descriptions, and a browser-editable HTML SRS.
+Produce an intake form, FRD, user stories, use case specifications, Screen Contract Lite, wireframes, final screen descriptions, and the BA-kit HTML deliverable set for intake, FRD, user stories, and SRS.
 ```
 
 ### Formal Requirements Only
@@ -135,7 +135,7 @@ Use Pencil only for wireframes in SRS-backed work:
 
 ## HTML Deliverable
 
-The generated HTML is the editable stakeholder deliverable. Open it in a browser to update text, replace images, and add or remove blocks without editing the source HTML manually.
+The generated HTML set uses one shared BA-kit document shell. Open the packaged artifacts in a browser to update text, replace images, and add or remove blocks without editing the source HTML manually. SRS HTML remains the primary stakeholder handoff, while intake, FRD, and user-stories HTML provide aligned review copies. The `package` step should stay narrow by default: validate any existing packaged HTML artifacts, but regenerate only the final SRS HTML unless the user explicitly asks for a full HTML repack.
 
 `/ba-start status` should report wireframes using the explicit state marker: `completed`, `skipped`, `not-applicable`, or `missing`.
 
