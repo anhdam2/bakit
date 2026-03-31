@@ -20,9 +20,12 @@ copy_tree() {
 }
 
 install_cli() {
+  local temp_target
   mkdir -p "${LOCAL_BIN_TARGET}"
-  cp "${ROOT_DIR}/scripts/ba-kit" "${LOCAL_BIN_TARGET}/ba-kit"
-  chmod +x "${LOCAL_BIN_TARGET}/ba-kit"
+  temp_target="$(mktemp "${LOCAL_BIN_TARGET}/ba-kit.tmp.XXXXXX")"
+  cp "${ROOT_DIR}/scripts/ba-kit" "${temp_target}"
+  chmod +x "${temp_target}"
+  mv "${temp_target}" "${LOCAL_BIN_TARGET}/ba-kit"
 }
 
 write_manifest() {
