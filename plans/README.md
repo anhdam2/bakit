@@ -9,11 +9,24 @@ Expected runtime structure:
 ```text
 plans/
   reports/
-    intake-{slug}-{date}.md
-    frd-{date}-{slug}.md
-    user-stories-{date}-{slug}.md
-    srs-{date}-{slug}.md
-    wireframe-state-{date}-{slug}.md
+    final/
+      intake-{slug}-{date}.md
+      backbone-{date}-{slug}.md
+      frd-{date}-{slug}.md
+      frd-{date}-{slug}.html
+      user-stories-{date}-{slug}.md
+      srs-{date}-{slug}.md
+      srs-{date}-{slug}.html
+    drafts/
+      srs-{date}-{slug}-group-a.md
+      srs-{date}-{slug}-group-b.md
+      srs-{date}-{slug}-group-c.md
+      srs-{date}-{slug}-group-d.md
+      srs-{date}-{slug}-group-e.md
+      srs-{date}-{slug}-group-f.md
+      wireframe-input-{date}-{slug}.md
+      wireframe-map-{date}-{slug}.md
+      wireframe-state-{date}-{slug}.md
   {date}-{slug}/
     plan.md
 ```

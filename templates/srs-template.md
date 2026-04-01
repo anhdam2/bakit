@@ -118,6 +118,38 @@ Giải thích wireframe đang tối ưu cho điều gì: tốc độ nhập dữ
 | Nội dung chính (Main Content) | [Mục đích] | [Form, bảng, panel chi tiết] |
 | Vùng hành động (Action Area) | [Mục đích] | [Hành động chính và phụ] |
 
+## Quy tắc dùng chung (Common Rules)
+Dùng phần này để gom các quy tắc lặp lại giữa nhiều màn hình hoặc nhiều trường. Trong mô tả màn hình, tham chiếu bằng `Rule Code` thay vì copy lại nguyên văn khi nội dung giống nhau.
+
+**Convention mã quy tắc (Rule Code Convention)**
+- Dùng định dạng `CR-{TYPE}-{NN}`.
+- `TYPE` dùng một trong các mã: `DIS` (Display), `BEH` (Behaviour), `VAL` (Validation), `MIX` (Mixed rule).
+- `NN` là số thứ tự 2 chữ số trong phạm vi tài liệu SRS, ví dụ `01`, `02`, `03`.
+- Giữ một mã cho một quy tắc dùng chung ổn định; không tạo mã mới nếu chỉ thay đổi màn hình tham chiếu.
+
+| Mã quy tắc (Rule Code) | Tên quy tắc (Rule Name) | Loại (Type) | Phạm vi áp dụng (Scope) | Nội dung quy tắc (Rule Detail) | Màn hình tham chiếu (Referenced Screens) |
+| --- | --- | --- | --- | --- | --- |
+| CR-DIS-01 | [Tên quy tắc hiển thị] | Display | [Toàn hệ thống / Module / Nhiều màn hình] | [Mô tả quy tắc dùng chung] | [SCR-01, SCR-02] |
+| CR-BEH-01 | [Tên quy tắc hành vi] | Behaviour | [Toàn hệ thống / Module / Nhiều màn hình] | [Mô tả quy tắc dùng chung] | [SCR-03] |
+| CR-VAL-01 | [Tên quy tắc validate] | Validation | [Toàn hệ thống / Module / Nhiều màn hình] | [Mô tả quy tắc dùng chung] | [SCR-01, SCR-04] |
+| CR-MIX-01 | [Tên quy tắc hỗn hợp] | Mixed | [Toàn hệ thống / Module / Nhiều màn hình] | [Quy tắc bao trùm nhiều loại: hiển thị + hành vi + validate] | [SCR-02, SCR-05] |
+
+## Danh sách thông điệp (Message List)
+Dùng phần này để chuẩn hóa error message, warning, success message, banner, toast, và inline message. Trong mô tả màn hình hoặc field, tham chiếu bằng `Message Code`.
+
+**Convention mã thông điệp (Message Code Convention)**
+- Dùng định dạng `MSG-{TYPE}-{NN}`.
+- `TYPE` dùng một trong các mã: `ERR` (Error), `WRN` (Warning), `SUC` (Success), `INF` (Info).
+- `NN` là số thứ tự 2 chữ số trong phạm vi tài liệu SRS, ví dụ `01`, `02`, `03`.
+- Một thông điệp chuẩn dùng chung chỉ nên có một mã duy nhất, ngay cả khi xuất hiện ở nhiều màn hình hoặc nhiều field.
+
+| Mã thông điệp (Message Code) | Loại (Type) | Bề mặt hiển thị (Surface) | Trigger / Điều kiện kích hoạt | Nội dung thông điệp (Message Text) | Ghi chú |
+| --- | --- | --- | --- | --- | --- |
+| MSG-ERR-01 | Error | [Inline / Toast / Banner / Modal] | [Khi nào hiển thị] | [Nội dung hiển thị cho người dùng] | [Ghi chú] |
+| MSG-WRN-01 | Warning | [Inline / Toast / Banner / Modal] | [Khi nào hiển thị] | [Nội dung hiển thị cho người dùng] | [Ghi chú] |
+| MSG-SUC-01 | Success | [Inline / Toast / Banner / Modal] | [Khi nào hiển thị] | [Nội dung hiển thị cho người dùng] | [Ghi chú] |
+| MSG-INF-01 | Info | [Inline / Toast / Banner / Modal] | [Khi nào hiển thị] | [Nội dung hiển thị cho người dùng] | [Ghi chú] |
+
 ## Wireframe Low-Fidelity (Low-Fidelity Wireframe)
 Sử dụng frame tham chiếu trong Pencil artifact `.pen` làm wireframe chính. Thêm bản phác thảo text ở đây chỉ khi cải thiện rõ ràng cho reviewer đọc markdown riêng.
 
@@ -136,9 +168,13 @@ Sử dụng frame tham chiếu trong Pencil artifact `.pen` làm wireframe chín
 
 | Tên trường (Field Name) | Loại trường (Field Type) | Mô tả (Description) |
 | --- | --- | --- |
-| [Tên trường] | [Text / Dropdown / Date Picker / Checkbox / Button / Table / etc.] | **Hiển thị (Display):** [Quy tắc hiển thị — visibility, giá trị mặc định, điều kiện read-only, định dạng] |
-| | | **Hành vi (Behaviour):** [Quy tắc hành vi — on-change actions, auto-fill, cascading, navigation triggers] |
-| | | **Kiểm tra (Validation):** [Quy tắc kiểm tra — required, format, range, cross-field, error messages] |
+| [Tên trường] | [Text / Dropdown / Date Picker / Checkbox / Button / Table / etc.] | **Display Rules:** [Mô tả cách field hiển thị: label, placeholder, visibility, giá trị mặc định, điều kiện read-only, định dạng, helper text nếu có] |
+| | | **Behaviour Rules:** [Mô tả cách field tương tác: on-click, on-change, auto-fill, cascading, enable/disable field khác, điều hướng sang màn hình hoặc modal nào] |
+| | | **Validation Rules:** [Mô tả rõ required, format, range, cross-field validation, cách hiển thị lỗi (inline / toast / banner), message code hoặc message text cụ thể] |
+| | | **Rule Codes:** [CR-DIS-01, CR-VAL-01] |
+| | | **Message Codes:** [MSG-ERR-01, MSG-INF-01] |
+
+> Nếu một quy tắc hoặc thông điệp lặp lại ở nhiều màn hình, ưu tiên tham chiếu `Rule Code` và `Message Code` từ phần dùng chung thay vì mô tả lại nguyên văn. Chỉ viết lại đầy đủ ở cấp field khi có ngoại lệ hoặc override riêng cho màn hình đó.
 
 **Hành động người dùng (User Actions)**
 - [Hành động chính và hành vi]
@@ -155,6 +191,15 @@ Sử dụng frame tham chiếu trong Pencil artifact `.pen` làm wireframe chín
 
 **Quy tắc phân quyền và hiển thị (Permission and Visibility Rules)**
 - [Vai trò nào có thể xem hoặc thao tác trên control nào]
+
+**Rule Codes sử dụng trong màn hình này (Applied Rule Codes)**
+- [CR-DIS-01]
+- [CR-BEH-01]
+- [CR-VAL-01]
+
+**Message Codes sử dụng trong màn hình này (Applied Message Codes)**
+- [MSG-ERR-01]
+- [MSG-SUC-01]
 
 **Liên kết User Stories / Use Cases / Requirements**
 - User stories: [US-001, US-002]

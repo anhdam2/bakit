@@ -5,10 +5,10 @@
 - Slug: [initiative-slug]
 - Date: [YYMMDD-HHmm]
 - App type: [web-app | mobile-app]
-- Source FRD: `plans/reports/frd-{date}-{slug}.md`
-- Source user stories: `plans/reports/user-stories-{date}-{slug}.md`
-- Source use cases: `plans/reports/srs-{date}-{slug}-group-b.md`
-- Source screen contract: `plans/reports/srs-{date}-{slug}-group-c.md`
+- Source FRD: `plans/reports/final/frd-{date}-{slug}.md`
+- Source user stories: `plans/reports/final/user-stories-{date}-{slug}.md`
+- Source use cases: `plans/reports/drafts/srs-{date}-{slug}-group-b.md`
+- Source screen contract: `plans/reports/drafts/srs-{date}-{slug}-group-c.md`
 
 ## Quy tắc tạo wireframe (Wireframe Generation Rules)
 

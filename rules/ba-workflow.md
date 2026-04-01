@@ -57,23 +57,24 @@ BA-kit is optimized for a solo IT BA. The workflow should reduce duplicated writ
 - Use templates from `templates/` whenever a matching template exists.
 - Keep document titles, headings, and filenames aligned.
 - Use descriptive kebab-case filenames.
-- Final artifacts go in `plans/reports/`. Work plans go in `plans/{date}-{slug}/`.
+- Final deliverables go in `plans/reports/final/`. Draft and intermediate artifacts go in `plans/reports/drafts/`. Work plans go in `plans/{date}-{slug}/`.
 - Delegation trackers for active sub-agent slices belong in `plans/{date}-{slug}/delegation/`.
 - Preserve traceability links between source, analysis, and final outputs.
 - Broken links and stale references must be corrected before handoff.
-- For UI-backed SRS work, persist a `wireframe-input-{date}-{slug}.md` artifact before Step 9 and a `wireframe-map-{date}-{slug}.md` artifact after successful wireframe generation.
-- Persist the backbone as `plans/reports/backbone-{date}-{slug}.md`. This is the default authoring source for downstream artifact emission.
+- For UI-backed SRS work, persist a `wireframe-input-{date}-{slug}.md` artifact under `plans/reports/drafts/` before Step 9 and a `wireframe-map-{date}-{slug}.md` artifact under `plans/reports/drafts/` after successful wireframe generation.
+- Persist the backbone as `plans/reports/final/backbone-{date}-{slug}.md`. This is the default authoring source for downstream artifact emission.
 - Do not infer current-playbook state from legacy report filenames such as `002-intake-form.md`; legacy suites must be migrated or rerun explicitly before they enter the current exact-pattern lifecycle.
 
 ## Naming Convention
 
 - `{date}` uses `YYMMDD-HHmm` format matching `.ck.json` convention.
 - Use the same `{date}` token for the report artifacts and the corresponding `plans/{date}-{slug}/plan.md` directory so a dated artifact set resolves unambiguously.
-- Intake: `plans/reports/intake-{slug}-{date}.md`
-- Backbone: `plans/reports/backbone-{date}-{slug}.md`
-- FRD: `plans/reports/frd-{date}-{slug}.md`
-- SRS: `plans/reports/srs-{date}-{slug}.md`
-- User stories: `plans/reports/user-stories-{date}-{slug}.md`
+- Intake: `plans/reports/final/intake-{slug}-{date}.md`
+- Backbone: `plans/reports/final/backbone-{date}-{slug}.md`
+- FRD: `plans/reports/final/frd-{date}-{slug}.md` plus `plans/reports/final/frd-{date}-{slug}.html`
+- SRS: `plans/reports/final/srs-{date}-{slug}.md` plus `plans/reports/final/srs-{date}-{slug}.html`
+- User stories: `plans/reports/final/user-stories-{date}-{slug}.md`
+- SRS draft groups and wireframe runtime artifacts: `plans/reports/drafts/`
 - Wireframes: `designs/{slug}/{artifact-name}.pen` plus frame-level screen mapping in the SRS
 - Supporting wireframe frames: use the parent screen ID prefix plus a stable suffix such as `SCR-01-EMPTY`, `SCR-01-ERROR`, or `SCR-01-TOAST-SUCCESS`
 - Modal/drawer/dialog overlays that affect flow should get their own primary `SCR-xx` IDs, not supporting-state suffix IDs
@@ -82,6 +83,10 @@ BA-kit is optimized for a solo IT BA. The workflow should reduce duplicated writ
 
 - Default to hybrid BA: formal analysis where risk is high, lightweight artifacts where speed matters.
 - Optimize for one analyst holding the primary context. Prefer one persisted source of truth plus derived artifacts over parallel authoring of overlapping documents.
+- Treat business requirements, stakeholder goals, process narratives, policies, and user flows as the primary scope inputs.
+- Treat API docs, schemas, sample payloads, database contracts, and webhook specs as supporting technical inputs that clarify feasibility, integrations, and constraints.
+- Do not let supporting technical inputs define scope on their own when primary requirement sources exist.
+- Use supporting technical inputs to validate or refine FRD/SRS details after the backbone is established, not to replace backbone-first scoping.
 - Reference BABOK 3.0 knowledge areas where useful, but keep outputs practical.
 - Match artifact depth to business criticality, regulatory exposure, and audience.
 - Start with discovery before solutioning.
@@ -97,10 +102,12 @@ BA-kit is optimized for a solo IT BA. The workflow should reduce duplicated writ
 - `hybrid` mode is the default for solo IT BA work: backbone + targeted FRD + stories + selective SRS + critical-screen wireframes when needed.
 - `formal` mode should emit the full artifact set only when governance, vendor handoff, or regulatory needs require it.
 - **Cross-artifact consistency check before packaging:** UC steps, screen fields/actions, and wireframe labels must use identical terminology and describe the same behavior.
+- Reusable cross-screen rules and standard messages should be centralized once in the SRS and referenced by code from individual screen descriptions to reduce duplication and drift.
+- Shared SRS codes should follow one convention only: `CR-{TYPE}-{NN}` for rules and `MSG-{TYPE}-{NN}` for messages; do not mix local ad-hoc formats inside the same artifact set.
 - Wireframe linkage must be screen-to-frame, not screen-to-file only. A single `.pen` file may cover multiple screens.
 - Supporting frames that are not expanded into full screen sections must still be captured in the SRS screen inventory and present in the `.pen` artifact.
 - Modal and overlay screens that affect flow must be treated like first-class screens in traceability, not collapsed into supporting-state inventory entries.
 - Verify quality before handoff.
 - **SRS preflight gate:** once slug/date and prerequisites are resolved, start from the exact backbone and user-stories artifacts, and pull the FRD only when it exists or is explicitly required.
-- **FRD/stories preflight gate:** once slug/date and prerequisites are resolved, start from the exact backbone artifact instead of rereading the entire `plans/reports/` suite.
+- **FRD/stories preflight gate:** once slug/date and prerequisites are resolved, start from the exact backbone artifact instead of rereading the entire `plans/reports/final/` suite.
 - **Context-loss recovery gate:** if exploration causes context pressure, recover from resolved command + slug/date + exact artifacts on disk; do not ask the user to restate the task unless the target really became ambiguous.

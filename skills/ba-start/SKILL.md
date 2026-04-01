@@ -50,13 +50,13 @@ Read this section first. Only continue to the detailed step sections when you ne
 | Command | Runs | Must read first | Produces |
 | --- | --- | --- | --- |
 | no subcommand | Full workflow | raw input | intake, backbone, gated downstream artifacts by mode |
-| `intake` | Steps 1-4 | raw input | intake + intake HTML + plan |
+| `intake` | Steps 1-4 | raw input | intake + plan |
 | `backbone` | Step 5 | intake | requirements backbone |
 | `frd` | Step 6 | backbone | FRD + FRD HTML |
-| `stories` | Step 7 | backbone | user stories + user stories HTML |
+| `stories` | Step 7 | backbone | user stories |
 | `srs` | Steps 8-11 | backbone + user stories | grouped SRS + wireframe-input + merged SRS + gated wireframes |
 | `wireframes` | Step 9 only | wireframe-input or exact wireframe source set | `.pen`, exports, wireframe-map, wireframe-state |
-| `package` | Step 12 only | emitted artifact set + non-missing wireframe-state when SRS screens exist | packaged HTML + delivery summary |
+| `package` | Step 12 only | emitted artifact set + non-missing wireframe-state when SRS screens exist | FRD/SRS HTML + delivery summary |
 | `status` | inspection only | none | checklist output |
 
 ### Non-negotiable stop conditions
@@ -116,7 +116,7 @@ Parse `ARGUMENTS` before doing any work.
 Subcommands that operate on an existing project must resolve the target project slug in this order:
 
 1. Use the explicit `--slug <slug>` value when provided.
-2. Otherwise inspect `plans/reports/` for exact BA-kit artifact patterns and collect unique candidate slugs.
+2. Otherwise inspect `plans/reports/final/` and `plans/reports/drafts/` for exact BA-kit artifact patterns and collect unique candidate slugs.
 3. If exactly one candidate slug exists, use it.
 4. If multiple candidate slugs exist, print the candidate list, ask the user to choose a slug or rerun with `--slug`, and stop.
 
@@ -127,15 +127,15 @@ For mutating subcommands (`backbone`, `frd`, `stories`, `srs`, `wireframes`, `pa
 After resolving the slug, resolve the target dated artifact set.
 
 1. Inspect exact filenames for the selected slug:
-   - `plans/reports/intake-{slug}-{date}.md`
-   - `plans/reports/backbone-{date}-{slug}.md`
-   - `plans/reports/frd-{date}-{slug}.md`
-   - `plans/reports/user-stories-{date}-{slug}.md`
-   - `plans/reports/srs-{date}-{slug}.md`
-   - `plans/reports/srs-{date}-{slug}-group-c.md`
-   - `plans/reports/wireframe-input-{date}-{slug}.md`
-   - `plans/reports/wireframe-map-{date}-{slug}.md`
-   - `plans/reports/wireframe-state-{date}-{slug}.md`
+   - `plans/reports/final/intake-{slug}-{date}.md`
+   - `plans/reports/final/backbone-{date}-{slug}.md`
+   - `plans/reports/final/frd-{date}-{slug}.md`
+   - `plans/reports/final/user-stories-{date}-{slug}.md`
+   - `plans/reports/final/srs-{date}-{slug}.md`
+   - `plans/reports/drafts/srs-{date}-{slug}-group-c.md`
+   - `plans/reports/drafts/wireframe-input-{date}-{slug}.md`
+   - `plans/reports/drafts/wireframe-map-{date}-{slug}.md`
+   - `plans/reports/drafts/wireframe-state-{date}-{slug}.md`
    - `plans/{date}-{slug}/plan.md`
 2. Build candidate `{date}` sets from exact filename matches only.
 3. If exactly one dated set exists for the slug, use it.
@@ -150,7 +150,7 @@ Use exact filename patterns, not broad `*-{slug}*` matching. Print the specific 
 
 Before mutating `backbone`, `frd`, `stories`, `srs`, `wireframes`, `package`, or `status`:
 
-1. Check whether `plans/reports/` contains legacy BA-kit report names such as:
+1. Check whether `plans/reports/`, `plans/reports/final/`, or `plans/reports/drafts/` contains legacy BA-kit report names such as:
    - `plans/reports/002-intake-form.md`
    - `plans/reports/002-gap-analysis.md`
    - `plans/reports/002-*.md`
@@ -164,12 +164,12 @@ Before mutating `backbone`, `frd`, `stories`, `srs`, `wireframes`, `package`, or
 
 | Command | Requires | Produces |
 | --- | --- | --- |
-| `intake` | Raw input (file or pasted text) | `plans/reports/intake-{slug}-{date}.md`, `plans/reports/intake-{slug}-{date}.html`, `plans/{date}-{slug}/plan.md` |
-| `backbone` | `plans/reports/intake-{slug}-{date}.md` | `plans/reports/backbone-{date}-{slug}.md` |
-| `frd` | `plans/reports/backbone-{date}-{slug}.md` | `plans/reports/frd-{date}-{slug}.md`, `plans/reports/frd-{date}-{slug}.html` |
-| `stories` | `plans/reports/backbone-{date}-{slug}.md` | `plans/reports/user-stories-{date}-{slug}.md`, `plans/reports/user-stories-{date}-{slug}.html` |
-| `srs` | `plans/reports/backbone-{date}-{slug}.md`, `plans/reports/user-stories-{date}-{slug}.md` | `plans/reports/srs-{date}-{slug}.md`, `plans/reports/wireframe-input-{date}-{slug}.md`, and any supporting `srs-{date}-{slug}-group-*.md` files |
-| `wireframes` | `plans/reports/wireframe-input-{date}-{slug}.md` or exact fallback sources for pack generation | `designs/{slug}/*.pen`, `designs/{slug}/exports/**`, `plans/reports/wireframe-map-{date}-{slug}.md`, `plans/reports/wireframe-state-{date}-{slug}.md` |
+| `intake` | Raw input (file or pasted text) | `plans/reports/final/intake-{slug}-{date}.md`, `plans/{date}-{slug}/plan.md` |
+| `backbone` | `plans/reports/final/intake-{slug}-{date}.md` | `plans/reports/final/backbone-{date}-{slug}.md` |
+| `frd` | `plans/reports/final/backbone-{date}-{slug}.md` | `plans/reports/final/frd-{date}-{slug}.md`, `plans/reports/final/frd-{date}-{slug}.html` |
+| `stories` | `plans/reports/final/backbone-{date}-{slug}.md` | `plans/reports/final/user-stories-{date}-{slug}.md` |
+| `srs` | `plans/reports/final/backbone-{date}-{slug}.md`, `plans/reports/final/user-stories-{date}-{slug}.md` | `plans/reports/final/srs-{date}-{slug}.md`, `plans/reports/drafts/wireframe-input-{date}-{slug}.md`, and any supporting `plans/reports/drafts/srs-{date}-{slug}-group-*.md` files |
+| `wireframes` | `plans/reports/drafts/wireframe-input-{date}-{slug}.md` or exact fallback sources for pack generation | `designs/{slug}/*.pen`, `designs/{slug}/exports/**`, `plans/reports/drafts/wireframe-map-{date}-{slug}.md`, `plans/reports/drafts/wireframe-state-{date}-{slug}.md` |
 | `package` | emitted downstream artifacts for the selected mode; wireframes may be completed, skipped, or not-applicable | packaged HTML artifacts, delivery summary |
 | `status` | None | Checklist output only |
 
@@ -258,7 +258,7 @@ Rules:
 
 Persist an explicit wireframe-state marker after every Step 9 run at:
 
-`plans/reports/wireframe-state-{date}-{slug}.md`
+`plans/reports/drafts/wireframe-state-{date}-{slug}.md`
 
 Use this structure:
 
@@ -268,9 +268,9 @@ Use this structure:
 - Slug: {slug}
 - Date: {date}
 - State: completed | skipped | not-applicable | missing
-- Source: plans/reports/wireframe-input-{date}-{slug}.md OR exact fallback source set
-- Input Pack: plans/reports/wireframe-input-{date}-{slug}.md
-- Mapping: plans/reports/wireframe-map-{date}-{slug}.md
+- Source: plans/reports/drafts/wireframe-input-{date}-{slug}.md OR exact fallback source set
+- Input Pack: plans/reports/drafts/wireframe-input-{date}-{slug}.md
+- Mapping: plans/reports/drafts/wireframe-map-{date}-{slug}.md
 - Artifacts:
   - designs/{slug}/{artifact-name}.pen
 - Exports:
@@ -343,7 +343,7 @@ Read the source material and extract content into the [intake-form-template.md](
 - Constraints, assumptions, compliance needs
 - Open questions identified during parsing
 
-Save the completed intake form to `plans/reports/intake-{slug}-{date}.md`.
+Save the completed intake form to `plans/reports/final/intake-{slug}-{date}.md`.
 
 ### Step 3 - Gap analysis
 
@@ -373,13 +373,7 @@ Present the identified gaps to the user as 3-8 targeted questions. Focus on:
 
 Incorporate the answers back into the intake form.
 
-Export the intake artifact to the shared BA-kit HTML shell:
-
-```bash
-python scripts/md-to-html.py plans/reports/intake-{slug}-{date}.md
-```
-
-Output: `plans/reports/intake-{slug}-{date}.html`
+Do not package intake to HTML by default. Intake remains a markdown source artifact unless the user explicitly asks for an ad hoc conversion.
 
 ### Step 4.1 - Generate work plan
 
@@ -432,15 +426,15 @@ Run Step 5 only.
 ### Prerequisites
 
 - Resolve the slug and dated set using the shared rules.
-- Require `plans/reports/intake-{slug}-{date}.md`.
+- Require `plans/reports/final/intake-{slug}-{date}.md`.
 - If the intake artifact is missing, print the exact missing path, tell the user to run `/ba-start intake`, and stop.
 - Run a narrow backbone preflight before reading content:
-  - read only `plans/reports/intake-{slug}-{date}.md` and `plans/{date}-{slug}/plan.md` when it exists
-  - do not scan unrelated files in `plans/reports/` once the target slug/date is resolved
+  - read only `plans/reports/final/intake-{slug}-{date}.md` and `plans/{date}-{slug}/plan.md` when it exists
+  - do not scan unrelated files in `plans/reports/final/` once the target slug/date is resolved
 
 ### Output
 
-- `plans/reports/backbone-{date}-{slug}.md`
+- `plans/reports/final/backbone-{date}-{slug}.md`
 
 ### Step 5 - Build the requirements backbone
 
@@ -471,18 +465,18 @@ Run Step 6 only.
 ### Prerequisites
 
 - Resolve the slug and dated set using the shared rules.
-- Require `plans/reports/backbone-{date}-{slug}.md`.
+- Require `plans/reports/final/backbone-{date}-{slug}.md`.
 - If the backbone artifact is missing, print the exact missing path, tell the user to run `/ba-start backbone --slug {slug}`, and stop.
 - Trust the user intent. Do not re-check whether the work plan selected FRD.
 - Run a narrow FRD preflight before reading content:
-  - read only `plans/reports/backbone-{date}-{slug}.md` and `plans/{date}-{slug}/plan.md` when it exists
-  - do not scan unrelated files in `plans/reports/` once the target slug/date is resolved
+  - read only `plans/reports/final/backbone-{date}-{slug}.md` and `plans/{date}-{slug}/plan.md` when it exists
+  - do not scan unrelated files in `plans/reports/final/` once the target slug/date is resolved
   - if only legacy-named report suites exist for the apparent project, stop with the legacy artifact detection message instead of inferring from them
 
 ### Output
 
-- `plans/reports/frd-{date}-{slug}.md`
-- `plans/reports/frd-{date}-{slug}.html`
+- `plans/reports/final/frd-{date}-{slug}.md`
+- `plans/reports/final/frd-{date}-{slug}.html`
 
 ### Step 6 - Produce FRD
 
@@ -505,15 +499,15 @@ Produce the FRD from the backbone using [frd-template.md](../../templates/frd-te
 - Integration points
 - Acceptance criteria
 
-Save to `plans/reports/frd-{date}-{slug}.md`.
+Save to `plans/reports/final/frd-{date}-{slug}.md`.
 
 Export FRD to HTML for rendered Mermaid workflows:
 
 ```bash
-python scripts/md-to-html.py plans/reports/frd-{date}-{slug}.md
+python scripts/md-to-html.py plans/reports/final/frd-{date}-{slug}.md
 ```
 
-Output: `plans/reports/frd-{date}-{slug}.html`
+Output: `plans/reports/final/frd-{date}-{slug}.html`
 
 ## Subcommand: stories
 
@@ -522,19 +516,18 @@ Run Step 7 only.
 ### Prerequisites
 
 - Resolve the slug and dated set using the shared rules.
-- Require `plans/reports/backbone-{date}-{slug}.md`.
+- Require `plans/reports/final/backbone-{date}-{slug}.md`.
 - If the backbone artifact is missing, print the exact missing path, tell the user to run `/ba-start backbone --slug {slug}`, and stop.
 - Run a narrow stories preflight before reading content:
-  - read only `plans/reports/backbone-{date}-{slug}.md`
+  - read only `plans/reports/final/backbone-{date}-{slug}.md`
   - read `plans/{date}-{slug}/plan.md` only when it exists and only if it adds needed scope context
-  - read `plans/reports/frd-{date}-{slug}.md` only when it already exists and adds needed vocabulary or workflow structure
-  - do not scan unrelated files in `plans/reports/` once the target slug/date is resolved
+  - read `plans/reports/final/frd-{date}-{slug}.md` only when it already exists and adds needed vocabulary or workflow structure
+  - do not scan unrelated files in `plans/reports/final/` once the target slug/date is resolved
   - if only legacy-named report suites exist for the apparent project, stop with the legacy artifact detection message instead of inferring from them
 
 ### Output
 
-- `plans/reports/user-stories-{date}-{slug}.md`
-- `plans/reports/user-stories-{date}-{slug}.html`
+- `plans/reports/final/user-stories-{date}-{slug}.md`
 
 ### Step 7 - Produce user stories
 
@@ -554,15 +547,9 @@ Generate Agile user stories from the backbone feature map and FR draft using [us
 
 User stories with their acceptance criteria become the primary input for SRS, wireframes, and downstream artifacts. Every SRS functional requirement, use case, and screen description should trace back to one or more user stories.
 
-Save to `plans/reports/user-stories-{date}-{slug}.md`.
+Save to `plans/reports/final/user-stories-{date}-{slug}.md`.
 
-Export user stories to HTML using the shared BA-kit shell:
-
-```bash
-python scripts/md-to-html.py plans/reports/user-stories-{date}-{slug}.md
-```
-
-Output: `plans/reports/user-stories-{date}-{slug}.html`
+Do not package user stories to HTML by default. Keep them as markdown unless the user explicitly asks for an ad hoc conversion.
 
 ## Subcommand: srs
 
@@ -572,24 +559,24 @@ Run Steps 8-11 only. This path applies mode gates instead of assuming a full-det
 
 - Resolve the slug and dated set using the shared rules.
 - Require:
-  - `plans/reports/backbone-{date}-{slug}.md`
-  - `plans/reports/user-stories-{date}-{slug}.md`
+  - `plans/reports/final/backbone-{date}-{slug}.md`
+  - `plans/reports/final/user-stories-{date}-{slug}.md`
 - If a required artifact is missing, print the exact missing path, tell the user which subcommand to run first, and stop.
 - Run an SRS preflight before reading content:
   - read only the resolved backbone, user stories, optional FRD, and `plans/{date}-{slug}/plan.md` when it exists
-  - do not scan unrelated files in `plans/reports/` once the target slug/date is resolved
+  - do not scan unrelated files in `plans/reports/final/` and `plans/reports/drafts/` once the target slug/date is resolved
   - if only legacy-named report suites exist for the apparent project, stop with the legacy artifact detection message instead of inferring from them
 
 ### Output
 
-- `plans/reports/srs-{date}-{slug}-group-a.md`
-- `plans/reports/srs-{date}-{slug}-group-b.md`
-- `plans/reports/srs-{date}-{slug}-group-c.md`
-- `plans/reports/srs-{date}-{slug}-group-d.md`
-- `plans/reports/srs-{date}-{slug}-group-e.md`
-- `plans/reports/srs-{date}-{slug}-group-f.md`
-- `plans/reports/srs-{date}-{slug}.md`
-- `plans/reports/wireframe-input-{date}-{slug}.md`
+- `plans/reports/drafts/srs-{date}-{slug}-group-a.md`
+- `plans/reports/drafts/srs-{date}-{slug}-group-b.md`
+- `plans/reports/drafts/srs-{date}-{slug}-group-c.md`
+- `plans/reports/drafts/srs-{date}-{slug}-group-d.md`
+- `plans/reports/drafts/srs-{date}-{slug}-group-e.md`
+- `plans/reports/drafts/srs-{date}-{slug}-group-f.md`
+- `plans/reports/final/srs-{date}-{slug}.md`
+- `plans/reports/drafts/wireframe-input-{date}-{slug}.md`
 - Any wireframe artifacts and the wireframe-state marker produced during Step 9
 
 ### Step 8 - Produce SRS core, use cases, and Screen Contract Lite
@@ -598,7 +585,7 @@ SRS is the largest artifact. Produce only the slices justified by the selected m
 
 SRS preflight execution rules:
 
-- Start from the exact prerequisite set only. Do not read every report in `plans/reports/` to "understand the full picture".
+- Start from the exact prerequisite set only. Do not read every report in `plans/reports/final/` and `plans/reports/drafts/` to "understand the full picture".
 - Trust the accepted scope. If the user has already confirmed that SRS authoring should proceed, continue from the resolved backbone and user stories instead of reopening discovery.
 - Pull in extra analysis artifacts only when the exact SRS slice needs them and cite the exact path or section.
 - If an extra artifact is useful but non-essential, note it as optional context instead of blocking the run.
@@ -700,7 +687,7 @@ Sections:
 - Overall Description
 - Functional Requirements table
 
-Output: `plans/reports/srs-{date}-{slug}-group-a.md`
+Output: `plans/reports/drafts/srs-{date}-{slug}-group-a.md`
 
 #### Group B - Behavioral
 
@@ -708,7 +695,7 @@ Sections:
 
 - Use Case Specifications
 
-Output: `plans/reports/srs-{date}-{slug}-group-b.md`
+Output: `plans/reports/drafts/srs-{date}-{slug}-group-b.md`
 
 Consistency rules:
 
@@ -722,7 +709,7 @@ Sections:
 - Screen Contract Lite
 - Screen Inventory
 
-Output: `plans/reports/srs-{date}-{slug}-group-c.md`
+Output: `plans/reports/drafts/srs-{date}-{slug}-group-c.md`
 
 Consistency rules:
 
@@ -736,11 +723,11 @@ After Group B and Group C are complete, assemble a persisted wireframe input art
 
 Source inputs:
 
-- `plans/reports/srs-{date}-{slug}-group-b.md`
-- `plans/reports/srs-{date}-{slug}-group-c.md`
+- `plans/reports/drafts/srs-{date}-{slug}-group-b.md`
+- `plans/reports/drafts/srs-{date}-{slug}-group-c.md`
 - relevant FRD and user-story excerpts needed for traceability
 
-Save to `plans/reports/wireframe-input-{date}-{slug}.md`.
+Save to `plans/reports/drafts/wireframe-input-{date}-{slug}.md`.
 
 The wireframe input pack must contain:
 
@@ -761,7 +748,7 @@ Sections:
 - API specifications
 - Constraints
 
-Output: `plans/reports/srs-{date}-{slug}-group-d.md`
+Output: `plans/reports/drafts/srs-{date}-{slug}-group-d.md`
 
 Technical slice gate:
 
@@ -783,14 +770,14 @@ After Step 9 resolves, expand the full Screen Descriptions from:
 
 - Use Case Specifications
 - Screen Contract Lite
-- `plans/reports/wireframe-map-{date}-{slug}.md` when wireframe state is `completed`
+- `plans/reports/drafts/wireframe-map-{date}-{slug}.md` when wireframe state is `completed`
 - Supporting frame inventory
 
 If wireframes are `skipped` or `not-applicable`, expand the screen descriptions from use cases and Screen Contract Lite only, and keep Pencil references explicitly absent.
 
-If wireframe state is `completed` but `plans/reports/wireframe-map-{date}-{slug}.md` is missing, stop and rerun `/ba-start wireframes --slug {slug}` before expanding final screen descriptions.
+If wireframe state is `completed` but `plans/reports/drafts/wireframe-map-{date}-{slug}.md` is missing, stop and rerun `/ba-start wireframes --slug {slug}` before expanding final screen descriptions.
 
-Output: `plans/reports/srs-{date}-{slug}-group-e.md`
+Output: `plans/reports/drafts/srs-{date}-{slug}-group-e.md`
 
 Screen field table format:
 
@@ -814,7 +801,7 @@ Sections:
 - Glossary
 - Traceability cross-references
 
-Output: `plans/reports/srs-{date}-{slug}-group-f.md`
+Output: `plans/reports/drafts/srs-{date}-{slug}-group-f.md`
 
 ### Step 11 - Assembly and quality review
 
@@ -832,7 +819,7 @@ After all groups complete:
 3. Resolve UC placeholder references in screens.
 4. Resolve ID conflicts across namespaces.
 5. Verify every SCR and UC traces back to user stories.
-6. Save to `plans/reports/srs-{date}-{slug}.md`.
+6. Save to `plans/reports/final/srs-{date}-{slug}.md`.
 7. Delete group fragments only after the merged SRS is verified.
 
 Execution order:
@@ -858,22 +845,22 @@ Run Step 9 only. This path must be read-only on upstream artifacts and regenerat
 
 - Resolve the slug and dated set using the shared rules.
 - Resolve the wireframe source in this order:
-  1. `plans/reports/wireframe-input-{date}-{slug}.md`
-  2. exact pair `plans/reports/srs-{date}-{slug}-group-b.md` + `plans/reports/srs-{date}-{slug}-group-c.md`
-  3. `plans/reports/srs-{date}-{slug}.md` only when Use Case Specifications, Screen Contract Lite, and Screen Inventory are already assembled there
-- If source 2 or 3 is used, build or refresh `plans/reports/wireframe-input-{date}-{slug}.md` before generating wireframes.
+  1. `plans/reports/drafts/wireframe-input-{date}-{slug}.md`
+  2. exact pair `plans/reports/drafts/srs-{date}-{slug}-group-b.md` + `plans/reports/drafts/srs-{date}-{slug}-group-c.md`
+  3. `plans/reports/final/srs-{date}-{slug}.md` only when Use Case Specifications, Screen Contract Lite, and Screen Inventory are already assembled there
+- If source 2 or 3 is used, build or refresh `plans/reports/drafts/wireframe-input-{date}-{slug}.md` before generating wireframes.
 - If none of the sources exist, print all expected paths, tell the user to run `/ba-start srs --slug {slug}`, and stop.
 
 ### Output
 
 - `designs/{slug}/{artifact-name}.pen`
 - `designs/{slug}/exports/{artifact-name}/SCR-xx-name.png`
-- `plans/reports/wireframe-map-{date}-{slug}.md`
-- `plans/reports/wireframe-state-{date}-{slug}.md`
+- `plans/reports/drafts/wireframe-map-{date}-{slug}.md`
+- `plans/reports/drafts/wireframe-state-{date}-{slug}.md`
 
 ### Step 9.1 - Resolve wireframe input pack
 
-Use `plans/reports/wireframe-input-{date}-{slug}.md` as the primary wireframe generation source.
+Use `plans/reports/drafts/wireframe-input-{date}-{slug}.md` as the primary wireframe generation source.
 
 If the pack is missing but fallback sources exist:
 
@@ -905,7 +892,7 @@ The screen contract defines {N} primary screens. How should I generate wireframe
 
 If the user skips:
 
-- persist `plans/reports/wireframe-state-{date}-{slug}.md` with `State: skipped`
+- persist `plans/reports/drafts/wireframe-state-{date}-{slug}.md` with `State: skipped`
 - stop without changing upstream artifacts
 
 If the scope has no UI-backed screens:
@@ -942,8 +929,8 @@ designs/{slug}/exports/{artifact-name}/SCR-xx-name.png
 
 After successful export:
 
-- persist `plans/reports/wireframe-map-{date}-{slug}.md` with the final artifact, frame, and export mapping
-- persist `plans/reports/wireframe-state-{date}-{slug}.md` with `State: completed`
+- persist `plans/reports/drafts/wireframe-map-{date}-{slug}.md` with the final artifact, frame, and export mapping
+- persist `plans/reports/drafts/wireframe-state-{date}-{slug}.md` with `State: completed`
 - list the input-pack, mapping, artifact, and export paths in the marker
 
 ## Subcommand: package
@@ -954,9 +941,9 @@ Run Step 12 only.
 
 - Resolve the slug and dated set using the shared rules.
 - Require at least one emitted downstream artifact for the selected mode.
-- If the engagement emitted an SRS, require `plans/reports/srs-{date}-{slug}.md`.
+- If the engagement emitted an SRS, require `plans/reports/final/srs-{date}-{slug}.md`.
 - If the merged SRS is required but missing, print the exact path, tell the user to run `/ba-start srs --slug {slug}`, and stop.
-- Read `plans/reports/wireframe-state-{date}-{slug}.md` when present.
+- Read `plans/reports/drafts/wireframe-state-{date}-{slug}.md` when present.
 - If the wireframe state is `missing`, print the marker path, tell the user to run `/ba-start wireframes --slug {slug}`, and stop.
 - If the wireframe state is `completed`, `skipped`, or `not-applicable`, continue.
 
@@ -969,8 +956,8 @@ Run Step 12 only.
 
 Run a final packaging and quality pass:
 
-- Keep the default `package` scope narrow: validate the existing artifact set, then regenerate only `plans/reports/srs-{date}-{slug}.html`.
-- Do not treat `package` as a full rebuild of intake, backbone, FRD, user-stories, and SRS HTML in one delegated pass unless the user explicitly asks for a full HTML repack.
+- Keep the default `package` scope narrow: validate the existing artifact set, then regenerate `plans/reports/final/frd-{date}-{slug}.html` when FRD exists and `plans/reports/final/srs-{date}-{slug}.html` when SRS exists.
+- Do not treat `package` as a full rebuild of intake, backbone, user-stories, and SRS drafts. Only FRD and SRS are standard HTML outputs unless the user explicitly asks for an ad hoc conversion.
 - Verify all deliverables follow their templates.
 - Check cross-references between the backbone and every emitted downstream artifact.
 - When FRD and SRS exist, check their cross-references against stories.
@@ -984,7 +971,7 @@ Run a final packaging and quality pass:
   - User story acceptance criteria are covered by UC postconditions and screen Validation Rules.
   - FRD features are fully covered by user stories and SRS requirements.
 - Validate naming conventions and file structure.
-- Verify the target SRS HTML, plus any already-existing intake/FRD/user-stories HTML artifacts, use the shared BA-kit HTML shell and document metadata header.
+- Verify the target FRD and SRS HTML artifacts use the shared BA-kit HTML shell and document metadata header.
 - Flag broken links or missing sections.
 - Produce a delivery summary.
 
@@ -995,10 +982,14 @@ When the engagement includes a merged SRS, convert it to HTML with wireframe ima
 Convert the merged SRS markdown to HTML with wireframe images embedded inline:
 
 ```bash
-python scripts/md-to-html.py plans/reports/srs-{date}-{slug}.md
+python scripts/md-to-html.py plans/reports/final/frd-{date}-{slug}.md
+python scripts/md-to-html.py plans/reports/final/srs-{date}-{slug}.md
 ```
 
-Output: `plans/reports/srs-{date}-{slug}.html`
+Output:
+
+- `plans/reports/final/frd-{date}-{slug}.html` when FRD exists
+- `plans/reports/final/srs-{date}-{slug}.html` when SRS exists
 
 When the engagement does not include an SRS, package only the artifacts that were actually emitted and requested for stakeholder handoff.
 
@@ -1014,18 +1005,24 @@ The final HTML should present:
 ```text
 plans/
   reports/
-    intake-{slug}-{date}.md
-    intake-{slug}-{date}.html
-    backbone-{date}-{slug}.md
-    frd-{date}-{slug}.md
-    frd-{date}-{slug}.html
-    user-stories-{date}-{slug}.md
-    user-stories-{date}-{slug}.html
-    srs-{date}-{slug}.md
-    srs-{date}-{slug}.html
-    wireframe-input-{date}-{slug}.md
-    wireframe-map-{date}-{slug}.md
-    wireframe-state-{date}-{slug}.md
+    final/
+      intake-{slug}-{date}.md
+      backbone-{date}-{slug}.md
+      frd-{date}-{slug}.md
+      frd-{date}-{slug}.html
+      user-stories-{date}-{slug}.md
+      srs-{date}-{slug}.md
+      srs-{date}-{slug}.html
+    drafts/
+      srs-{date}-{slug}-group-a.md
+      srs-{date}-{slug}-group-b.md
+      srs-{date}-{slug}-group-c.md
+      srs-{date}-{slug}-group-d.md
+      srs-{date}-{slug}-group-e.md
+      srs-{date}-{slug}-group-f.md
+      wireframe-input-{date}-{slug}.md
+      wireframe-map-{date}-{slug}.md
+      wireframe-state-{date}-{slug}.md
   {date}-{slug}/
     plan.md
     delegation/
@@ -1043,7 +1040,7 @@ designs/
         SCR-05-review-order.png
 ```
 
-The HTML files are the primary stakeholder deliverables. The Markdown files remain the editable BA sources.
+The HTML files are produced only for FRD and SRS. All other BA artifacts remain markdown sources. Draft SRS slices and wireframe runtime files stay under `plans/reports/drafts/`, separate from final deliverables.
 
 ## Subcommand: status
 
@@ -1062,17 +1059,15 @@ Print a checklist like this:
 Project: {slug}
 Date set: {date}
 
-- [x] intake-{slug}-{date}.md — 2026-03-26
-- [x] intake-{slug}-{date}.html — 2026-03-26
+- [x] final/intake-{slug}-{date}.md — 2026-03-26
 - [x] plans/{date}-{slug}/plan.md — 2026-03-26
-- [x] backbone-{date}-{slug}.md — 2026-03-26
-- [x] frd-{date}-{slug}.md — 2026-03-26
-- [x] frd-{date}-{slug}.html — 2026-03-26
-- [ ] user-stories-{date}-{slug}.md — missing
-- [ ] user-stories-{date}-{slug}.html — missing
-- [ ] srs-{date}-{slug}.md — missing
-- [ ] wireframe-input-{date}-{slug}.md — missing
-- [ ] wireframe-map-{date}-{slug}.md — missing
+- [x] final/backbone-{date}-{slug}.md — 2026-03-26
+- [x] final/frd-{date}-{slug}.md — 2026-03-26
+- [x] final/frd-{date}-{slug}.html — 2026-03-26
+- [ ] final/user-stories-{date}-{slug}.md — missing
+- [ ] final/srs-{date}-{slug}.md — missing
+- [ ] drafts/wireframe-input-{date}-{slug}.md — missing
+- [ ] drafts/wireframe-map-{date}-{slug}.md — missing
 - [!] wireframes — skipped — 2026-03-26
 
 Delegated slices:
@@ -1094,12 +1089,11 @@ Status rules:
 ## Deliverables
 
 - Normalized intake form
-- Intake HTML in the shared BA-kit document shell
 - Gap analysis summary
 - Scoped BA work plan
 - Requirements backbone
 - FRD in Markdown and HTML
-- User stories in Markdown and HTML
+- User stories in Markdown
 - SRS working fragments for grouped production
 - Wireframe input pack for resumable Step 9 generation
 - Unified SRS with use cases, wireframe-backed screen descriptions, NFRs, and test cases

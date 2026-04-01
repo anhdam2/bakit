@@ -15,12 +15,12 @@ Prefer structured, decision-ready deliverables over generic prose.
 
 - For non-trivial BA work, read `skills/ba-start/SKILL.md` before drafting the artifact. Do not rely only on the user prompt summary.
 - Write BA deliverables in Vietnamese by default. Use English only when the user explicitly asks for it or when technical identifiers must remain in English.
-- Treat the artifact-set `{date}` token as `YYMMDD-HHmm` consistently across `plans/reports/*` artifacts and `plans/{date}-{slug}/plan.md`.
+- Treat the artifact-set `{date}` token as `YYMMDD-HHmm` consistently across `plans/reports/final/*`, `plans/reports/drafts/*`, and `plans/{date}-{slug}/plan.md`.
 - Use exact artifact matching and exact slug/date resolution. Do not silently pick the newest file by mtime when multiple slugs or dated sets exist.
 - Optimize for Solo IT BA by default: build the requirements backbone first, then emit only the downstream artifacts justified by the selected mode. Default mode is `hybrid`.
 - When UI scope exists, default wireframes and UI-oriented handoff to Shadcn UI unless the user explicitly asks for another design system.
-- For `srs`, begin from the resolved backbone and user-stories prerequisites, and pull the FRD only when it exists or is explicitly required. Do not reread the whole `plans/reports/` suite once slug/date is resolved.
-- For `frd` and `stories`, begin from the resolved backbone prerequisite only. Do not reread the whole `plans/reports/` suite once slug/date is resolved.
+- For `srs`, begin from the resolved backbone and user-stories prerequisites, and pull the FRD only when it exists or is explicitly required. Do not reread the whole `plans/reports/final/` and `plans/reports/drafts/` suite once slug/date is resolved.
+- For `frd` and `stories`, begin from the resolved backbone prerequisite only. Do not reread the whole `plans/reports/final/` suite once slug/date is resolved.
 - Treat legacy report suites like `002-intake-form.md` as out-of-contract until they are migrated or rerun explicitly.
 - If context truncation happens mid-run, recover from the resolved command, slug/date, and exact prerequisite artifacts instead of asking the user to restate the task.
 - After the user explicitly approves a mutating rerun step, keep that step locked for the current run and do not fall back to generic "what do you want me to do?" prompts.

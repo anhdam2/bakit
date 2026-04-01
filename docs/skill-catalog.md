@@ -8,7 +8,7 @@ This catalog explains the BA-kit workflow skill plus the maintenance skills that
 
 | Skill | When to Use | Related Templates | Related Agents | Typical Output |
 | --- | --- | --- | --- | --- |
-| `ba-start` | Full BA engagement or resumable step-level reruns from raw input to packaged deliverables | `intake-form-template.md`, `requirements-backbone-template.md`, `frd-template.md`, `user-story-template.md`, `srs-template.md`, `wireframe-input-template.md`, `wireframe-map-template.md` | `requirements-engineer`, `ui-ux-designer`, `ba-documentation-manager`, `ba-researcher` | Intake form + HTML, requirements backbone, gated FRD/stories/SRS artifacts, wireframe input pack, wireframes, wireframe map, packaged HTML, quality review, artifact status |
+| `ba-start` | Full BA engagement or resumable step-level reruns from raw input to packaged deliverables | `intake-form-template.md`, `requirements-backbone-template.md`, `frd-template.md`, `user-story-template.md`, `srs-template.md`, `wireframe-input-template.md`, `wireframe-map-template.md` | `requirements-engineer`, `ui-ux-designer`, `ba-documentation-manager`, `ba-researcher` | Intake form, requirements backbone, gated FRD/stories/SRS artifacts, wireframe input pack, wireframes, wireframe map, FRD/SRS HTML, quality review, artifact status |
 | `ba-kit-update` | Update the installed BA-kit runtime assets from the registered source repo | None | None | One-command fast-forward update and reinstall |
 | `ba-notion` | Publish an exact BA markdown artifact into Notion via MCP | None | None | Notion page created or updated from BA source content |
 
@@ -46,10 +46,10 @@ This catalog explains the BA-kit workflow skill plus the maintenance skills that
 
 | Command | Purpose | Prerequisite |
 | --- | --- | --- |
-| `intake` | Parse input, normalize intake, package intake HTML, and save the work plan | Raw file or pasted text |
+| `intake` | Parse input, normalize intake, and save the work plan | Raw file or pasted text |
 | `backbone` | Build the persisted source-of-truth artifact after scope lock | Matching intake artifact |
 | `frd` | Produce the FRD and FRD HTML only when the gate is open | Matching backbone artifact |
-| `stories` | Produce user stories and user-stories HTML only | Matching backbone artifact |
+| `stories` | Produce user stories only | Matching backbone artifact |
 | `srs` | Produce grouped SRS artifacts, wireframe input pack, gated wireframes, wireframe map, and merged SRS | Matching backbone and user stories |
 | `wireframes` | Re-run Step 9 from the persisted wireframe input pack or exact fallback sources | Wireframe input pack, or exact Group B + Group C / merged SRS fallback |
 | `package` | Run quality review, validate existing packaged HTML artifacts, and regenerate only the needed packaged outputs | Emitted artifact set and non-missing wireframe state |
@@ -58,7 +58,7 @@ This catalog explains the BA-kit workflow skill plus the maintenance skills that
 Subcommand targeting rules:
 
 - Use `--slug <slug>` first when rerunning an existing project.
-- If exactly one slug exists in `plans/reports/`, BA-kit may use it automatically.
+- If exactly one slug exists across `plans/reports/final/` and `plans/reports/drafts/`, BA-kit may use it automatically.
 - If multiple slugs exist, BA-kit should stop and ask the user to choose.
 - If one slug has multiple dated artifact sets, BA-kit should stop and ask which dated set to use.
 

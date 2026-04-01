@@ -13,7 +13,7 @@ Use this maintenance skill when the user wants to publish BA output into Notion 
 ```text
 /ba-notion srs --slug warehouse-rfp --page https://www.notion.so/... --mode overwrite
 /ba-notion frd --slug warehouse-rfp --parent https://www.notion.so/... --mode create
-/ba-notion plans/reports/backbone-260331-1015-warehouse-rfp.md --page https://www.notion.so/... --mode append
+/ba-notion plans/reports/final/backbone-260331-1015-warehouse-rfp.md --page https://www.notion.so/... --mode append
 /ba-notion srs --slug warehouse-rfp --mode fill-gaps
 ```
 
@@ -42,12 +42,12 @@ When the source is an artifact alias instead of a direct file path:
 
 Use these exact patterns:
 
-- `plans/reports/intake-{slug}-{date}.md`
-- `plans/reports/backbone-{date}-{slug}.md`
-- `plans/reports/frd-{date}-{slug}.md`
-- `plans/reports/user-stories-{date}-{slug}.md`
-- `plans/reports/srs-{date}-{slug}.md`
-- `plans/reports/wireframe-map-{date}-{slug}.md`
+- `plans/reports/final/intake-{slug}-{date}.md`
+- `plans/reports/final/backbone-{date}-{slug}.md`
+- `plans/reports/final/frd-{date}-{slug}.md`
+- `plans/reports/final/user-stories-{date}-{slug}.md`
+- `plans/reports/final/srs-{date}-{slug}.md`
+- `plans/reports/drafts/wireframe-map-{date}-{slug}.md`
 
 ## Publish Modes
 

@@ -70,8 +70,8 @@ Or ask Codex to run:
 13. When delegating, pass only narrow artifact slices and exact excerpts, not full upstream documents.
 14. If a delegated worker reports missing context or `NEEDS_REPARTITION`, split the scope and rerun only that slice.
 15. For non-trivial delegation, use the packet structure from `templates/sub-agent-handoff-template.md` or the equivalent snippet embedded in `ba-start`.
-16. For `srs`, resolve the exact backbone and user-stories artifacts first and pull the FRD only when it exists or is required instead of scanning every report in `plans/reports/`.
-17. For `frd` and `stories`, resolve the exact backbone prerequisite first and begin authoring from that file instead of scanning every report in `plans/reports/`.
+16. For `srs`, resolve the exact backbone and user-stories artifacts first and pull the FRD only when it exists or is required instead of scanning every report in `plans/reports/final/` and `plans/reports/drafts/`.
+17. For `frd` and `stories`, resolve the exact backbone prerequisite first and begin authoring from that file instead of scanning every report in `plans/reports/final/`.
 18. If only legacy report names like `002-intake-form.md` exist, stop and migrate or rerun them explicitly; do not infer the current slug/date from legacy filenames.
 19. If context truncation happens after the target workflow was already confirmed, recover from the resolved command and exact artifacts on disk instead of asking the user to restate the original task.
 20. Once the user explicitly approves a mutating rerun step, keep that step locked for the current run and do not fall back to generic "what do you want me to do with this document?" prompts.
@@ -86,7 +86,7 @@ Or ask Codex to run:
 Use AGENTS.md and skills/ba-start/SKILL.md.
 Parse the requirements in docs/raw/warehouse-rfp.pdf.
 Default to `hybrid` mode for a solo IT BA.
-Build the requirements backbone first, then emit FRD, user stories, use case specifications, Screen Contract Lite, wireframes, final screen descriptions, and the BA-kit HTML deliverable set only when each artifact is justified.
+Build the requirements backbone first, then emit FRD, user stories, use case specifications, Screen Contract Lite, wireframes, final screen descriptions, and FRD/SRS HTML only when each artifact is justified.
 ```
 
 ### Step-Level Rerun
@@ -106,7 +106,7 @@ Use AGENTS.md and skills/ba-start/SKILL.md.
 Run the equivalent of `/ba-start package --slug warehouse-rfp`.
 If the wireframe state is `missing`, stop and tell me to rerun `wireframes`.
 If the wireframe state is `completed`, `skipped`, or `not-applicable`, continue to HTML packaging.
-Keep the package scope narrow: regenerate only the final SRS HTML unless I explicitly ask for a full HTML repack.
+Keep the package scope narrow: regenerate final FRD and SRS HTML when those markdown artifacts exist, unless I explicitly ask for a broader HTML repack.
 ```
 
 ### Status Check
@@ -135,7 +135,7 @@ Do not silently choose a slug or dated set by mtime.
 Use the installed ba-start skill from ~/.codex/skills/ba-start/SKILL.md.
 Use the registered Codex BA agents from ~/.codex/agents when the skill delegates work.
 Parse the requirements in docs/raw/warehouse-rfp.pdf.
-Produce an intake form, requirements backbone, gated FRD/stories/SRS artifacts, wireframes when justified, final screen descriptions, and the BA-kit HTML deliverable set required by the selected mode.
+Produce an intake form, requirements backbone, gated FRD/stories/SRS artifacts, wireframes when justified, final screen descriptions, and the FRD/SRS HTML deliverables required by the selected mode.
 ```
 
 ### Formal Requirements Only
@@ -174,7 +174,7 @@ Use Pencil only for wireframes in SRS-backed work:
 
 ## HTML Deliverable
 
-The generated HTML set uses one shared BA-kit document shell. Open the packaged artifacts in a browser to update text, replace images, and add or remove blocks without editing the source HTML manually. SRS HTML remains the primary stakeholder handoff, while intake, FRD, and user-stories HTML provide aligned review copies. The `package` step should stay narrow by default: validate any existing packaged HTML artifacts, but regenerate only the final SRS HTML unless the user explicitly asks for a full HTML repack.
+The generated HTML set uses one shared BA-kit document shell. Open the packaged artifacts in a browser to update text, replace images, and add or remove blocks without editing the source HTML manually. SRS HTML remains the primary stakeholder handoff, while FRD HTML provides the aligned functional review copy. The `package` step should stay narrow by default: validate any existing packaged HTML artifacts, then regenerate FRD and SRS HTML only when those markdown artifacts exist.
 
 Wireframe images are constrained to a fit-to-document viewport by default so large screen exports remain readable inside the document, and clicking or double-clicking a wireframe opens a larger preview. Mermaid diagrams are bootstrapped explicitly after `DOMContentLoaded` so browser-opened stakeholder copies render them more reliably.
 

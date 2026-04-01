@@ -40,7 +40,7 @@ The intended working style is:
 | --- | --- | --- |
 | Discovery / backlog shaping | `lite` | intake, backbone, user stories |
 | Solo IT BA on product or internal system | `hybrid` | backbone, stories, targeted FRD/SRS, critical wireframes |
-| Vendor handoff / regulated change / formal approval | `formal` | full FRD, full SRS, wireframes, packaged HTML |
+| Vendor handoff / regulated change / formal approval | `formal` | full FRD, full SRS, wireframes, FRD/SRS HTML |
 
 ### Core Commands For A BA
 
@@ -63,7 +63,7 @@ The intended working style is:
 - FRD and user stories when needed
 - selective or full SRS depending on mode
 - Pencil wireframes for critical or approved screens
-- packaged HTML deliverables for stakeholder review
+- FRD/SRS HTML deliverables for stakeholder review
 
 ## Dependencies
 
@@ -155,11 +155,11 @@ See [docs/codex-setup.md](./docs/codex-setup.md) for prompt patterns and setup g
 
 Core defaults across Claude Code and Codex:
 - BA deliverables are written in Vietnamese by default unless the user explicitly requests English.
-- The dated artifact-set token uses `YYMMDD-HHmm` consistently across `plans/reports/*` and `plans/{date}-{slug}/plan.md`.
+- The dated artifact-set token uses `YYMMDD-HHmm` consistently across `plans/reports/final/*`, `plans/reports/drafts/*`, and `plans/{date}-{slug}/plan.md`.
 - The default engagement mode is `hybrid`: build the backbone first, then emit only the downstream artifacts the engagement actually needs.
 - When UI scope exists, wireframes default to Shadcn UI unless the user explicitly overrides it.
 
-`plans/` is a local BA workspace, not shipped example content. Keep generated `plans/reports/*` artifacts and `plans/{date}-{slug}/plan.md` local to your engagement and out of version control.
+`plans/` is a local BA workspace, not shipped example content. Keep generated `plans/reports/final/*`, `plans/reports/drafts/*`, and `plans/{date}-{slug}/plan.md` local to your engagement and out of version control.
 
 ## Workflow And Commands
 
@@ -195,7 +195,7 @@ Default `/ba-start` still runs the full lifecycle:
 
 For rerun commands, resolution order is:
 1. Explicit `--slug <slug>`
-2. A single detected project in `plans/reports/`
+2. A single detected project across `plans/reports/final/` and `plans/reports/drafts/`
 3. Otherwise stop and ask the user to choose
 
 If one slug has multiple dated artifact sets, `/ba-start` should stop and ask which dated set to use instead of silently taking the latest one.
@@ -232,7 +232,7 @@ Wireframe artifacts for SRS screen sections live under `./designs/` as Pencil `.
 
 For UI-backed work, BA-kit now defaults to the Shadcn UI design system for wireframes and UI-oriented handoff unless you explicitly request another system.
 
-BA-kit packages intake, FRD, user stories, and SRS into one shared HTML shell with consistent metadata, visual chrome, and in-browser editing controls. The SRS HTML remains the primary stakeholder handoff, while the other HTML artifacts provide aligned review copies for the same engagement.
+BA-kit packages FRD and SRS into one shared HTML shell with consistent metadata, visual chrome, and in-browser editing controls. SRS HTML remains the primary stakeholder handoff, and FRD HTML provides the aligned functional review copy for the same engagement.
 
 Wireframe images in packaged HTML now default to a fit-to-document viewport instead of rendering at full page width, and clicking or double-clicking an image opens a larger preview so tall screens remain readable. Mermaid diagrams are bootstrapped explicitly after `DOMContentLoaded` so packaged documents render diagrams more reliably in browser review copies.
 

@@ -94,14 +94,14 @@ When prompted, provide the file path or paste your requirements text. The skill 
 2. Identify gaps (missing stakeholders, unclear scope, no success criteria)
 3. Ask 3-8 clarifying questions
 4. Generate a scoped work plan
-5. Produce a requirements backbone, then emit FRD, user stories, use cases, Screen Contract Lite, wireframes, final screen descriptions, and browser-editable HTML output only when their gates are open
+5. Produce a requirements backbone, then emit FRD, user stories, use cases, Screen Contract Lite, wireframes, final screen descriptions, and FRD/SRS HTML output only when their gates are open
 
 For rerun commands:
 - pass `--slug <slug>` when more than one project exists
 - if one slug has multiple dated artifact sets, BA-kit should stop and ask which set to use
 - use `/ba-start status --slug <slug>` to inspect completion before rerunning a downstream step
-- for `srs`, start from the exact resolved backbone and user-stories artifacts, and pull the FRD only when it exists or is required, instead of rereading the whole `plans/reports/` directory
-- for `frd` and `stories`, start from the exact resolved backbone artifact instead of rereading the whole `plans/reports/` directory
+- for `srs`, start from the exact resolved backbone and user-stories artifacts, and pull the FRD only when it exists or is required, instead of rereading the whole `plans/reports/final/` and `plans/reports/drafts/` directories
+- for `frd` and `stories`, start from the exact resolved backbone artifact instead of rereading the whole `plans/reports/final/` directory
 - if you only have old reports named like `002-intake-form.md`, treat them as a legacy suite and rerun or migrate them before expecting the current `/ba-start` contract to resume from them
 - for non-trivial delegated work, expect BA-kit to create trackers under `plans/{date}-{slug}/delegation/`
 - treat a delegation tracker with no heartbeat for more than 10 minutes as likely stalled and inspect or rerun that slice instead of waiting blindly
@@ -134,7 +134,7 @@ If the Codex conversion is installed, you can point Codex directly at the bundle
 ```text
 Use ~/.codex/skills/ba-start/SKILL.md and the registered BA agents under ~/.codex/agents.
 Parse the requirements in docs/raw/warehouse-rfp.pdf.
-Produce an intake form, a requirements backbone, gated FRD/stories/SRS artifacts, wireframes when justified, final screen descriptions, and a browser-editable HTML output.
+Produce an intake form, a requirements backbone, gated FRD/stories/SRS artifacts, wireframes when justified, final screen descriptions, and browser-editable FRD/SRS HTML when those artifacts are emitted.
 ```
 
 For partial reruns in Codex, be explicit about the target slug and dated set when ambiguity exists. Example:
@@ -212,24 +212,22 @@ A full `/ba-start` engagement produces:
 
 | Deliverable | Template | Location |
 | --- | --- | --- |
-| Intake form | `intake-form-template.md` | `plans/reports/intake-{slug}-{date}.md` |
-| Intake HTML | `scripts/md-to-html.py` | `plans/reports/intake-{slug}-{date}.html` in the shared BA-kit document shell |
-| Requirements backbone | `requirements-backbone-template.md` | `plans/reports/backbone-{date}-{slug}.md` |
-| FRD | `frd-template.md` | `plans/reports/frd-{date}-{slug}.md` |
-| FRD HTML | `scripts/md-to-html.py` | `plans/reports/frd-{date}-{slug}.html` with rendered Mermaid diagrams |
-| SRS | `srs-template.md` | `plans/reports/srs-{date}-{slug}.md` |
-| User stories | `user-story-template.md` | `plans/reports/user-stories-{date}-{slug}.md` |
-| User stories HTML | `scripts/md-to-html.py` | `plans/reports/user-stories-{date}-{slug}.html` in the shared BA-kit document shell |
-| Wireframe input pack | `wireframe-input-template.md` | `plans/reports/wireframe-input-{date}-{slug}.md` |
+| Intake form | `intake-form-template.md` | `plans/reports/final/intake-{slug}-{date}.md` |
+| Requirements backbone | `requirements-backbone-template.md` | `plans/reports/final/backbone-{date}-{slug}.md` |
+| FRD | `frd-template.md` | `plans/reports/final/frd-{date}-{slug}.md` |
+| FRD HTML | `scripts/md-to-html.py` | `plans/reports/final/frd-{date}-{slug}.html` with rendered Mermaid diagrams |
+| SRS | `srs-template.md` | `plans/reports/final/srs-{date}-{slug}.md` |
+| User stories | `user-story-template.md` | `plans/reports/final/user-stories-{date}-{slug}.md` |
+| Wireframe input pack | `wireframe-input-template.md` | `plans/reports/drafts/wireframe-input-{date}-{slug}.md` |
 | Wireframes | Pencil MCP | `designs/{slug}/{artifact-name}.pen` plus `designs/{slug}/exports/{artifact-name}/SCR-xx-{name}.png` |
-| Wireframe map | `wireframe-map-template.md` | `plans/reports/wireframe-map-{date}-{slug}.md` |
-| Wireframe state | BA-kit routing metadata | `plans/reports/wireframe-state-{date}-{slug}.md` |
-| SRS HTML | `scripts/md-to-html.py` | `plans/reports/srs-{date}-{slug}.html` as the primary browser-editable stakeholder copy |
+| Wireframe map | `wireframe-map-template.md` | `plans/reports/drafts/wireframe-map-{date}-{slug}.md` |
+| Wireframe state | BA-kit routing metadata | `plans/reports/drafts/wireframe-state-{date}-{slug}.md` |
+| SRS HTML | `scripts/md-to-html.py` | `plans/reports/final/srs-{date}-{slug}.html` as the primary browser-editable stakeholder copy |
 
 If you need a clean read-only stakeholder handoff, generate HTML with:
 
 ```bash
-python scripts/md-to-html.py --no-editor plans/reports/srs-{date}-{slug}.md
+python scripts/md-to-html.py --no-editor plans/reports/final/srs-{date}-{slug}.md
 ```
 
 Packaged HTML keeps Mermaid diagrams visualized in-browser and constrains embedded wireframe images to a fit-to-document viewport by default. Click or double-click a wireframe image to open a larger preview when you need detail review.

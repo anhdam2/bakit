@@ -48,11 +48,50 @@ Hybrid mode fits most teams:
 - switch to user stories for delivery execution
 - keep a traceability bridge between formal requirements and backlog items
 
+## Input Source Hierarchy
+
+BA-kit treats input sources by decision authority, not by document detail.
+
+| Input Type | Typical Examples | Primary Use In BA-kit | Decision Authority |
+| --- | --- | --- | --- |
+| Primary requirement sources | business brief, BRD/PRD, workshop notes, stakeholder decisions, process maps, policy documents, user flows | define scope, business goals, actors, business rules, success metrics | highest |
+| Supporting technical sources | API docs, OpenAPI/Swagger, sample payloads, database schemas, event/webhook contracts | validate feasibility, clarify integration behavior, surface constraints and error cases | secondary |
+
+Rule of thumb:
+- primary requirement sources decide what problem is being solved
+- supporting technical sources clarify how the solution can integrate or what constraints already exist
+- BA-kit should not let an API doc silently become the scope source when business requirement artifacts exist
+
+## Using API Docs Alongside Requirements
+
+When an API doc is present, BA-kit should treat it as a supporting artifact that sharpens handoff quality without replacing discovery.
+
+| BA-kit Artifact | Primary Inputs | How API Docs Contribute | What API Docs Must Not Do |
+| --- | --- | --- | --- |
+| Intake | requirement doc, stakeholder notes, process context | expose missing actors, missing field definitions, unclear dependencies, and technical risks | define project scope by themselves |
+| Requirements backbone | intake + clarified scope | confirm existing capabilities, integration boundaries, candidate FR/NFR constraints, and delivery risks | override business goals, priorities, or in/out-of-scope decisions |
+| FRD | backbone | enrich workflows, data requirements, business-rule constraints, integration points, error handling, and performance expectations | turn the FRD into an endpoint inventory with no business flow |
+| User stories | backbone | sharpen acceptance criteria around validation, responses, and failure handling | replace user outcomes with API tasks |
+| SRS | backbone + user stories, plus FRD when required | specify request/response behavior, field rules, system responses, NFRs, and API-linked screen behavior | become the sole source of truth for user interaction or scope |
+
+Expected product behavior when requirements and API docs coexist:
+- build the backbone from business context first
+- use the API doc to validate feasibility and integration details
+- flag mismatches explicitly when requirement intent and API contract disagree
+- keep assumptions and open questions visible when the API contract leaves business behavior ambiguous
+
 ## Common Scenarios
 
 ### Greenfield Product
 
 Start with `/ba-start` and a raw requirements document. The skill produces intake, FRD, user stories with AC, SRS with screen descriptions, and wireframes.
+
+### Business Requirements Plus API Documentation
+
+Start with `/ba-start` using the requirement source as the primary input and include the API doc as supporting context. BA-kit should:
+- derive scope, goals, and actors from the requirement source
+- use the API doc to tighten integration points, field mapping, error handling, and NFR assumptions
+- keep unresolved gaps visible instead of pretending the API doc fully answers business behavior
 
 ### ERP Process Improvement
 

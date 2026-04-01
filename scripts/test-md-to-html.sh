@@ -19,19 +19,6 @@ png = (
 pathlib.Path(sys.argv[1]).write_bytes(base64.b64decode(png))
 PY
 
-cat >"$TMP_DIR/intake-demo-portal-260330-1010.md" <<'EOF'
-# Phiếu tiếp nhận yêu cầu (Intake Form)
-
-## Thông tin dự án (Project Information)
-
-| Trường (Field) | Giá trị (Value) |
-| --- | --- |
-| Tên dự án (Project name) | Demo Portal |
-| Ngày (Date) | 2026-03-30 |
-| Người yêu cầu (Requester) | Operations Lead |
-| Tài liệu gốc (Source file) | docs/raw/demo-portal.md |
-EOF
-
 cat >"$TMP_DIR/frd-260330-1010-demo-portal.md" <<'EOF'
 # Tài liệu yêu cầu chức năng (Functional Requirements Document)
 
@@ -48,18 +35,6 @@ flowchart TD
   B -- Yes --> C[Continue]
   B -- No --> D[Show error]
 ```
-EOF
-
-cat >"$TMP_DIR/user-stories-260330-1010-demo-portal.md" <<'EOF'
-# Mẫu User Story (User Story Template)
-
-**Epic:** Partner Operations
-**Tính năng (Feature):** Bulk approvals
-**Mã Story (Story ID):** US-014
-**Chủ sở hữu (Owner):** Product Owner
-
-## Câu chuyện (Story)
-Với tư cách là quản lý vận hành, tôi muốn duyệt hàng loạt để giảm thao tác lặp lại.
 EOF
 
 cat >"$TMP_DIR/srs-260330-1010-demo-portal.md" <<'EOF'
@@ -102,22 +77,16 @@ echo "package"
 ```
 EOF
 
-python3 "$ROOT_DIR/scripts/md-to-html.py" --base-dir "$TMP_DIR" --no-editor "$TMP_DIR/intake-demo-portal-260330-1010.md"
 python3 "$ROOT_DIR/scripts/md-to-html.py" --base-dir "$TMP_DIR" --no-editor "$TMP_DIR/frd-260330-1010-demo-portal.md"
-python3 "$ROOT_DIR/scripts/md-to-html.py" --base-dir "$TMP_DIR" --no-editor "$TMP_DIR/user-stories-260330-1010-demo-portal.md"
 python3 "$ROOT_DIR/scripts/md-to-html.py" --base-dir "$TMP_DIR" --no-editor "$TMP_DIR/srs-260330-1010-demo-portal.md"
 
-INTAKE_HTML="$TMP_DIR/intake-demo-portal-260330-1010.html"
 FRD_HTML="$TMP_DIR/frd-260330-1010-demo-portal.html"
-STORIES_HTML="$TMP_DIR/user-stories-260330-1010-demo-portal.html"
 SRS_HTML="$TMP_DIR/srs-260330-1010-demo-portal.html"
 
-test -f "$INTAKE_HTML"
 test -f "$FRD_HTML"
-test -f "$STORIES_HTML"
 test -f "$SRS_HTML"
 
-python3 - "$INTAKE_HTML" "$FRD_HTML" "$STORIES_HTML" "$SRS_HTML" <<'PY'
+python3 - "$FRD_HTML" "$SRS_HTML" <<'PY'
 from html.parser import HTMLParser
 from pathlib import Path
 import sys
@@ -173,15 +142,11 @@ class Probe(HTMLParser):
                 break
 
 
-intake_html = Path(sys.argv[1]).read_text(encoding="utf-8")
-frd_html = Path(sys.argv[2]).read_text(encoding="utf-8")
-stories_html = Path(sys.argv[3]).read_text(encoding="utf-8")
-srs_html = Path(sys.argv[4]).read_text(encoding="utf-8")
+frd_html = Path(sys.argv[1]).read_text(encoding="utf-8")
+srs_html = Path(sys.argv[2]).read_text(encoding="utf-8")
 
 for html, doc_type in (
-    (intake_html, "intake"),
     (frd_html, "frd"),
-    (stories_html, "stories"),
     (srs_html, "srs"),
 ):
     probe = Probe()
@@ -194,9 +159,7 @@ for html, doc_type in (
     assert "Source Markdown" in html, f"Missing source metadata row for {doc_type}"
     assert "Generated" in html, f"Missing generated metadata row for {doc_type}"
 
-assert "Requester" in intake_html, "Missing intake requester metadata"
 assert "Demo Portal" in frd_html, "Missing FRD project metadata"
-assert "US-014" in stories_html, "Missing user story metadata"
 
 probe = Probe()
 probe.feed(srs_html)
@@ -219,4 +182,4 @@ PY
 
 grep -q '<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>' "$SRS_HTML"
 
-echo "Smoke test passed: $INTAKE_HTML $FRD_HTML $STORIES_HTML $SRS_HTML"
+echo "Smoke test passed: $FRD_HTML $SRS_HTML"

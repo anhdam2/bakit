@@ -30,6 +30,15 @@ Related rules:
 - Modal, dialog, drawer, and overlay screens with distinct interaction logic must be modeled as primary screens with their own detailed screen sections.
 - Supporting wireframe frames must reflect the parent screen's defined states and feedback rules, including empty, error, and message variants when applicable.
 - Field names must be identical across UC steps, screen field tables, and wireframe labels.
+- Screen field descriptions must separate `Display Rules`, `Behaviour Rules`, and `Validation Rules`.
+- `Display Rules` should capture how the field appears, including label, placeholder, visibility, defaults, formatting, and read-only state when relevant.
+- `Behaviour Rules` should capture what happens when the user interacts with the field, including navigation targets, modal openings, and dependent-field behavior.
+- `Validation Rules` should capture validation logic, error surface (`inline`, `toast`, `banner`, etc.), and the exact message text or `Message Code`.
+- Reusable cross-screen rules should be centralized in a `Common Rules` section and referenced by `Rule Code` from screen descriptions instead of being duplicated verbatim.
+- Reusable UI and validation messages should be centralized in a `Message List` section and referenced by `Message Code` from screen descriptions instead of being duplicated verbatim.
+- `Rule Code` should use the format `CR-{TYPE}-{NN}` where `TYPE` is one of `DIS`, `BEH`, `VAL`, or `MIX`.
+- `Message Code` should use the format `MSG-{TYPE}-{NN}` where `TYPE` is one of `ERR`, `WRN`, `SUC`, or `INF`.
+- `NN` should be a 2-digit sequence that remains unique within the SRS and stable when the same shared rule or message is reused.
 - Each SRS screen must reference the correct Pencil artifact and the exact frame representing that screen.
 - Inventory-only supporting frames must still be listed in the SRS screen inventory and kept aligned with their Pencil frame names.
 - User story acceptance criteria must be covered by UC postconditions and screen Validation Rules.

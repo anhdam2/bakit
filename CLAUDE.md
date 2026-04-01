@@ -48,12 +48,12 @@ For rerun commands, resolve the project by explicit `--slug` first. If multiple 
 
 - For non-trivial BA work, start from `skills/ba-start/SKILL.md` instead of improvising the workflow from the prompt alone.
 - Write BA deliverables in Vietnamese by default unless the user explicitly requests English.
-- Treat the artifact-set `{date}` token as `YYMMDD-HHmm` consistently across `plans/reports/*` artifacts and `plans/{date}-{slug}/plan.md`.
+- Treat the artifact-set `{date}` token as `YYMMDD-HHmm` consistently across `plans/reports/final/*`, `plans/reports/drafts/*`, and `plans/{date}-{slug}/plan.md`.
 - Use exact artifact matching and exact slug/date resolution. Do not silently choose the newest file by mtime when multiple slugs or dated sets exist.
 - Default the engagement mode to `hybrid` for solo IT BA work. Build `backbone-{date}-{slug}.md` before emitting FRD, stories, or SRS.
 - When UI scope exists, default wireframes and UI-oriented handoff to Shadcn UI unless the user explicitly requests another design system.
-- For `srs`, run a narrow preflight: resolve the exact backbone and user-stories artifacts first, then pull the FRD only when needed instead of scanning the full `plans/reports/` suite.
-- For `frd` and `stories`, run a narrow preflight from the exact backbone artifact instead of scanning the full `plans/reports/` suite.
+- For `srs`, run a narrow preflight: resolve the exact backbone and user-stories artifacts first, then pull the FRD only when needed instead of scanning the full `plans/reports/final/` and `plans/reports/drafts/` suite.
+- For `frd` and `stories`, run a narrow preflight from the exact backbone artifact instead of scanning the full `plans/reports/final/` suite.
 - If a previous report set uses legacy names like `002-intake-form.md`, treat it as a legacy suite and stop for explicit migration or rerun; do not silently infer the current slug/date from it.
 - If context gets truncated after the user already confirmed the target workflow, recover from the resolved command, slug/date, and exact artifacts on disk instead of asking the user to restate the original request.
 - After the user explicitly approves a mutating rerun step, keep that step locked for the current run and do not fall back to generic prompts like "What would you like me to do with this document?".
@@ -61,11 +61,11 @@ For rerun commands, resolve the project by explicit `--slug` first. If multiple 
 
 ## Documentation Expectations
 
-Use `./templates/` for structured outputs whenever a matching template exists. Working artifacts belong in `plans/reports/`.
+Use `./templates/` for structured outputs whenever a matching template exists. Final deliverables belong in `plans/reports/final/`. Draft and intermediate artifacts belong in `plans/reports/drafts/`.
 
 For UI-backed SRS work:
-- persist `wireframe-input-{date}-{slug}.md` before Step 9
-- persist `wireframe-map-{date}-{slug}.md` after successful wireframe generation
+- persist `drafts/wireframe-input-{date}-{slug}.md` before Step 9
+- persist `drafts/wireframe-map-{date}-{slug}.md` after successful wireframe generation
 - use the wireframe map for final screen expansion when wireframes are completed
 
 Minimum quality bar:

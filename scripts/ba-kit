@@ -240,14 +240,15 @@ collect_candidate_slugs() {
 
   shopt -s nullglob
   for path in \
-    "${repo}"/plans/reports/intake-*-*.md \
-    "${repo}"/plans/reports/backbone-*-*.md \
-    "${repo}"/plans/reports/frd-*-*.md \
-    "${repo}"/plans/reports/user-stories-*-*.md \
-    "${repo}"/plans/reports/srs-*-*.md \
-    "${repo}"/plans/reports/wireframe-input-*-*.md \
-    "${repo}"/plans/reports/wireframe-map-*-*.md \
-    "${repo}"/plans/reports/wireframe-state-*-*.md; do
+    "${repo}"/plans/reports/final/intake-*-*.md \
+    "${repo}"/plans/reports/final/backbone-*-*.md \
+    "${repo}"/plans/reports/final/frd-*-*.md \
+    "${repo}"/plans/reports/final/user-stories-*-*.md \
+    "${repo}"/plans/reports/final/srs-*-*.md \
+    "${repo}"/plans/reports/drafts/wireframe-input-*-*.md \
+    "${repo}"/plans/reports/drafts/wireframe-map-*-*.md \
+    "${repo}"/plans/reports/drafts/wireframe-state-*-*.md \
+    "${repo}"/plans/reports/drafts/srs-*-*.md; do
     [[ -f "${path}" ]] || continue
     base="$(basename "${path}")"
     case "${base}" in
@@ -290,43 +291,44 @@ collect_candidate_dates() {
 
   shopt -s nullglob
   for path in \
-    "${repo}/plans/reports/intake-${slug}-"*.md \
-    "${repo}/plans/reports/backbone-"*-"${slug}.md" \
-    "${repo}/plans/reports/frd-"*-"${slug}.md" \
-    "${repo}/plans/reports/user-stories-"*-"${slug}.md" \
-    "${repo}/plans/reports/srs-"*-"${slug}.md" \
-    "${repo}/plans/reports/wireframe-input-"*-"${slug}.md" \
-    "${repo}/plans/reports/wireframe-map-"*-"${slug}.md" \
-    "${repo}/plans/reports/wireframe-state-"*-"${slug}.md" \
+    "${repo}/plans/reports/final/intake-${slug}-"*.md \
+    "${repo}/plans/reports/final/backbone-"*-"${slug}.md" \
+    "${repo}/plans/reports/final/frd-"*-"${slug}.md" \
+    "${repo}/plans/reports/final/user-stories-"*-"${slug}.md" \
+    "${repo}/plans/reports/final/srs-"*-"${slug}.md" \
+    "${repo}/plans/reports/drafts/wireframe-input-"*-"${slug}.md" \
+    "${repo}/plans/reports/drafts/wireframe-map-"*-"${slug}.md" \
+    "${repo}/plans/reports/drafts/wireframe-state-"*-"${slug}.md" \
+    "${repo}/plans/reports/drafts/srs-"*-"${slug}.md" \
     "${repo}/plans/"*-"${slug}"/plan.md; do
     [[ -f "${path}" ]] || continue
     base="$(basename "${path}")"
     case "${path}" in
-      */plans/reports/intake-${slug}-*.md)
+      */plans/reports/final/intake-${slug}-*.md)
         date="$(printf '%s\n' "${base}" | sed -nE "s/^intake-${slug}-([0-9]{6}-[0-9]{4})\\.md$/\\1/p")"
         ;;
-      */plans/reports/backbone-*-${slug}.md)
+      */plans/reports/final/backbone-*-${slug}.md)
         date="$(printf '%s\n' "${base}" | sed -nE "s/^backbone-([0-9]{6}-[0-9]{4})-${slug}\\.md$/\\1/p")"
         ;;
-      */plans/reports/frd-*-${slug}.md)
+      */plans/reports/final/frd-*-${slug}.md)
         date="$(printf '%s\n' "${base}" | sed -nE "s/^frd-([0-9]{6}-[0-9]{4})-${slug}\\.md$/\\1/p")"
         ;;
-      */plans/reports/user-stories-*-${slug}.md)
+      */plans/reports/final/user-stories-*-${slug}.md)
         date="$(printf '%s\n' "${base}" | sed -nE "s/^user-stories-([0-9]{6}-[0-9]{4})-${slug}\\.md$/\\1/p")"
         ;;
-      */plans/reports/srs-*-${slug}.md)
+      */plans/reports/final/srs-*-${slug}.md)
         date="$(printf '%s\n' "${base}" | sed -nE "s/^srs-([0-9]{6}-[0-9]{4})-${slug}\\.md$/\\1/p")"
         ;;
-      */plans/reports/srs-*-${slug}-group-*.md)
+      */plans/reports/drafts/srs-*-${slug}-group-*.md)
         date="$(printf '%s\n' "${base}" | sed -nE "s/^srs-([0-9]{6}-[0-9]{4})-${slug}-group-[a-z0-9-]+\\.md$/\\1/p")"
         ;;
-      */plans/reports/wireframe-input-*-${slug}.md)
+      */plans/reports/drafts/wireframe-input-*-${slug}.md)
         date="$(printf '%s\n' "${base}" | sed -nE "s/^wireframe-input-([0-9]{6}-[0-9]{4})-${slug}\\.md$/\\1/p")"
         ;;
-      */plans/reports/wireframe-map-*-${slug}.md)
+      */plans/reports/drafts/wireframe-map-*-${slug}.md)
         date="$(printf '%s\n' "${base}" | sed -nE "s/^wireframe-map-([0-9]{6}-[0-9]{4})-${slug}\\.md$/\\1/p")"
         ;;
-      */plans/reports/wireframe-state-*-${slug}.md)
+      */plans/reports/drafts/wireframe-state-*-${slug}.md)
         date="$(printf '%s\n' "${base}" | sed -nE "s/^wireframe-state-([0-9]{6}-[0-9]{4})-${slug}\\.md$/\\1/p")"
         ;;
       */plans/*-${slug}/plan.md)
@@ -774,7 +776,7 @@ status_command() {
     slugs="$(collect_candidate_slugs "${repo}")"
     slug_count="$(printf '%s\n' "${slugs}" | sed '/^$/d' | wc -l | tr -d ' ')"
     if [[ "${slug_count}" -eq 0 ]]; then
-      fail "No BA-kit artifacts found under ${repo}/plans/reports"
+      fail "No BA-kit artifacts found under ${repo}/plans/reports/final or ${repo}/plans/reports/drafts"
     elif [[ "${slug_count}" -gt 1 ]]; then
       printf 'Multiple slugs found. Rerun with --slug. Candidates:\n%s\n' "${slugs}" >&2
       exit 1
@@ -797,19 +799,17 @@ status_command() {
   printf 'Project: %s\n' "${slug}"
   printf 'Date set: %s\n\n' "${date_token}"
 
-  print_artifact_status_line "${repo}/plans/reports/intake-${slug}-${date_token}.md" "intake-${slug}-${date_token}.md"
-  print_artifact_status_line "${repo}/plans/reports/intake-${slug}-${date_token}.html" "intake-${slug}-${date_token}.html"
+  print_artifact_status_line "${repo}/plans/reports/final/intake-${slug}-${date_token}.md" "final/intake-${slug}-${date_token}.md"
   print_artifact_status_line "${repo}/plans/${date_token}-${slug}/plan.md" "plans/${date_token}-${slug}/plan.md"
-  print_artifact_status_line "${repo}/plans/reports/backbone-${date_token}-${slug}.md" "backbone-${date_token}-${slug}.md"
-  print_artifact_status_line "${repo}/plans/reports/frd-${date_token}-${slug}.md" "frd-${date_token}-${slug}.md"
-  print_artifact_status_line "${repo}/plans/reports/frd-${date_token}-${slug}.html" "frd-${date_token}-${slug}.html"
-  print_artifact_status_line "${repo}/plans/reports/user-stories-${date_token}-${slug}.md" "user-stories-${date_token}-${slug}.md"
-  print_artifact_status_line "${repo}/plans/reports/user-stories-${date_token}-${slug}.html" "user-stories-${date_token}-${slug}.html"
-  print_artifact_status_line "${repo}/plans/reports/srs-${date_token}-${slug}.md" "srs-${date_token}-${slug}.md"
-  print_artifact_status_line "${repo}/plans/reports/srs-${date_token}-${slug}.html" "srs-${date_token}-${slug}.html"
-  print_artifact_status_line "${repo}/plans/reports/wireframe-input-${date_token}-${slug}.md" "wireframe-input-${date_token}-${slug}.md"
-  print_artifact_status_line "${repo}/plans/reports/wireframe-map-${date_token}-${slug}.md" "wireframe-map-${date_token}-${slug}.md"
-  print_wireframe_status_line "${repo}/plans/reports/wireframe-state-${date_token}-${slug}.md"
+  print_artifact_status_line "${repo}/plans/reports/final/backbone-${date_token}-${slug}.md" "final/backbone-${date_token}-${slug}.md"
+  print_artifact_status_line "${repo}/plans/reports/final/frd-${date_token}-${slug}.md" "final/frd-${date_token}-${slug}.md"
+  print_artifact_status_line "${repo}/plans/reports/final/frd-${date_token}-${slug}.html" "final/frd-${date_token}-${slug}.html"
+  print_artifact_status_line "${repo}/plans/reports/final/user-stories-${date_token}-${slug}.md" "final/user-stories-${date_token}-${slug}.md"
+  print_artifact_status_line "${repo}/plans/reports/final/srs-${date_token}-${slug}.md" "final/srs-${date_token}-${slug}.md"
+  print_artifact_status_line "${repo}/plans/reports/final/srs-${date_token}-${slug}.html" "final/srs-${date_token}-${slug}.html"
+  print_artifact_status_line "${repo}/plans/reports/drafts/wireframe-input-${date_token}-${slug}.md" "drafts/wireframe-input-${date_token}-${slug}.md"
+  print_artifact_status_line "${repo}/plans/reports/drafts/wireframe-map-${date_token}-${slug}.md" "drafts/wireframe-map-${date_token}-${slug}.md"
+  print_wireframe_status_line "${repo}/plans/reports/drafts/wireframe-state-${date_token}-${slug}.md"
   print_delegation_status "${repo}" "${slug}" "${date_token}"
 }
 

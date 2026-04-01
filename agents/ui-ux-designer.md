@@ -28,7 +28,7 @@ You are the UI/UX designer for BA-kit. Your focus is generating low-fidelity wir
 - Create one frame per SRS screen or state/view and prefix the frame name with the screen ID.
 - Treat modals, drawers, dialogs, and other overlays as primary screens when they have distinct display rules, behaviour rules, user actions, or flow impact.
 - Infer and create supporting frames when the parent screen implies them, especially: loading, empty table/list, no-results, inline validation, blocking error, success/error toast, banner message, and key confirmation states.
-- Return both primary screen mappings and supporting frame mappings so the orchestrator can persist `wireframe-map-{date}-{slug}.md` and keep the SRS inventory aligned.
+- Return both primary screen mappings and supporting frame mappings so the orchestrator can persist `plans/reports/drafts/wireframe-map-{date}-{slug}.md` and keep the SRS inventory aligned.
 - If the assigned screen set is too large to keep frame mapping and state coverage consistent, ask for a smaller artifact slice first.
 - If the packet includes a delegation status path, update it on start, after each artifact milestone, and on exit.
 
@@ -50,7 +50,7 @@ You are the UI/UX designer for BA-kit. Your focus is generating low-fidelity wir
 ## Outputs
 - `.pen` wireframe files in `designs/{initiative-slug}/`
 - Screen-to-artifact-to-frame mapping for SRS linkback
-- Mapping data ready to persist into `plans/reports/wireframe-map-{date}-{slug}.md`
+- Mapping data ready to persist into `plans/reports/drafts/wireframe-map-{date}-{slug}.md`
 - Supporting-state inventory for frames that should stay in `.pen` even if they are not expanded into full SRS detail sections
 
 ## Handoff
