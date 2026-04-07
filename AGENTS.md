@@ -22,6 +22,8 @@ Prefer structured, decision-ready deliverables over generic prose.
 - Before any AI agent generates wireframes for UI-backed scope, ask the user to make or approve the design decisions needed to persist a project-specific `designs/{slug}/DESIGN.md`. Treat that file as the system design document for wireframe generation.
 - For `srs`, begin from the resolved backbone and user-stories prerequisites, and pull the FRD only when it exists or is explicitly required. Do not reread the whole `plans/reports/final/` and `plans/reports/drafts/` suite once slug/date is resolved.
 - For `frd` and `stories`, begin from the resolved backbone prerequisite only. Do not reread the whole `plans/reports/final/` suite once slug/date is resolved.
+- When a new requirement or rule change appears during downstream work such as `frd`, `stories`, `srs`, `wireframes`, or `package`, route through `impact` triage first unless the edit is clearly wording-only.
+- When the user provides a bare requirement or correction statement in an existing project context, treat it as change evidence for `impact` triage first. Do not mutate artifacts unless the user explicitly asks to update, edit, overwrite, regenerate, or rerun a named artifact or step.
 - Treat legacy report suites like `002-intake-form.md` as out-of-contract until they are migrated or rerun explicitly.
 - If context truncation happens mid-run, recover from the resolved command, slug/date, and exact prerequisite artifacts instead of asking the user to restate the task.
 - After the user explicitly approves a mutating rerun step, keep that step locked for the current run and do not fall back to generic "what do you want me to do?" prompts.
@@ -47,8 +49,18 @@ When asked to produce or update a BA artifact:
 
 ## Routing Guide
 
-All BA work routes through the single skill:
-- `skills/ba-start/SKILL.md` — end-to-end BA engagement
+Preferred freeform entry:
+- `skills/ba-do/SKILL.md` — route natural-language BA requests to the right BA-kit command
+
+Lifecycle engine and deterministic helpers:
+- `skills/ba-start/SKILL.md` — end-to-end BA engagement and explicit artifact subcommands
+- `skills/ba-impact/SKILL.md` — change-impact triage before mutating downstream artifacts
+- `skills/ba-next/SKILL.md` — inspect the current artifact set and recommend the next BA command
+
+Natural-language routing default:
+- if the user gives a freeform BA request without naming a command, route through `ba-do` first
+- if the user describes a requirement addition, rule change, removed scope item, or screen behavior change without naming a subcommand, treat it as the equivalent of `/ba-start impact --slug <slug>` when the target project set already exists
+- if the user sends only a short correction statement such as "Không có nhóm admin user" and a project set already exists, also treat it as `/ba-start impact --slug <slug>` rather than a direct edit request
 
 Key templates:
 - `templates/intake-form-template.md` — input normalization

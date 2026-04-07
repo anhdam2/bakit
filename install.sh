@@ -8,6 +8,8 @@ SKILLS_TARGET="${TARGET_HOME}/skills"
 RULES_TARGET="${TARGET_HOME}/rules/ba-kit"
 AGENTS_TARGET="${TARGET_HOME}/agents"
 TEMPLATES_TARGET="${TARGET_HOME}/templates"
+CORE_SOURCE="${ROOT_DIR}/core"
+CORE_TARGET="${TARGET_HOME}/ba-kit"
 LOCAL_BIN_TARGET="${HOME}/.local/bin"
 STATE_TARGET="${HOME}/.local/share/ba-kit/installations"
 
@@ -50,6 +52,7 @@ done
 copy_tree "${ROOT_DIR}/rules" "${RULES_TARGET}"
 copy_tree "${ROOT_DIR}/agents" "${AGENTS_TARGET}"
 copy_tree "${ROOT_DIR}/templates" "${TEMPLATES_TARGET}"
+copy_tree "${CORE_SOURCE}" "${CORE_TARGET}"
 install_cli
 write_manifest
 
@@ -59,5 +62,6 @@ echo "Installed skills to ${SKILLS_TARGET}"
 echo "Installed rules to ${RULES_TARGET}"
 echo "Installed agents to ${AGENTS_TARGET}"
 echo "Installed templates to ${TEMPLATES_TARGET}"
+echo "Installed BA core to ${CORE_TARGET}"
 echo "Installed update CLI to ${LOCAL_BIN_TARGET}/ba-kit"
 echo "BA-kit installation complete."

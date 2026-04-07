@@ -28,10 +28,19 @@ Use these rule files as the source of truth:
 
 ## Skills Activation
 
-BA-kit has one unified skill: `ba-start`. This is the single entry point for all BA engagements. It handles the full lifecycle from raw input to packaged deliverables and also supports resumable subcommands.
+BA-kit uses a two-layer command model:
+- `ba-do` is the preferred freeform entry point for natural-language BA requests
+- `ba-start` is the lifecycle engine for full engagements and explicit artifact reruns
+
+BA-kit also exposes deterministic helpers:
+- `ba-impact` — analyze requirement changes before any artifact mutation
+- `ba-next` — inspect the current artifact set and recommend the next BA command
 
 ```text
+/ba-do <description>
 /ba-start
+/ba-impact [--slug <slug>] <change statement|file>
+/ba-next [--slug <slug>]
 /ba-start intake <file>
 /ba-start backbone --slug <slug>
 /ba-start frd --slug <slug>

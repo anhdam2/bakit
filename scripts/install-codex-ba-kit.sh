@@ -6,9 +6,11 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SOURCE_ROOT="${BA_KIT_CODEX_SOURCE_ROOT:-${ROOT_DIR}/codex}"
 SOURCE_SKILLS="${SOURCE_ROOT}/skills"
 SOURCE_AGENTS="${SOURCE_ROOT}/agents"
+CORE_SOURCE="${BA_KIT_CORE_SOURCE_ROOT:-${ROOT_DIR}/core}"
 TARGET_HOME="${HOME}/.codex"
 TARGET_SKILLS="${TARGET_HOME}/skills"
 TARGET_AGENTS="${TARGET_HOME}/agents"
+CORE_TARGET="${TARGET_HOME}/ba-kit"
 TARGET_CONFIG="${TARGET_HOME}/config.toml"
 LOCAL_BIN_TARGET="${HOME}/.local/bin"
 STATE_TARGET="${HOME}/.local/share/ba-kit/installations"
@@ -27,6 +29,14 @@ install_cli() {
   cp "${ROOT_DIR}/scripts/ba-kit" "${temp_target}"
   chmod +x "${temp_target}"
   mv "${temp_target}" "${LOCAL_BIN_TARGET}/ba-kit"
+}
+
+copy_tree() {
+  local source_dir="$1"
+  local target_dir="$2"
+
+  mkdir -p "$target_dir"
+  cp -R "${source_dir}/." "$target_dir/"
 }
 
 write_manifest() {
@@ -145,5 +155,9 @@ if (registrations.length > 0) {
 NODE
 
 install_cli
+if [[ -d "${CORE_SOURCE}" ]]; then
+  copy_tree "${CORE_SOURCE}" "${CORE_TARGET}"
+  echo "Installed BA core to ${CORE_TARGET}"
+fi
 write_manifest
 echo "Installed update CLI to ${LOCAL_BIN_TARGET}/ba-kit"

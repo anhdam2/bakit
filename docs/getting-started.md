@@ -30,6 +30,7 @@ What this installs:
 - agents to `~/.claude/agents/`
 - rules to `~/.claude/rules/ba-kit/`
 - templates to `~/.claude/templates/`
+- shared BA workflows and references to `~/.claude/ba-kit/`
 - the shared update command to `~/.local/bin/ba-kit`
 
 Then restart Claude Code if it is already open.
@@ -49,7 +50,13 @@ Both commands also surface update availability when the registered upstream has 
 
 ## 4. Use BA-kit In Claude Code
 
-The single entry point is still `/ba-start`, but it now supports resumable subcommands.
+Preferred natural-language entry:
+
+```text
+/ba-do <description>
+```
+
+Use `/ba-start` when you already know the lifecycle step or want the full BA pipeline.
 
 Full workflow:
 
@@ -61,6 +68,7 @@ Step-level reruns:
 
 ```text
 /ba-start intake docs/raw/warehouse-rfp.pdf
+/ba-start impact --slug warehouse-rfp
 /ba-start backbone --slug warehouse-rfp
 /ba-start frd --slug warehouse-rfp
 /ba-start stories --slug warehouse-rfp
@@ -71,7 +79,15 @@ Step-level reruns:
 /ba-notion srs --slug warehouse-rfp --page https://www.notion.so/... --mode overwrite
 ```
 
-Default `/ba-start` handles the full BA lifecycle:
+Router and deterministic helpers:
+
+```text
+/ba-do dang lam do SRS thi them yeu cau nay
+/ba-impact --slug warehouse-rfp Khong co nhom admin user
+/ba-next --slug warehouse-rfp
+```
+
+Default `/ba-start` handles the full BA lifecycle once routing is already clear:
 1. Parse raw input into an intake form
 2. Gap analysis and clarifying questions
 3. Scope lock and mode selection
@@ -101,6 +117,9 @@ For rerun commands:
 - pass `--slug <slug>` when more than one project exists
 - if one slug has multiple dated artifact sets, BA-kit should stop and ask which set to use
 - use `/ba-start status --slug <slug>` to inspect completion before rerunning a downstream step
+- use `/ba-start impact --slug <slug>` when a requirement, rule, scope item, actor responsibility, or screen behavior changes while a downstream artifact is already being drafted
+- treat `impact` as the default change-triage path when the user says things like "đang làm dở SRS thì thêm yêu cầu này" unless the edit is obviously wording-only
+- treat a short correction statement like "Không có nhóm admin user" as `impact` in an existing project context; do not interpret it as a direct edit request unless the user explicitly asks to update an artifact
 - for `srs`, start from the exact resolved backbone and user-stories artifacts, and pull the FRD only when it exists or is required, instead of rereading the whole `plans/reports/final/` and `plans/reports/drafts/` directories
 - for `frd` and `stories`, start from the exact resolved backbone artifact instead of rereading the whole `plans/reports/final/` directory
 - if you only have old reports named like `002-intake-form.md`, treat them as a legacy suite and rerun or migrate them before expecting the current `/ba-start` contract to resume from them
@@ -115,11 +134,13 @@ Codex does not need `install.sh`.
 Instead:
 1. Open this repository in Codex
 2. Make sure the root `AGENTS.md` is visible in the repo
-3. Tell Codex to use `skills/ba-start/SKILL.md` as the playbook
-4. Point Codex to the correct template under `templates/`
-5. If you have the Codex-converted bundle, run `bash scripts/install-codex-ba-kit.sh` once to copy the skill and agents into `~/.codex` and register Codex agents in `~/.codex/config.toml`
-6. If you use the installer, make sure `node` is available because the registration step runs on Node.js
-7. The installer also records the source repo for the shared update command `ba-kit update`
+3. For freeform BA requests, tell Codex to use `skills/ba-do/SKILL.md` first
+4. Tell Codex to use `skills/ba-start/SKILL.md` when the lifecycle step is explicit
+5. Point Codex to the correct template under `templates/`
+6. If you have the Codex-converted bundle, run `bash scripts/install-codex-ba-kit.sh` once to copy the skill and agents into `~/.codex` and register Codex agents in `~/.codex/config.toml`
+7. If you use the installer, make sure `node` is available because the registration step runs on Node.js
+8. The installer also records the source repo for the shared update command `ba-kit update`
+9. The Codex installer also copies shared BA workflows and references into `~/.codex/ba-kit/`
 
 ### Codex Example
 
@@ -147,6 +168,17 @@ If multiple dated sets exist for that slug, stop and ask me which date to use.
 Reuse the existing `designs/{slug}/DESIGN.md` if it is approved, otherwise ask me to refresh it before generating wireframes.
 Use the persisted `wireframe-input-{date}-{slug}.md` when it exists, or rebuild it from exact fallback sources before generating wireframes.
 Then report `/ba-start status` semantics with artifact dates, wireframe state, and any wireframe input/map artifacts.
+```
+
+Change-impact triage in Codex:
+
+```text
+Use AGENTS.md and skills/ba-start/SKILL.md.
+I am writing the SRS for slug warehouse-rfp and this new requirement arrived:
+"Export CSV must require permission, record an audit log, and show a success or failure banner."
+Run the equivalent of `/ba-start impact --slug warehouse-rfp`.
+Resolve the exact dated set instead of choosing by mtime.
+Tell me the source of truth to update, the affected artifacts, and the exact commands to run next.
 ```
 
 See [codex-setup.md](./codex-setup.md) for more prompt patterns.
