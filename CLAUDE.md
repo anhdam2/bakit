@@ -92,6 +92,7 @@ Delegation hardening:
 - If a delegated slice is too large to keep consistent, repartition before spawning.
 - If a sub-agent reports missing context or `NEEDS_REPARTITION`, stop and rerun only the affected slice with a smaller packet.
 - If a worker tracker has no heartbeat for more than 10 minutes and the target artifact has not advanced, treat it as likely stalled instead of assuming it is still healthy.
+- Never delegate assembly or merge steps (merging SRS groups, FRD sections, HTML conversion of large artifacts) to a sub-agent. Sub-agents have ~200k context and limited output tokens; a merged SRS easily exceeds that budget. Assembly must run inline using incremental Read-then-Edit-append writes.
 
 ## Methodology
 

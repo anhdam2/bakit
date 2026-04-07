@@ -634,6 +634,8 @@ Delegation fallback:
   - the smallest viable split proposal
   - the exact upstream sections needed for the rerun
 - On `NEEDS_REPARTITION`, rerun only the affected group or subgroup. Do not restart the whole SRS pipeline.
+- **Never delegate assembly or merge steps to a sub-agent.** Merging group fragments into a final artifact (SRS, FRD, HTML) must run inline in the orchestrator using incremental Read-then-Edit-append writes. Sub-agents have a 200k context window and limited output tokens; a merged SRS can easily exceed both.
+- Similarly, never delegate HTML conversion of a large merged artifact to a sub-agent. Run md-to-html inline or chunk the conversion.
 
 Delegation packet template:
 
@@ -833,10 +835,16 @@ Output: `plans/reports/drafts/srs-{date}-{slug}-group-f.md`
 
 ### Step 11 - Assembly and quality review
 
-After all groups complete:
+After all groups complete, the **orchestrator** assembles the final SRS inline. Do not delegate assembly to a sub-agent — the merged output is likely to exceed sub-agent output token limits.
 
-1. Merge groups into a single SRS following `srs-template.md` section order.
-2. Run a cross-artifact consistency check:
+Assembly procedure (incremental writes):
+
+1. Write the SRS skeleton to `plans/reports/final/srs-{date}-{slug}.md` using the `srs-template.md` heading structure with empty section bodies.
+2. For each group in template section order (A → B → C → D → E → F):
+   a. Read the group fragment from `plans/reports/drafts/`.
+   b. Edit-append the fragment content into the matching section of the skeleton.
+   c. Confirm the edit succeeded before moving to the next group.
+3. After all groups are appended, run a cross-artifact consistency check on the file on disk:
    - Every UC step maps to a screen field or action and vice versa.
    - Screen Contract Lite entries have matching wireframes and final screen descriptions.
    - UC actor actions use the same wording as screen User Actions.
@@ -844,11 +852,11 @@ After all groups complete:
    - UC alternate flows are reflected in screen Error or States.
    - Field names are identical between UC steps, screen field tables, and wireframe labels.
    - User story acceptance criteria are covered by UC postconditions and screen Validation Rules.
-3. Resolve UC placeholder references in screens.
-4. Resolve ID conflicts across namespaces.
-5. Verify every SCR and UC traces back to user stories.
-6. Save to `plans/reports/final/srs-{date}-{slug}.md`.
-7. Delete group fragments only after the merged SRS is verified.
+4. Resolve UC placeholder references in screens.
+5. Resolve ID conflicts across namespaces.
+6. Verify every SCR and UC traces back to user stories.
+7. Apply inline fixes to the file on disk using Edit, not by regenerating the whole file.
+8. Delete group fragments only after the merged SRS is verified.
 
 Execution order:
 
@@ -863,7 +871,7 @@ Group E -> Group F
 Group F -> Assembly
 ```
 
-Failure handling: if a grouped pass fails, retry once. If it still fails, complete that group inline.
+Failure handling: if a grouped pass fails, retry once. If it still fails, complete that group inline. Assembly (Step 11) always runs inline regardless of failure state — never delegate the merge to a sub-agent.
 
 ## Subcommand: wireframes
 
@@ -1222,3 +1230,13 @@ Status rules:
 - Prefer slim handoff packets: objective, write scope, trace IDs, and a few quoted excerpts. If you are tempted to attach full upstream documents, repartition first.
 - Do not combine content generation, full cross-artifact audit, and packaging into the same delegated call when the artifact set is already large.
 - If one delegated slice still feels too large after summarization, stop and split it again rather than hoping the worker keeps the whole context consistent.
+
+### Large artifact write protocol
+
+Assembly and merge steps that produce artifacts longer than roughly 150 lines must use **incremental writes** instead of a single Write call.
+
+1. **Write the skeleton first**: create the target file with the template structure (headings, boilerplate, front matter) using one Write call.
+2. **Append group content sequentially**: for each group fragment, Read the fragment, then Edit-append it into the correct section of the target file. Complete one group before starting the next.
+3. **Never generate the entire merged content in memory and flush it in one Write call.** The output token budget of a sub-agent (or even the orchestrator) may not be large enough to hold the full artifact.
+4. **Assembly must run inline** (orchestrator context), not delegated to a sub-agent. Merged SRS, merged FRD, and HTML conversion are all assembly tasks.
+5. After all groups are appended, run validation on the file already on disk rather than validating an in-memory draft.

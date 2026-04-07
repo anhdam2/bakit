@@ -52,6 +52,7 @@ BA-kit is optimized for a solo IT BA. The workflow should reduce duplicated writ
 - The orchestrator should create one tracker file per delegated slice, mark it `queued` before spawn, and require the worker to update it to `running` immediately on start.
 - Workers should heartbeat after each major milestone and at least every 5 minutes during long-running work.
 - If a delegated slice shows no heartbeat for more than 10 minutes and the target artifact has not advanced, treat it as likely stalled and recover intentionally instead of waiting blindly.
+- **Never delegate assembly or merge steps** (merging SRS groups, FRD sections, or HTML conversion of large artifacts) to a sub-agent. Sub-agents have limited output tokens; a merged SRS easily exceeds that budget. Assembly must run inline in the orchestrator using incremental Read-then-Edit-append writes.
 
 ## Documentation Rules
 
