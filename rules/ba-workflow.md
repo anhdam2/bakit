@@ -69,7 +69,7 @@ BA-kit is optimized for a solo IT BA. The workflow should reduce duplicated writ
 
 ## Naming Convention
 
-- `{date}` uses `YYMMDD-HHmm` format matching `.ck.json` convention.
+- `{date}` uses `YYMMDD-HHmm` format matching `ba-kit.config.json` convention.
 - Use the same `{date}` token for the report artifacts and the corresponding `plans/{date}-{slug}/plan.md` directory so a dated artifact set resolves unambiguously.
 - Intake: `plans/reports/final/intake-{slug}-{date}.md`
 - Backbone: `plans/reports/final/backbone-{date}-{slug}.md`

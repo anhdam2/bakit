@@ -1,6 +1,6 @@
 ---
 name: ba-kit-update
-description: Update an installed BA-kit with one command. Checks for local git conflicts or dirty state, pulls fast-forward only, and reinstalls Claude/Codex assets from the registered source repo.
+description: Update an installed BA-kit with one command. Checks for local git conflicts or dirty state, pulls fast-forward only, and reinstalls Claude/Codex/Antigravity assets from the registered source repo.
 argument-hint: ""
 ---
 
@@ -28,7 +28,7 @@ ba-kit update
 ~/.local/bin/ba-kit update
 ```
 
-3. Do not manually run `git pull`, `install.sh`, or `scripts/install-codex-ba-kit.sh` one by one unless the CLI is missing or broken.
+3. Do not manually run `git pull`, `install.sh`, `scripts/install-codex-ba-kit.sh`, or `scripts/install-antigravity-ba-kit.sh` one by one unless the CLI is missing or broken.
 4. If the CLI reports local changes, unfinished merge/rebase state, or multiple registered source repos, stop and report the exact blocker instead of forcing the update.
 5. After the command completes, report:
    - source repo path
@@ -43,4 +43,4 @@ ba-kit update
 
 - One command updates the tracked BA-kit source repo.
 - The update uses `git pull --ff-only`.
-- Installed Claude and Codex assets are re-synced automatically when they were previously installed from that repo.
+- Installed Claude, Codex, and Antigravity assets are re-synced automatically when they were previously installed from that repo.

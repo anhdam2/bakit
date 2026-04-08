@@ -13,6 +13,14 @@
     "type": "business-analysis",
     "methodology": "hybrid"
   },
+  "runtimes": {
+    "supported": ["claude-code", "codex", "antigravity"],
+    "installers": {
+      "claude-code": "install.sh",
+      "codex": "scripts/install-codex-ba-kit.sh",
+      "antigravity": "scripts/install-antigravity-ba-kit.sh"
+    }
+  },
   "assertions": [
     "All requirements must have acceptance criteria",
     "Use BABOK 3.0 knowledge areas as reference",

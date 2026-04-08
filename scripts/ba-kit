@@ -489,6 +489,8 @@ doctor_mcp_check() {
   local codex_config="${HOME}/.codex/config.toml"
   local claude_settings="${HOME}/.claude/settings.json"
   local claude_config="${HOME}/.claude.json"
+  local gemini_global="${HOME}/.gemini/settings.json"
+  local gemini_project
 
   if scan_file_for_token "${codex_config}" "${token}"; then
     doctor_ok "${label} detected in ${codex_config}"
@@ -502,8 +504,20 @@ doctor_mcp_check() {
     doctor_ok "${label} detected in ${claude_config}"
     return 0
   fi
+  if scan_file_for_token "${gemini_global}" "${token}"; then
+    doctor_ok "${label} detected in ${gemini_global}"
+    return 0
+  fi
+  # Check project-level .gemini/settings.json if we have a resolved repo
+  if [[ -n "${BA_KIT_DOCTOR_REPO:-}" ]]; then
+    gemini_project="${BA_KIT_DOCTOR_REPO}/.gemini/settings.json"
+    if scan_file_for_token "${gemini_project}" "${token}"; then
+      doctor_ok "${label} detected in ${gemini_project}"
+      return 0
+    fi
+  fi
 
-  doctor_warn "${label} not detected in local Codex/Claude config files"
+  doctor_warn "${label} not detected in local Codex/Claude/Antigravity config files"
   return 1
 }
 
@@ -560,6 +574,10 @@ run_installer() {
     codex)
       [[ -x "${repo}/scripts/install-codex-ba-kit.sh" ]] || fail "Codex installer missing: ${repo}/scripts/install-codex-ba-kit.sh"
       (cd "${repo}" && ./scripts/install-codex-ba-kit.sh)
+      ;;
+    antigravity)
+      [[ -f "${repo}/scripts/install-antigravity-ba-kit.sh" ]] || fail "Antigravity installer missing: ${repo}/scripts/install-antigravity-ba-kit.sh"
+      (cd "${repo}" && bash ./scripts/install-antigravity-ba-kit.sh)
       ;;
     *)
       fail "Unsupported runtime in installation manifest: ${runtime}"
@@ -634,6 +652,7 @@ doctor_command() {
   doctor_file_check "installation manifest dir" "${MANIFEST_DIR}" "optional" || failures=$((failures + 1))
   doctor_file_check "Claude installer" "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/install.sh" "required" || failures=$((failures + 1))
   doctor_file_check "Codex installer" "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/scripts/install-codex-ba-kit.sh" "required" || failures=$((failures + 1))
+  doctor_file_check "Antigravity installer" "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/scripts/install-antigravity-ba-kit.sh" "required" || failures=$((failures + 1))
   doctor_file_check "HTML renderer" "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/scripts/md-to-html.py" "required" || failures=$((failures + 1))
   printf '\n'
 
@@ -726,6 +745,12 @@ doctor_command() {
     doctor_warn "Claude home not detected at ${HOME}/.claude"
     warnings=$((warnings + 1))
   fi
+  if [[ -d "${HOME}/.gemini/antigravity" ]]; then
+    doctor_ok "Antigravity home detected at ${HOME}/.gemini/antigravity"
+  else
+    doctor_warn "Antigravity home not detected at ${HOME}/.gemini/antigravity"
+    warnings=$((warnings + 1))
+  fi
   printf '\n'
 
   if [[ "${repo_resolved}" -eq 1 && -d "${repo}/skills/ba-notion" ]]; then
@@ -739,6 +764,12 @@ doctor_command() {
     doctor_ok "ba-notion installed in at least one runtime"
   else
     doctor_warn "ba-notion not installed into ~/.codex/skills or ~/.claude/skills"
+    warnings=$((warnings + 1))
+  fi
+  if [[ -d "${HOME}/.gemini/antigravity/knowledge/ba-kit-workflow" ]]; then
+    doctor_ok "BA-kit workflow KI installed for Antigravity"
+  else
+    doctor_warn "BA-kit workflow KI not installed for Antigravity (run scripts/install-antigravity-ba-kit.sh)"
     warnings=$((warnings + 1))
   fi
 
