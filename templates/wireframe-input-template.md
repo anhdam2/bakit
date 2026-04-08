@@ -18,6 +18,7 @@
 - Mọi modal, drawer, dialog, wizard step, hoặc overlay có ảnh hưởng luồng phải được coi là primary screen
 - Supporting states phải được suy ra từ states, validation rules, table/list behavior, và feedback surfaces
 - Không tự phát minh hành vi khi use case hoặc Screen Contract Lite chưa đủ
+- Bắt buộc áp dụng cấu trúc Information Architecture (Portals, Navigation, Sitemap) đã định nghĩa trong `DESIGN.md` để đảm bảo hệ thống menu nhất quán trên toàn bộ các frame.
 - Nếu `DESIGN.md` chưa tồn tại hoặc chưa được người dùng chốt, phải dừng trước khi tạo wireframe
 
 ## Tóm tắt quyết định thiết kế đã chốt (Approved Design Decisions Snapshot)
@@ -28,6 +29,8 @@
 - Typography direction: [Tóm tắt]
 - Component feel: [Tóm tắt]
 - Responsive priority: [Desktop-first | Mobile-first | Balanced]
+- Portals & Navigation: [Ví dụ: Admin Portal (Sidebar), Customer App (Bottom tabs)]
+- Key Sitemap: [Ví dụ: Dashboard, Users, Settings, Profile]
 - Hard constraints / anti-patterns: [Tóm tắt]
 
 ## Use Case Excerpts

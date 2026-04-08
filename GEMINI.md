@@ -75,6 +75,7 @@ Tiếp theo cần làm gì cho slug warehouse-rfp?
 - When a new requirement or rule change appears during downstream work, route through `impact` triage first unless the edit is clearly wording-only.
 - When the user provides a bare requirement or correction statement in an existing project context, treat it as change evidence for `impact` triage first.
 - After the user explicitly approves a mutating rerun step, keep that step locked for the current run.
+- **Image Generation Restriction:** NEVER use your built-in `generate_image` tool to create UI wireframes or mockups. Do not assume Antigravity has automatic MCP UI abilities. Instead, ALWAYS generate `.pen` files (Pencil markup) directly to the filesystem or use external MCP servers specifically requested by the user. Do not produce `.png` artifacts using direct image generation.
 
 ## Documentation Expectations
 

@@ -14,6 +14,14 @@ Nêu phạm vi phần mềm, ranh giới hệ thống, và đối tượng đọ
 - Môi trường vận hành:
 - Giả định và phụ thuộc:
 
+## Kiến trúc hệ thống & Điều hướng (Information Architecture)
+Liệt kê các Portal/App trong hệ thống, đối tượng mục tiêu, và cấu trúc Menu (Sitemap) tương ứng để đảm bảo sự nhất quán trong thiết kế UI/UX và phân quyền.
+
+| Portal / App | Đối tượng mục tiêu (Target Actor) | Menu chính (Sitemap) | Pattern điều hướng |
+| --- | --- | --- | --- |
+| [Admin Portal] | [System Admin] | - Dashboard<br>- Quản lý người dùng<br>- Cài đặt | [Sidebar] |
+| [Customer App] | [Khách hàng] | - Home<br>- Đơn hàng<br>- Tài khoản | [Bottom tabs] |
+
 ## Yêu cầu chức năng (Functional Requirements)
 | Mã (ID) | Yêu cầu (Requirement) | Ưu tiên (Priority) | Nguồn (Source) | Tiêu chí chấp nhận (Acceptance Criteria) |
 | --- | --- | --- | --- | --- |
@@ -44,6 +52,17 @@ Mô tả các tương tác chính của hệ thống theo định dạng actor-g
 
 **Quy tắc nghiệp vụ (Business Rules)**
 - [Tham chiếu quy tắc]
+
+**Sơ đồ luồng (Process Flow / Sequence Diagram)**
+Yêu cầu bắt buộc phải có sơ đồ luồng BPMN 2.0 (có swimlane bằng Mermaid flowchart/state diagram) hoặc Sơ đồ trình tự (Sequence Diagram) cho Use Case này. Thể hiện rõ các tương tác giữa tác nhân và hệ thống, cũng như các rẽ nhánh luồng thay thế.
+
+```mermaid
+sequenceDiagram
+    actor U as Người dùng (Actor)
+    participant S as Hệ thống (System)
+    U->>S: [Gửi tương tác / Hành động]
+    S-->>U: [Hiển thị phản hồi / Kết quả]
+```
 
 **Màn hình liên kết (Linked Screen):** [SCR-01 — Tên màn hình]
 

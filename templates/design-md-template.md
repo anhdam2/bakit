@@ -23,7 +23,16 @@
 - Density: [Compact | Balanced | Spacious]
 - Visual priorities: [Ví dụ: clarity first, fast scanning, guided completion]
 
-## 2. Color Palette & Roles
+## 2. Information Architecture (Portals & Navigation)
+
+| Portal / App | Target Actor | Main Navigation (Sitemap) | Notes |
+| --- | --- | --- | --- |
+| [Tên portal, VD: Admin Portal] | [Role, VD: System Admin] | - Dashboard<br>- Users<br>- Settings | [Menu type: Top bar / Sidebar] |
+
+- Global navigation pattern: [Sidebar | Top bar | Bottom tabs]
+- Routing persistence: [Cách menu giữ trạng thái active / Hệ thống Breadcrumbs]
+
+## 3. Color Palette & Roles
 
 | Role | Color | Usage | Notes |
 | --- | --- | --- | --- |
@@ -35,7 +44,7 @@
 | Error | [#HEX] | [Usage] | [Notes] |
 | Border / Divider | [#HEX] | [Usage] | [Notes] |
 
-## 3. Typography Rules
+## 4. Typography Rules
 
 | Level | Font / Style | Size / Weight | Usage |
 | --- | --- | --- | --- |
@@ -45,7 +54,7 @@
 | Label | [Rule] | [Rule] | [Usage] |
 | Mono / Data | [Rule] | [Rule] | [Usage] |
 
-## 4. Component Stylings
+## 5. Component Stylings
 
 - Button style: [Shape, emphasis, states]
 - Input and form style: [Density, labels, validation]
@@ -54,21 +63,21 @@
 - Navigation style: [Sidebar, tabs, top bar, breadcrumbs]
 - Feedback style: [Toast, inline error, banners, dialogs]
 
-## 5. Layout Principles
+## 6. Layout Principles
 
 - Grid and spacing philosophy: [Rule]
 - Content width and breakpoints: [Rule]
 - Section hierarchy: [Rule]
 - Mobile / responsive priority: [Desktop-first | Mobile-first | Balanced]
 
-## 6. Depth & Elevation
+## 7. Depth & Elevation
 
 - Surface model: [Flat | Layered | Mixed]
 - Border radius direction: [Rule]
 - Shadow / border treatment: [Rule]
 - Overlays and modal treatment: [Rule]
 
-## 7. Do's and Don'ts
+## 8. Do's and Don'ts
 
 ### Do
 
@@ -80,16 +89,17 @@
 - [Anti-pattern]
 - [Anti-pattern]
 
-## 8. Responsive Behavior
+## 9. Responsive Behavior
 
 - Navigation collapse behavior: [Rule]
 - Table/list adaptation: [Rule]
 - Form adaptation: [Rule]
 - Minimum touch/interaction targets: [Rule]
 
-## 9. Agent Prompt Guide
+## 10. Agent Prompt Guide
 
 - Use this file as the system design document before generating any wireframe for this project.
 - Follow the approved visual tone, color roles, typography rules, and component styling consistently across all frames.
+- Strictly adhere to the Portals & Navigation architecture. Make sure global menus and sitemaps are present and consistent in all screens of their respective portals.
 - Keep behavior aligned with use cases and Screen Contract Lite. Do not invent flows that are not documented.
 - Use Shadcn UI as the fallback component baseline only when this file leaves a detail unspecified.

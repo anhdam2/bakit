@@ -23,6 +23,7 @@ Related rules:
 
 ## Cross-Artifact Consistency
 - Use cases, screen descriptions, and wireframes must describe the **same** behavior using **identical** terminology.
+- Every detailed Use Case in the SRS must include a Process Flow (BPMN 2.0 with swimlanes) or Sequence Diagram (using Mermaid).
 - When wireframes are AI-generated, an approved project `DESIGN.md` must exist and the resulting frames must follow it consistently.
 - Screen Contract Lite must be sufficient to generate wireframes before final screen descriptions are written.
 - UC actor actions must match screen User Actions — same wording, same sequence.

@@ -970,15 +970,15 @@ Output: `plans/reports/drafts/srs-{date}-{slug}-group-e.md`
 
 Screen field table format:
 
-| Field Name | Field Type | Description |
+| Tên trường (Field Name) | Loại trường (Field Type) | Mô tả (Description) |
 | --- | --- | --- |
-| [Field] | [Type] | Display: [...] / Behaviour: [...] / Validation: [...] |
+| [Field] | [Type] | **Display Rules:** [visibility, defaults, read-only conditions, formatting] |
+| | | **Behaviour Rules:** [on-change actions, auto-fill, cascading, navigation triggers] |
+| | | **Validation Rules:** [required, format, range, cross-field, error message triggers] |
+| | | **Rule Codes:** [CR-DIS-01, CR-VAL-01, v.v.] |
+| | | **Message Codes:** [MSG-ERR-01, MSG-SUC-01, v.v.] |
 
-The description column contains up to three rule categories as needed:
-
-- Display Rules: visibility, defaults, read-only conditions, formatting
-- Behaviour Rules: on-change actions, auto-fill, cascading, navigation triggers
-- Validation Rules: required, format, range, cross-field, error messages
+The description column MUST separate the 3 rule categories (Display, Behaviour, Validation) cleanly and MUST include explicit rows for `Rule Codes` and `Message Codes` to ensure DRY maintainability as defined in the SRS template.
 
 ### Step 10.1 - Produce validation pack
 
