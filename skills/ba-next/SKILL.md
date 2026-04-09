@@ -21,7 +21,8 @@ Use this command when you want BA-kit to inspect the current project set and tel
 
 <execution_context>
 @$HOME/.claude/ba-kit/workflows/next.md
-@$HOME/.claude/ba-kit/references/artifact-contract.md
+@$HOME/.claude/ba-kit/contract.yaml
+@$HOME/.claude/ba-kit/contract-behavior.md
 </execution_context>
 
 <context>

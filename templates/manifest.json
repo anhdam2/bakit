@@ -1,0 +1,86 @@
+{
+  "srs-template.md": {
+    "groups": {
+      "A": {
+        "headings": [
+          "## Mục đích và phạm vi (Purpose and Scope)",
+          "## Mô tả tổng quan (Overall Description)",
+          "## Yêu cầu chức năng (Functional Requirements)"
+        ]
+      },
+      "B": {
+        "headings": [
+          "## Đặc tả Use Case (Use Case Specifications)"
+        ]
+      },
+      "C": {
+        "headings": [
+          "## Hợp đồng màn hình rút gọn (Screen Contract Lite)",
+          "## Danh mục màn hình (Screen Inventory)"
+        ]
+      },
+      "D": {
+        "headings": [
+          "## Yêu cầu phi chức năng (Non-Functional Requirements)",
+          "## Sơ đồ luồng dữ liệu (Data Flow Diagrams)",
+          "## Sơ đồ thực thể quan hệ (Entity Relationship Diagram)",
+          "## Đặc tả API (API Specifications)",
+          "## Ràng buộc (Constraints)"
+        ]
+      },
+      "E": {
+        "headings": [
+          "## Mô tả màn hình (Screen Descriptions)",
+          "## Tham chiếu Wireframe / Mockup (Wireframe / Mockup Reference)",
+          "## Ý đồ Wireframe (Wireframe Intent)",
+          "## Vùng màn hình (Screen Regions)",
+          "## Wireframe Low-Fidelity (Low-Fidelity Wireframe)"
+        ]
+      },
+      "F": {
+        "headings": [
+          "## Quy tắc dùng chung (Common Rules)",
+          "## Danh sách thông điệp (Message List)",
+          "## Kịch bản kiểm thử (Test Cases)",
+          "## Bảng thuật ngữ (Glossary)"
+        ]
+      }
+    }
+  },
+  "frd-template.md": {
+    "groups": {
+      "all": {
+        "headings": [
+          "# Tài liệu yêu cầu chức năng (Functional Requirements Document)"
+        ]
+      }
+    }
+  },
+  "requirements-backbone-template.md": {
+    "groups": {
+      "all": {
+        "headings": [
+          "# Xương sống yêu cầu (Requirements Backbone)"
+        ]
+      }
+    }
+  },
+  "user-story-template.md": {
+    "groups": {
+      "all": {
+        "headings": [
+          "# Mẫu User Story (User Story Template)"
+        ]
+      }
+    }
+  },
+  "wireframe-input-template.md": {
+    "groups": {
+      "all": {
+        "headings": [
+          "# Gói đầu vào wireframe (Wireframe Input Pack)"
+        ]
+      }
+    }
+  }
+}

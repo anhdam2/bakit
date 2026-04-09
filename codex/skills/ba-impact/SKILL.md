@@ -29,7 +29,8 @@ This command must not mutate artifacts. It should analyze the change first, then
 
 <execution_context>
 @$HOME/.codex/ba-kit/workflows/impact.md
-@$HOME/.codex/ba-kit/references/artifact-contract.md
+@$HOME/.codex/ba-kit/contract.yaml
+@$HOME/.codex/ba-kit/contract-behavior.md
 </execution_context>
 
 <context>

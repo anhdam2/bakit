@@ -29,7 +29,8 @@ This is a dispatcher. It should not do the downstream BA work itself.
 
 <execution_context>
 @$HOME/.codex/ba-kit/workflows/do.md
-@$HOME/.codex/ba-kit/references/artifact-contract.md
+@$HOME/.codex/ba-kit/contract.yaml
+@$HOME/.codex/ba-kit/contract-behavior.md
 </execution_context>
 
 <context>

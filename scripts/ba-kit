@@ -14,12 +14,26 @@ usage() {
 Usage:
   ba-kit doctor
   ba-kit update
-  ba-kit status [--slug <slug>] [--date <YYMMDD-HHmm>]
+  ba-kit resolve [--slug <slug>] [--date <YYMMDD-HHmm>] [--module <module_slug>]
+  ba-kit next [--slug <slug>] [--date <YYMMDD-HHmm>] [--module <module_slug>]
+  ba-kit check-prereq <command> [--slug <slug>] [--date <YYMMDD-HHmm>] [--module <module_slug>]
+  ba-kit template-section <template> <group>
+  ba-kit source-extract <file> [--slug <slug>] [--date <YYMMDD-HHmm>] [--chunk-chars <n>] [--copy-raw] [--promote]
+  ba-kit design-snapshot [--slug <slug>] [--design-doc <path>]
+  ba-kit stitch-state <init|show|upsert> --slug <slug> [options]
+  ba-kit status [--slug <slug>] [--date <YYMMDD-HHmm>] [--module <module_slug>]
 
 Commands:
-  doctor    Check BA-kit runtime readiness, installed manifests, and optional MCP/tool dependencies.
-  update    Fast-forward pull the installed BA-kit source repo and rerun installed runtime installers.
-  status    Inspect BA-kit artifacts and delegated worker trackers from the registered source repo.
+  doctor          Check BA-kit runtime readiness, installed manifests, and optional MCP/tool dependencies.
+  update          Fast-forward pull the installed BA-kit source repo and rerun installed runtime installers.
+  resolve         Resolve the exact slug/date/module target from the modular tree.
+  next            Recommend the next BA-kit command for the resolved modular artifact set.
+  check-prereq    Validate the exact prerequisite artifacts for a BA command.
+  template-section  Print only the requested template group from templates/manifest.json.
+  source-extract  Extract a source file into staged cache and optionally promote it into 00_source.
+  design-snapshot Generate designs/{slug}/.design-snapshot.md from designs/{slug}/DESIGN.md.
+  stitch-state    Manage designs/{slug}/stitch-state.json for Stitch-backed runs.
+  status          Inspect BA-kit modular artifacts and delegated worker trackers from the registered source repo.
 EOF
 }
 
@@ -58,6 +72,11 @@ collect_installations() {
 }
 
 resolve_registered_repo() {
+  if [[ -n "${BA_KIT_SOURCE_REPO:-}" ]]; then
+    printf '%s\n' "${BA_KIT_SOURCE_REPO}"
+    return 0
+  fi
+
   local installations unique_repos repo_count repo runtime
   installations="$(collect_installations)"
 
@@ -234,111 +253,193 @@ print_update_notice_if_available() {
   fi
 }
 
+contract_query() {
+  local repo="$1"
+  local query="$2"
+
+  python3 - "${repo}/core/contract.yaml" "${query}" <<'PY'
+import json
+import sys
+
+contract_path, query = sys.argv[1], sys.argv[2]
+with open(contract_path, "r", encoding="utf-8") as fh:
+    data = json.load(fh)
+
+value = data
+for part in query.split("."):
+    value = value[part]
+
+if isinstance(value, list):
+    print("\n".join(str(item) for item in value))
+elif isinstance(value, dict):
+    print(json.dumps(value))
+else:
+    print(value)
+PY
+}
+
+render_contract_path() {
+  local repo="$1"
+  local key="$2"
+  local slug="${3:-}"
+  local date_token="${4:-}"
+  local module_slug="${5:-}"
+  local group="${6:-}"
+  local artifact_name="${7:-}"
+  local screen_id="${8:-}"
+  local source_hash="${9:-}"
+  local template
+
+  template="$(contract_query "${repo}" "paths.${key}")"
+  template="${template//\{slug\}/${slug}}"
+  template="${template//\{date\}/${date_token}}"
+  template="${template//\{module_slug\}/${module_slug}}"
+  template="${template//\{group\}/${group}}"
+  template="${template//\{artifact_name\}/${artifact_name}}"
+  template="${template//\{screen_id\}/${screen_id}}"
+  template="${template//\{source_hash\}/${source_hash}}"
+  printf '%s\n' "${template}"
+}
+
+project_root_path() {
+  local repo="$1"
+  local slug="$2"
+  local date_token="$3"
+  render_contract_path "${repo}" "project_root" "${slug}" "${date_token}"
+}
+
+list_project_dirs() {
+  local repo="$1"
+  local path base
+
+  [[ -d "${repo}/plans" ]] || return 0
+  while IFS= read -r -d '' path; do
+    base="$(basename "${path}")"
+    [[ "${base}" == "reports" || "${base}" == "_source-cache" ]] && continue
+    if [[ "${base}" =~ ^(.+)-([0-9]{6}-[0-9]{4})$ ]]; then
+      printf '%s\t%s\t%s\n' "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}" "${path}"
+    fi
+  done < <(find "${repo}/plans" -mindepth 1 -maxdepth 1 -type d -print0 | sort -z)
+}
+
 collect_candidate_slugs() {
   local repo="$1"
-  local path base slug
-
-  shopt -s nullglob
-  for path in \
-    "${repo}"/plans/reports/final/intake-*-*.md \
-    "${repo}"/plans/reports/final/backbone-*-*.md \
-    "${repo}"/plans/reports/final/frd-*-*.md \
-    "${repo}"/plans/reports/final/user-stories-*-*.md \
-    "${repo}"/plans/reports/final/srs-*-*.md \
-    "${repo}"/plans/reports/drafts/wireframe-input-*-*.md \
-    "${repo}"/plans/reports/drafts/wireframe-map-*-*.md \
-    "${repo}"/plans/reports/drafts/wireframe-state-*-*.md \
-    "${repo}"/plans/reports/drafts/srs-*-*.md; do
-    [[ -f "${path}" ]] || continue
-    base="$(basename "${path}")"
-    case "${base}" in
-      intake-*-*.md)
-        slug="$(printf '%s\n' "${base}" | sed -nE 's/^intake-(.+)-[0-9]{6}-[0-9]{4}\.md$/\1/p')"
-        ;;
-      backbone-*-*.md)
-        slug="$(printf '%s\n' "${base}" | sed -nE 's/^backbone-[0-9]{6}-[0-9]{4}-(.+)\.md$/\1/p')"
-        ;;
-      frd-*-*.md)
-        slug="$(printf '%s\n' "${base}" | sed -nE 's/^frd-[0-9]{6}-[0-9]{4}-(.+)\.md$/\1/p')"
-        ;;
-      user-stories-*-*.md)
-        slug="$(printf '%s\n' "${base}" | sed -nE 's/^user-stories-[0-9]{6}-[0-9]{4}-(.+)\.md$/\1/p')"
-        ;;
-      srs-*-*.md)
-        slug="$(printf '%s\n' "${base}" | sed -nE \
-          -e 's/^srs-[0-9]{6}-[0-9]{4}-(.+)-group-[a-z0-9-]+\.md$/\1/p' \
-          -e 's/^srs-[0-9]{6}-[0-9]{4}-(.+)\.md$/\1/p')"
-        ;;
-      wireframe-input-*-*.md)
-        slug="$(printf '%s\n' "${base}" | sed -nE 's/^wireframe-input-[0-9]{6}-[0-9]{4}-(.+)\.md$/\1/p')"
-        ;;
-      wireframe-map-*-*.md)
-        slug="$(printf '%s\n' "${base}" | sed -nE 's/^wireframe-map-[0-9]{6}-[0-9]{4}-(.+)\.md$/\1/p')"
-        ;;
-      wireframe-state-*-*.md)
-        slug="$(printf '%s\n' "${base}" | sed -nE 's/^wireframe-state-[0-9]{6}-[0-9]{4}-(.+)\.md$/\1/p')"
-        ;;
-    esac
-    [[ -n "${slug}" ]] && printf '%s\n' "${slug}"
-  done | sed '/^$/d' | sort -u
-  shopt -u nullglob
+  list_project_dirs "${repo}" | cut -f1 | sed '/^$/d' | sort -u
 }
 
 collect_candidate_dates() {
   local repo="$1"
   local slug="$2"
-  local path base date
+  list_project_dirs "${repo}" | awk -F'\t' -v target="${slug}" '$1 == target {print $2}' | sed '/^$/d' | sort -u
+}
 
-  shopt -s nullglob
-  for path in \
-    "${repo}/plans/reports/final/intake-${slug}-"*.md \
-    "${repo}/plans/reports/final/backbone-"*-"${slug}.md" \
-    "${repo}/plans/reports/final/frd-"*-"${slug}.md" \
-    "${repo}/plans/reports/final/user-stories-"*-"${slug}.md" \
-    "${repo}/plans/reports/final/srs-"*-"${slug}.md" \
-    "${repo}/plans/reports/drafts/wireframe-input-"*-"${slug}.md" \
-    "${repo}/plans/reports/drafts/wireframe-map-"*-"${slug}.md" \
-    "${repo}/plans/reports/drafts/wireframe-state-"*-"${slug}.md" \
-    "${repo}/plans/reports/drafts/srs-"*-"${slug}.md" \
-    "${repo}/plans/"*-"${slug}"/plan.md; do
-    [[ -f "${path}" ]] || continue
-    base="$(basename "${path}")"
-    case "${path}" in
-      */plans/reports/final/intake-${slug}-*.md)
-        date="$(printf '%s\n' "${base}" | sed -nE "s/^intake-${slug}-([0-9]{6}-[0-9]{4})\\.md$/\\1/p")"
-        ;;
-      */plans/reports/final/backbone-*-${slug}.md)
-        date="$(printf '%s\n' "${base}" | sed -nE "s/^backbone-([0-9]{6}-[0-9]{4})-${slug}\\.md$/\\1/p")"
-        ;;
-      */plans/reports/final/frd-*-${slug}.md)
-        date="$(printf '%s\n' "${base}" | sed -nE "s/^frd-([0-9]{6}-[0-9]{4})-${slug}\\.md$/\\1/p")"
-        ;;
-      */plans/reports/final/user-stories-*-${slug}.md)
-        date="$(printf '%s\n' "${base}" | sed -nE "s/^user-stories-([0-9]{6}-[0-9]{4})-${slug}\\.md$/\\1/p")"
-        ;;
-      */plans/reports/final/srs-*-${slug}.md)
-        date="$(printf '%s\n' "${base}" | sed -nE "s/^srs-([0-9]{6}-[0-9]{4})-${slug}\\.md$/\\1/p")"
-        ;;
-      */plans/reports/drafts/srs-*-${slug}-group-*.md)
-        date="$(printf '%s\n' "${base}" | sed -nE "s/^srs-([0-9]{6}-[0-9]{4})-${slug}-group-[a-z0-9-]+\\.md$/\\1/p")"
-        ;;
-      */plans/reports/drafts/wireframe-input-*-${slug}.md)
-        date="$(printf '%s\n' "${base}" | sed -nE "s/^wireframe-input-([0-9]{6}-[0-9]{4})-${slug}\\.md$/\\1/p")"
-        ;;
-      */plans/reports/drafts/wireframe-map-*-${slug}.md)
-        date="$(printf '%s\n' "${base}" | sed -nE "s/^wireframe-map-([0-9]{6}-[0-9]{4})-${slug}\\.md$/\\1/p")"
-        ;;
-      */plans/reports/drafts/wireframe-state-*-${slug}.md)
-        date="$(printf '%s\n' "${base}" | sed -nE "s/^wireframe-state-([0-9]{6}-[0-9]{4})-${slug}\\.md$/\\1/p")"
-        ;;
-      */plans/*-${slug}/plan.md)
-        date="$(basename "$(dirname "${path}")")"
-        date="${date%-${slug}}"
-        ;;
-    esac
-    [[ -n "${date}" ]] && printf '%s\n' "${date}"
-  done | sed '/^$/d' | sort -u
-  shopt -u nullglob
+collect_modules() {
+  local repo="$1"
+  local slug="$2"
+  local date_token="$3"
+  local root path
+
+  root="$(project_root_path "${repo}" "${slug}" "${date_token}")"
+  [[ -d "${repo}/${root}/03_modules" ]] || return 0
+
+  while IFS= read -r -d '' path; do
+    basename "${path}"
+  done < <(find "${repo}/${root}/03_modules" -mindepth 1 -maxdepth 1 -type d -print0 | sort -z)
+}
+
+resolve_module_name() {
+  local repo="$1"
+  local slug="$2"
+  local date_token="$3"
+  local module="${4:-}"
+  local modules module_count
+
+  if [[ -n "${module}" ]]; then
+    printf '%s\n' "${module}"
+    return 0
+  fi
+
+  modules="$(collect_modules "${repo}" "${slug}" "${date_token}")"
+  module_count="$(printf '%s\n' "${modules}" | sed '/^$/d' | wc -l | tr -d ' ')"
+  if [[ "${module_count}" -eq 1 ]]; then
+    printf '%s\n' "$(printf '%s\n' "${modules}" | sed '/^$/d' | head -n 1)"
+  fi
+}
+
+require_unique_slug() {
+  local repo="$1"
+  local slug="$2"
+  local slugs slug_count
+
+  if [[ -n "${slug}" ]]; then
+    printf '%s\n' "${slug}"
+    return 0
+  fi
+
+  slugs="$(collect_candidate_slugs "${repo}")"
+  slug_count="$(printf '%s\n' "${slugs}" | sed '/^$/d' | wc -l | tr -d ' ')"
+  if [[ "${slug_count}" -eq 0 ]]; then
+    fail "No BA-kit modular project roots found under ${repo}/plans"
+  fi
+  if [[ "${slug_count}" -gt 1 ]]; then
+    printf 'Multiple slugs found. Rerun with --slug. Candidates:\n%s\n' "${slugs}" >&2
+    exit 1
+  fi
+  printf '%s\n' "$(printf '%s\n' "${slugs}" | sed '/^$/d' | head -n 1)"
+}
+
+require_unique_date() {
+  local repo="$1"
+  local slug="$2"
+  local date_token="$3"
+  local dates date_count
+
+  if [[ -n "${date_token}" ]]; then
+    printf '%s\n' "${date_token}"
+    return 0
+  fi
+
+  dates="$(collect_candidate_dates "${repo}" "${slug}")"
+  date_count="$(printf '%s\n' "${dates}" | sed '/^$/d' | wc -l | tr -d ' ')"
+  if [[ "${date_count}" -eq 0 ]]; then
+    fail "No dated artifact set found for slug '${slug}' under ${repo}/plans"
+  fi
+  if [[ "${date_count}" -gt 1 ]]; then
+    printf 'Multiple dated sets found for slug %s. Rerun with --date. Candidates:\n%s\n' "${slug}" "${dates}" >&2
+    exit 1
+  fi
+  printf '%s\n' "$(printf '%s\n' "${dates}" | sed '/^$/d' | head -n 1)"
+}
+
+module_root_path() {
+  local repo="$1"
+  local slug="$2"
+  local date_token="$3"
+  local module_slug="$4"
+  render_contract_path "${repo}" "module_root" "${slug}" "${date_token}" "${module_slug}"
+}
+
+design_root_path() {
+  local repo="$1"
+  local slug="$2"
+  render_contract_path "${repo}" "design_root" "${slug}"
+}
+
+print_path_if_exists() {
+  local path="$1"
+  [[ -e "${path}" ]] && printf '%s\n' "${path}"
+}
+
+command_requires_module() {
+  local repo="$1"
+  local command="$2"
+  [[ "$(contract_query "${repo}" "commands.${command}.module_required")" == "True" || "$(contract_query "${repo}" "commands.${command}.module_required")" == "true" ]]
+}
+
+command_requirements() {
+  local repo="$1"
+  local command="$2"
+  contract_query "${repo}" "commands.${command}.requires"
 }
 
 print_artifact_status_line() {
@@ -366,6 +467,17 @@ print_wireframe_status_line() {
   printf -- "- [!] wireframes — %s — %s\n" "${state}" "$(stat_mtime_pretty "${path}")"
 }
 
+print_json_state_line() {
+  local path="$1"
+  local label="$2"
+
+  if [[ -f "${path}" ]]; then
+    printf -- "- [x] %s — %s\n" "${label}" "$(stat_mtime_pretty "${path}")"
+  else
+    printf -- "- [ ] %s — missing\n" "${label}"
+  fi
+}
+
 delegation_icon() {
   local display_status="$1"
 
@@ -388,7 +500,7 @@ print_delegation_status() {
   local date_token="$3"
   local dir now found path base slice_status threshold age_minutes display_status last_heartbeat note
 
-  dir="${repo}/plans/${date_token}-${slug}/delegation"
+  dir="${repo}/$(render_contract_path "${repo}" "delegation_root" "${slug}" "${date_token}")"
   [[ -d "${dir}" ]] || return 0
 
   now="$(date +%s)"
@@ -406,7 +518,7 @@ print_delegation_status() {
     last_heartbeat="$(read_md_field "${path}" "Last Heartbeat At")"
     note="$(read_md_field "${path}" "Latest Milestone Or Blocker")"
     [[ -n "${slice_status}" ]] || slice_status="unknown"
-    [[ "${threshold}" =~ ^[0-9]+$ ]] || threshold=10
+    [[ "${threshold}" =~ ^[0-9]+$ ]] || threshold="$(contract_query "${repo}" "states.stall_after_minutes")"
     age_minutes="$(( (now - $(stat_mtime_epoch "${path}")) / 60 ))"
     display_status="${slice_status}"
     if [[ ( "${slice_status}" == "running" || "${slice_status}" == "queued" ) && "${age_minutes}" -gt "${threshold}" ]]; then
@@ -780,7 +892,7 @@ doctor_command() {
 }
 
 status_command() {
-  local slug="" date_token="" repo slugs slug_count dates date_count
+  local slug="" date_token="" module="" repo slugs slug_count dates date_count root modules
 
   while [[ "$#" -gt 0 ]]; do
     case "$1" in
@@ -794,6 +906,11 @@ status_command() {
         date_token="$2"
         shift 2
         ;;
+      --module)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --module"
+        module="$2"
+        shift 2
+        ;;
       *)
         fail "Unsupported argument for 'status': $1"
         ;;
@@ -803,45 +920,459 @@ status_command() {
   repo="$(resolve_registered_repo)"
   print_update_notice_if_available "${repo}"
 
-  if [[ -z "${slug}" ]]; then
-    slugs="$(collect_candidate_slugs "${repo}")"
-    slug_count="$(printf '%s\n' "${slugs}" | sed '/^$/d' | wc -l | tr -d ' ')"
-    if [[ "${slug_count}" -eq 0 ]]; then
-      fail "No BA-kit artifacts found under ${repo}/plans/reports/final or ${repo}/plans/reports/drafts"
-    elif [[ "${slug_count}" -gt 1 ]]; then
-      printf 'Multiple slugs found. Rerun with --slug. Candidates:\n%s\n' "${slugs}" >&2
-      exit 1
-    fi
-    slug="$(printf '%s\n' "${slugs}" | sed '/^$/d' | head -n 1)"
-  fi
-
-  if [[ -z "${date_token}" ]]; then
-    dates="$(collect_candidate_dates "${repo}" "${slug}")"
-    date_count="$(printf '%s\n' "${dates}" | sed '/^$/d' | wc -l | tr -d ' ')"
-    if [[ "${date_count}" -eq 0 ]]; then
-      fail "No dated artifact set found for slug '${slug}' under ${repo}/plans"
-    elif [[ "${date_count}" -gt 1 ]]; then
-      printf 'Multiple dated sets found for slug %s. Rerun with --date. Candidates:\n%s\n' "${slug}" "${dates}" >&2
-      exit 1
-    fi
-    date_token="$(printf '%s\n' "${dates}" | sed '/^$/d' | head -n 1)"
-  fi
+  slug="$(require_unique_slug "${repo}" "${slug}")"
+  date_token="$(require_unique_date "${repo}" "${slug}" "${date_token}")"
 
   printf 'Project: %s\n' "${slug}"
   printf 'Date set: %s\n\n' "${date_token}"
 
-  print_artifact_status_line "${repo}/plans/reports/final/intake-${slug}-${date_token}.md" "final/intake-${slug}-${date_token}.md"
-  print_artifact_status_line "${repo}/plans/${date_token}-${slug}/plan.md" "plans/${date_token}-${slug}/plan.md"
-  print_artifact_status_line "${repo}/plans/reports/final/backbone-${date_token}-${slug}.md" "final/backbone-${date_token}-${slug}.md"
-  print_artifact_status_line "${repo}/plans/reports/final/frd-${date_token}-${slug}.md" "final/frd-${date_token}-${slug}.md"
-  print_artifact_status_line "${repo}/plans/reports/final/frd-${date_token}-${slug}.html" "final/frd-${date_token}-${slug}.html"
-  print_artifact_status_line "${repo}/plans/reports/final/user-stories-${date_token}-${slug}.md" "final/user-stories-${date_token}-${slug}.md"
-  print_artifact_status_line "${repo}/plans/reports/final/srs-${date_token}-${slug}.md" "final/srs-${date_token}-${slug}.md"
-  print_artifact_status_line "${repo}/plans/reports/final/srs-${date_token}-${slug}.html" "final/srs-${date_token}-${slug}.html"
-  print_artifact_status_line "${repo}/plans/reports/drafts/wireframe-input-${date_token}-${slug}.md" "drafts/wireframe-input-${date_token}-${slug}.md"
-  print_artifact_status_line "${repo}/plans/reports/drafts/wireframe-map-${date_token}-${slug}.md" "drafts/wireframe-map-${date_token}-${slug}.md"
-  print_wireframe_status_line "${repo}/plans/reports/drafts/wireframe-state-${date_token}-${slug}.md"
+  root="$(project_root_path "${repo}" "${slug}" "${date_token}")"
+  printf '[Source]\n'
+  print_json_state_line "${repo}/$(render_contract_path "${repo}" "source_manifest" "${slug}" "${date_token}")" "00_source/manifest.json"
+  print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "source_summary" "${slug}" "${date_token}")" "00_source/summary.md"
+
+  printf '\n[Core]\n'
+  print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "intake" "${slug}" "${date_token}")" "01_intake/intake.md"
+  print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "plan" "${slug}" "${date_token}")" "01_intake/plan.md"
+  print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "backbone" "${slug}" "${date_token}")" "02_backbone/backbone.md"
+
+  modules="${module}"
+  if [[ -z "${modules}" ]]; then
+    modules="$(collect_modules "${repo}" "${slug}" "${date_token}")"
+  fi
+  if [[ -n "${modules}" ]]; then
+    while IFS= read -r module_name; do
+      [[ -n "${module_name}" ]] || continue
+      printf '\n[Module: %s]\n' "${module_name}"
+      print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "frd" "${slug}" "${date_token}" "${module_name}")" "03_modules/${module_name}/frd.md"
+      print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "stories" "${slug}" "${date_token}" "${module_name}")" "03_modules/${module_name}/user-stories.md"
+      print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "srs" "${slug}" "${date_token}" "${module_name}")" "03_modules/${module_name}/srs.md"
+      print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "wireframe_input" "${slug}" "${date_token}" "${module_name}")" "03_modules/${module_name}/wireframe-input.md"
+      print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "wireframe_map" "${slug}" "${date_token}" "${module_name}")" "03_modules/${module_name}/wireframe-map.md"
+      print_wireframe_status_line "${repo}/$(render_contract_path "${repo}" "wireframe_state" "${slug}" "${date_token}" "${module_name}")"
+    done <<<"${modules}"
+  fi
+
+  printf '\n[Compiled]\n'
+  print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "compiled_frd" "${slug}" "${date_token}")" "04_compiled/compiled-frd.html"
+  print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "compiled_srs" "${slug}" "${date_token}")" "04_compiled/compiled-srs.html"
+
+  printf '\n[Designs]\n'
+  print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "design_doc" "${slug}")" "designs/${slug}/DESIGN.md"
+  print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "design_snapshot" "${slug}")" "designs/${slug}/.design-snapshot.md"
+  print_json_state_line "${repo}/$(render_contract_path "${repo}" "stitch_state" "${slug}")" "designs/${slug}/stitch-state.json"
   print_delegation_status "${repo}" "${slug}" "${date_token}"
+}
+
+resolve_command() {
+  local slug="" date_token="" module="" repo root resolved_module module_root
+
+  while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+      --slug)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --slug"
+        slug="$2"
+        shift 2
+        ;;
+      --date)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --date"
+        date_token="$2"
+        shift 2
+        ;;
+      --module)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --module"
+        module="$2"
+        shift 2
+        ;;
+      *)
+        fail "Unsupported argument for 'resolve': $1"
+        ;;
+    esac
+  done
+
+  repo="$(resolve_registered_repo)"
+  slug="$(require_unique_slug "${repo}" "${slug}")"
+  date_token="$(require_unique_date "${repo}" "${slug}" "${date_token}")"
+
+  root="$(project_root_path "${repo}" "${slug}" "${date_token}")"
+  resolved_module="$(resolve_module_name "${repo}" "${slug}" "${date_token}" "${module}")"
+
+  printf 'Project: %s\n' "${slug}"
+  printf 'Date set: %s\n' "${date_token}"
+  printf 'Project root: %s/%s\n' "${repo}" "${root}"
+  if [[ -n "${resolved_module}" ]]; then
+    module_root="$(module_root_path "${repo}" "${slug}" "${date_token}" "${resolved_module}")"
+    printf 'Module: %s\n' "${resolved_module}"
+    printf 'Module root: %s/%s\n' "${repo}" "${module_root}"
+  fi
+}
+
+check_prereq_command() {
+  local target_command="${1:-}"
+  local slug="" date_token="" module="" repo requires requirement path
+
+  [[ -n "${target_command}" ]] || fail "Usage: ba-kit check-prereq <command> [--slug ... --date ... --module ...]"
+  shift || true
+
+  while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+      --slug)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --slug"
+        slug="$2"
+        shift 2
+        ;;
+      --date)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --date"
+        date_token="$2"
+        shift 2
+        ;;
+      --module)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --module"
+        module="$2"
+        shift 2
+        ;;
+      *)
+        fail "Unsupported argument for 'check-prereq': $1"
+        ;;
+    esac
+  done
+
+  repo="$(resolve_registered_repo)"
+  slug="$(require_unique_slug "${repo}" "${slug}")"
+  date_token="$(require_unique_date "${repo}" "${slug}" "${date_token}")"
+  if command_requires_module "${repo}" "${target_command}"; then
+    module="$(resolve_module_name "${repo}" "${slug}" "${date_token}" "${module}")"
+    [[ -n "${module}" ]] || fail "Command '${target_command}' requires --module or a single resolvable module."
+  fi
+
+  requires="$(command_requirements "${repo}" "${target_command}")"
+  while IFS= read -r requirement; do
+    [[ -n "${requirement}" ]] || continue
+    path="$(render_contract_path "${repo}" "${requirement}" "${slug}" "${date_token}" "${module}")"
+    if [[ ! -f "${repo}/${path}" ]]; then
+      printf 'Missing: %s\n' "${repo}/${path}"
+      case "${requirement}" in
+        intake) printf 'Run first: ba-start intake\n' ;;
+        backbone) printf 'Run first: ba-start backbone --slug %s\n' "${slug}" ;;
+        stories) printf 'Run first: ba-start stories --slug %s --module %s\n' "${slug}" "${module}" ;;
+        wireframe_input) printf 'Run first: ba-start srs --slug %s --module %s\n' "${slug}" "${module}" ;;
+      esac
+      exit 1
+    fi
+  done <<<"${requires}"
+
+  printf 'OK: %s prerequisites satisfied\n' "${target_command}"
+}
+
+next_command() {
+  local slug="" date_token="" module="" repo story_path srs_path wireframe_input_path wireframe_state_path compiled_frd compiled_srs
+
+  while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+      --slug)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --slug"
+        slug="$2"
+        shift 2
+        ;;
+      --date)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --date"
+        date_token="$2"
+        shift 2
+        ;;
+      --module)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --module"
+        module="$2"
+        shift 2
+        ;;
+      *)
+        fail "Unsupported argument for 'next': $1"
+        ;;
+    esac
+  done
+
+  repo="$(resolve_registered_repo)"
+  slug="$(require_unique_slug "${repo}" "${slug}")"
+  date_token="$(require_unique_date "${repo}" "${slug}" "${date_token}")"
+
+  if [[ ! -f "${repo}/$(render_contract_path "${repo}" "intake" "${slug}" "${date_token}")" ]]; then
+    printf 'Next command: ba-start intake\n'
+    printf 'Reason: intake is missing.\n'
+    return 0
+  fi
+  if [[ ! -f "${repo}/$(render_contract_path "${repo}" "backbone" "${slug}" "${date_token}")" ]]; then
+    printf 'Next command: ba-start backbone --slug %s\n' "${slug}"
+    printf 'Reason: backbone is missing.\n'
+    return 0
+  fi
+
+  module="$(resolve_module_name "${repo}" "${slug}" "${date_token}" "${module}")"
+  [[ -n "${module}" ]] || fail "Next-step detection needs --module when more than one module exists."
+
+  story_path="${repo}/$(render_contract_path "${repo}" "stories" "${slug}" "${date_token}" "${module}")"
+  srs_path="${repo}/$(render_contract_path "${repo}" "srs" "${slug}" "${date_token}" "${module}")"
+  wireframe_input_path="${repo}/$(render_contract_path "${repo}" "wireframe_input" "${slug}" "${date_token}" "${module}")"
+  wireframe_state_path="${repo}/$(render_contract_path "${repo}" "wireframe_state" "${slug}" "${date_token}" "${module}")"
+  compiled_frd="${repo}/$(render_contract_path "${repo}" "compiled_frd" "${slug}" "${date_token}")"
+  compiled_srs="${repo}/$(render_contract_path "${repo}" "compiled_srs" "${slug}" "${date_token}")"
+
+  if [[ ! -f "${story_path}" ]]; then
+    printf 'Next command: ba-start stories --slug %s --module %s\n' "${slug}" "${module}"
+    printf 'Reason: user stories are missing.\n'
+    return 0
+  fi
+  if [[ ! -f "${srs_path}" ]]; then
+    printf 'Next command: ba-start srs --slug %s --module %s\n' "${slug}" "${module}"
+    printf 'Reason: SRS is missing for the resolved module.\n'
+    return 0
+  fi
+  if [[ -f "${wireframe_input_path}" && ! -f "${wireframe_state_path}" ]]; then
+    printf 'Next command: ba-start wireframes --slug %s --module %s\n' "${slug}" "${module}"
+    printf 'Reason: wireframe input exists but wireframe state is missing.\n'
+    return 0
+  fi
+  if [[ ! -f "${compiled_frd}" || ! -f "${compiled_srs}" ]]; then
+    printf 'Next command: ba-start package --slug %s\n' "${slug}"
+    printf 'Reason: compiled HTML is missing.\n'
+    return 0
+  fi
+
+  printf 'Next command: ba-start status --slug %s\n' "${slug}"
+  printf 'Reason: required artifacts already exist for the resolved module.\n'
+}
+
+template_section_command() {
+  local template_name="${1:-}"
+  local group="${2:-}"
+  local repo manifest_path template_path
+
+  [[ -n "${template_name}" && -n "${group}" ]] || fail "Usage: ba-kit template-section <template> <group>"
+  repo="$(resolve_registered_repo)"
+  manifest_path="${repo}/$(contract_query "${repo}" "templates.manifest")"
+  template_path="${repo}/templates/${template_name}"
+  [[ -f "${template_path}" ]] || fail "Template not found: ${template_path}"
+
+  python3 - "${manifest_path}" "${template_path}" "${template_name}" "${group}" <<'PY'
+import json
+import re
+import sys
+from pathlib import Path
+
+manifest_path, template_path, template_name, group = sys.argv[1:5]
+manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
+template_info = manifest.get(template_name)
+if not template_info:
+    raise SystemExit(f"Template '{template_name}' is not indexed in {manifest_path}")
+group_info = template_info["groups"].get(group)
+if not group_info:
+    raise SystemExit(f"Group '{group}' is not defined for {template_name}")
+
+lines = Path(template_path).read_text(encoding="utf-8").splitlines()
+heading_re = re.compile(r"^(#{1,6})\s+(.+)$")
+headings = []
+for idx, line in enumerate(lines):
+    match = heading_re.match(line.strip())
+    if match:
+        headings.append((idx, len(match.group(1)), line.strip()))
+
+def extract_block(target_heading: str) -> list[str]:
+    for i, (start_idx, level, heading_text) in enumerate(headings):
+        if heading_text == target_heading:
+            end_idx = len(lines)
+            for next_idx, next_level, _ in headings[i + 1:]:
+                if next_level <= level:
+                    end_idx = next_idx
+                    break
+            return lines[start_idx:end_idx]
+    raise SystemExit(f"Heading '{target_heading}' not found in {template_path}")
+
+blocks = []
+for heading in group_info["headings"]:
+    blocks.extend(extract_block(heading))
+    blocks.append("")
+
+print("\n".join(blocks).rstrip())
+PY
+}
+
+source_extract_command() {
+  local source_path="${1:-}"
+  local slug="" date_token="" chunk_chars="4000" copy_raw=0 promote=0
+  local repo cache_root_template cache_root_arg promoted_root=""
+
+  [[ -n "${source_path}" ]] || fail "Usage: ba-kit source-extract <file> [--slug ... --date ... --chunk-chars <n> --copy-raw --promote]"
+  shift || true
+
+  while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+      --slug)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --slug"
+        slug="$2"
+        shift 2
+        ;;
+      --date)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --date"
+        date_token="$2"
+        shift 2
+        ;;
+      --chunk-chars)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --chunk-chars"
+        chunk_chars="$2"
+        shift 2
+        ;;
+      --copy-raw)
+        copy_raw=1
+        shift
+        ;;
+      --promote)
+        promote=1
+        shift
+        ;;
+      *)
+        fail "Unsupported argument for 'source-extract': $1"
+        ;;
+    esac
+  done
+
+  [[ "${chunk_chars}" =~ ^[0-9]+$ ]] || fail "--chunk-chars must be an integer"
+  repo="$(resolve_registered_repo)"
+  cache_root_template="$(contract_query "${repo}" "paths.source_cache_root")"
+  cache_root_arg="${repo}/${cache_root_template}"
+
+  if [[ "${promote}" -eq 1 ]]; then
+    slug="$(require_unique_slug "${repo}" "${slug}")"
+    date_token="$(require_unique_date "${repo}" "${slug}" "${date_token}")"
+    promoted_root="${repo}/$(render_contract_path "${repo}" "source_promoted_root" "${slug}" "${date_token}")"
+  fi
+
+  local cmd=(python3 "${repo}/scripts/source-extract.py" "${source_path}" --cache-root "${cache_root_arg}" --chunk-chars "${chunk_chars}")
+  if [[ "${copy_raw}" -eq 1 ]]; then
+    cmd+=(--copy-raw)
+  fi
+  if [[ -n "${promoted_root}" ]]; then
+    cmd+=(--promote-root "${promoted_root}")
+  fi
+  "${cmd[@]}"
+}
+
+design_snapshot_command() {
+  local slug="" design_doc="" repo output_path
+
+  while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+      --slug)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --slug"
+        slug="$2"
+        shift 2
+        ;;
+      --design-doc)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --design-doc"
+        design_doc="$2"
+        shift 2
+        ;;
+      *)
+        fail "Unsupported argument for 'design-snapshot': $1"
+        ;;
+    esac
+  done
+
+  repo="$(resolve_registered_repo)"
+  slug="$(require_unique_slug "${repo}" "${slug}")"
+  if [[ -z "${design_doc}" ]]; then
+    design_doc="${repo}/$(render_contract_path "${repo}" "design_doc" "${slug}")"
+  fi
+  output_path="${repo}/$(render_contract_path "${repo}" "design_snapshot" "${slug}")"
+  python3 "${repo}/scripts/design-snapshot.py" --design-doc "${design_doc}" --output "${output_path}" --slug "${slug}"
+}
+
+stitch_state_command() {
+  local subcommand="${1:-}"
+  local slug="" project_id="" screen="" status_value="" screen_ref="" artifact="" prompt=""
+  local repo state_path
+
+  [[ -n "${subcommand}" ]] || fail "Usage: ba-kit stitch-state <init|show|upsert> --slug <slug> [options]"
+  shift || true
+
+  while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+      --slug)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --slug"
+        slug="$2"
+        shift 2
+        ;;
+      --project-id)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --project-id"
+        project_id="$2"
+        shift 2
+        ;;
+      --screen)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --screen"
+        screen="$2"
+        shift 2
+        ;;
+      --status)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --status"
+        status_value="$2"
+        shift 2
+        ;;
+      --screen-ref)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --screen-ref"
+        screen_ref="$2"
+        shift 2
+        ;;
+      --artifact)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --artifact"
+        artifact="$2"
+        shift 2
+        ;;
+      --prompt)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --prompt"
+        prompt="$2"
+        shift 2
+        ;;
+      *)
+        fail "Unsupported argument for 'stitch-state': $1"
+        ;;
+    esac
+  done
+
+  repo="$(resolve_registered_repo)"
+  slug="$(require_unique_slug "${repo}" "${slug}")"
+  state_path="${repo}/$(render_contract_path "${repo}" "stitch_state" "${slug}")"
+
+  case "${subcommand}" in
+    init)
+      local cmd=(python3 "${repo}/scripts/stitch-state.py" init --path "${state_path}")
+      if [[ -n "${project_id}" ]]; then
+        cmd+=(--project-id "${project_id}")
+      fi
+      "${cmd[@]}"
+      ;;
+    show)
+      [[ -z "${project_id}${screen}${status_value}${screen_ref}${artifact}${prompt}" ]] || fail "'show' does not accept update fields"
+      python3 "${repo}/scripts/stitch-state.py" show --path "${state_path}"
+      ;;
+    upsert)
+      [[ -n "${screen}" ]] || fail "'upsert' requires --screen"
+      [[ -n "${status_value}" ]] || fail "'upsert' requires --status"
+      local cmd=(python3 "${repo}/scripts/stitch-state.py" upsert --path "${state_path}" --screen "${screen}" --status "${status_value}")
+      if [[ -n "${project_id}" ]]; then
+        cmd+=(--project-id "${project_id}")
+      fi
+      if [[ -n "${screen_ref}" ]]; then
+        cmd+=(--screen-ref "${screen_ref}")
+      fi
+      if [[ -n "${artifact}" ]]; then
+        cmd+=(--artifact "${artifact}")
+      fi
+      if [[ -n "${prompt}" ]]; then
+        cmd+=(--prompt "${prompt}")
+      fi
+      "${cmd[@]}"
+      ;;
+    *)
+      fail "Unsupported stitch-state subcommand: ${subcommand}"
+      ;;
+  esac
 }
 
 main() {
@@ -855,6 +1386,27 @@ main() {
     update)
       [[ "$#" -eq 0 ]] || fail "Unsupported arguments for 'update'"
       update_command
+      ;;
+    resolve)
+      resolve_command "$@"
+      ;;
+    next)
+      next_command "$@"
+      ;;
+    check-prereq)
+      check_prereq_command "$@"
+      ;;
+    template-section)
+      template_section_command "$@"
+      ;;
+    source-extract)
+      source_extract_command "$@"
+      ;;
+    design-snapshot)
+      design_snapshot_command "$@"
+      ;;
+    stitch-state)
+      stitch_state_command "$@"
       ;;
     status)
       status_command "$@"

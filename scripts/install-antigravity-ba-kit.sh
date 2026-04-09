@@ -49,6 +49,10 @@ create_ki_metadata() {
     },
     {
       "type": "file",
+      "path": "${ROOT_DIR}/core/contract-behavior.md"
+    },
+    {
+      "type": "file",
       "path": "${ROOT_DIR}/skills/ba-start/SKILL.md"
     }
   ]
@@ -88,10 +92,10 @@ create_workflow_ki() {
 | `/ba-start` | "Read skills/ba-start/SKILL.md and run the full BA workflow" |
 | `/ba-start intake <file>` | "Read skills/ba-start/SKILL.md and run intake for <file>" |
 | `/ba-start backbone --slug X` | "Read skills/ba-start/SKILL.md and run backbone for slug X" |
-| `/ba-start frd --slug X` | "Read skills/ba-start/SKILL.md and run frd for slug X" |
-| `/ba-start stories --slug X` | "Read skills/ba-start/SKILL.md and run stories for slug X" |
-| `/ba-start srs --slug X` | "Read skills/ba-start/SKILL.md and run srs for slug X" |
-| `/ba-start wireframes --slug X` | "Read skills/ba-start/SKILL.md and run wireframes for slug X" |
+| `/ba-start frd --slug X --module Y` | "Read skills/ba-start/SKILL.md and run frd for slug X module Y" |
+| `/ba-start stories --slug X --module Y` | "Read skills/ba-start/SKILL.md and run stories for slug X module Y" |
+| `/ba-start srs --slug X --module Y` | "Read skills/ba-start/SKILL.md and run srs for slug X module Y" |
+| `/ba-start wireframes --slug X --module Y` | "Read skills/ba-start/SKILL.md and run wireframes for slug X module Y" |
 | `/ba-start package --slug X` | "Read skills/ba-start/SKILL.md and run package for slug X" |
 | `/ba-start status --slug X` | "Read skills/ba-start/SKILL.md and run status for slug X" |
 | `/ba-start impact --slug X` | "Read skills/ba-start/SKILL.md and run impact for slug X" |
@@ -126,6 +130,7 @@ create_workflow_ki() {
 - Date token: YYMMDD-HHmm
 - Mode: hybrid
 - UI baseline: Shadcn UI (unless DESIGN.md overrides)
+- Canonical contract: core/contract.yaml + core/contract-behavior.md
 KIEOF
 }
 

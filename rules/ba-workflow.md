@@ -44,7 +44,7 @@ BA-kit is optimized for a solo IT BA. The workflow should reduce duplicated writ
 
 - Build delegated work as narrow handoff packets, not full-document dumps.
 - Each delegated packet should contain only the objective, target artifact, allowed write scope, exact upstream excerpts, trace IDs, and expected output sections.
-- For non-trivial delegated work, include a dedicated tracker path under `plans/{date}-{slug}/delegation/` so progress is visible outside the live chat session.
+- For non-trivial delegated work, include a dedicated tracker path under `plans/{slug}-{date}/delegation/` so progress is visible outside the live chat session.
 - Do not pass the full playbook, full rule set, and full template into every sub-agent call once the orchestrator has already resolved the workflow.
 - If the delegated packet still requires large merged artifacts to be understandable, repartition the work before spawning.
 - When a delegated scope grows too large to keep terminology and traceability consistent, split it into smaller groups and rerun only the affected slice.
@@ -117,5 +117,5 @@ BA-kit is optimized for a solo IT BA. The workflow should reduce duplicated writ
 - Modal and overlay screens that affect flow must be treated like first-class screens in traceability, not collapsed into supporting-state inventory entries.
 - Verify quality before handoff.
 - **SRS preflight gate:** once slug/date and prerequisites are resolved, start from the exact backbone and user-stories artifacts, and pull the FRD only when it exists or is explicitly required.
-- **FRD/stories preflight gate:** once slug/date and prerequisites are resolved, start from the exact backbone artifact instead of rereading the entire `plans/reports/final/` suite.
+- **FRD/stories preflight gate:** once slug/date and prerequisites are resolved, start from the exact backbone artifact instead of rereading unrelated report or module trees.
 - **Context-loss recovery gate:** if exploration causes context pressure, recover from resolved command + slug/date + exact artifacts on disk; do not ask the user to restate the task unless the target really became ambiguous.

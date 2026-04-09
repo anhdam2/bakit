@@ -5,7 +5,7 @@ This command is the BA equivalent of a lightweight state machine. It reads the c
 </purpose>
 
 <required_reading>
-Read the installed BA playbook and artifact contract before computing the next step.
+Read the installed BA playbook, `contract.yaml`, and `contract-behavior.md` before computing the next step.
 </required_reading>
 
 <process>

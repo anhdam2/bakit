@@ -4,9 +4,10 @@
 
 - Slug: [initiative-slug]
 - Date: [YYMMDD-HHmm]
+- Module: [module-slug]
 - Source DESIGN.md: `designs/{slug}/DESIGN.md`
-- Source input pack: `plans/reports/drafts/wireframe-input-{date}-{slug}.md`
-- State marker: `plans/reports/drafts/wireframe-state-{date}-{slug}.md`
+- Source input pack: `plans/{slug}-{date}/03_modules/{module_slug}/wireframe-input.md`
+- State marker: `plans/{slug}-{date}/03_modules/{module_slug}/wireframe-state.md`
 
 ## Artifact Summary
 

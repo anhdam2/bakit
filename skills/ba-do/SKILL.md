@@ -22,7 +22,8 @@ Use this command when you know what you want to do in a BA workflow but do not k
 
 <execution_context>
 @$HOME/.claude/ba-kit/workflows/do.md
-@$HOME/.claude/ba-kit/references/artifact-contract.md
+@$HOME/.claude/ba-kit/contract.yaml
+@$HOME/.claude/ba-kit/contract-behavior.md
 </execution_context>
 
 <context>

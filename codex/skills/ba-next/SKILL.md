@@ -27,7 +27,8 @@ Detect the next logical BA step from the current BA artifact set and recommend t
 
 <execution_context>
 @$HOME/.codex/ba-kit/workflows/next.md
-@$HOME/.codex/ba-kit/references/artifact-contract.md
+@$HOME/.codex/ba-kit/contract.yaml
+@$HOME/.codex/ba-kit/contract-behavior.md
 </execution_context>
 
 <context>

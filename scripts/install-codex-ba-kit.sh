@@ -7,6 +7,7 @@ SOURCE_ROOT="${BA_KIT_CODEX_SOURCE_ROOT:-${ROOT_DIR}/codex}"
 SOURCE_SKILLS="${SOURCE_ROOT}/skills"
 SOURCE_AGENTS="${SOURCE_ROOT}/agents"
 CORE_SOURCE="${BA_KIT_CORE_SOURCE_ROOT:-${ROOT_DIR}/core}"
+CANONICAL_STEP_SOURCE="${ROOT_DIR}/skills/ba-start/steps"
 TARGET_HOME="${HOME}/.codex"
 TARGET_SKILLS="${TARGET_HOME}/skills"
 TARGET_AGENTS="${TARGET_HOME}/agents"
@@ -31,6 +32,14 @@ install_cli() {
   mv "${temp_target}" "${LOCAL_BIN_TARGET}/ba-kit"
 }
 
+generate_codex_assets() {
+  if [[ ! -x "${ROOT_DIR}/scripts/generate-codex-assets.sh" ]]; then
+    echo "Codex asset generator missing: ${ROOT_DIR}/scripts/generate-codex-assets.sh" >&2
+    exit 1
+  fi
+  (cd "${ROOT_DIR}" && bash ./scripts/generate-codex-assets.sh)
+}
+
 copy_tree() {
   local source_dir="$1"
   local target_dir="$2"
@@ -49,11 +58,13 @@ BA_KIT_INSTALLER=scripts/install-codex-ba-kit.sh
 EOF
 }
 
-node - "${SOURCE_SKILLS}" "${SOURCE_AGENTS}" "${TARGET_HOME}" "${TARGET_SKILLS}" "${TARGET_AGENTS}" "${TARGET_CONFIG}" <<'NODE'
+generate_codex_assets
+
+node - "${SOURCE_SKILLS}" "${SOURCE_AGENTS}" "${TARGET_HOME}" "${TARGET_SKILLS}" "${TARGET_AGENTS}" "${TARGET_CONFIG}" "${CANONICAL_STEP_SOURCE}" <<'NODE'
 const fs = require("node:fs");
 const path = require("node:path");
 
-const [sourceSkills, sourceAgents, targetHome, targetSkills, targetAgents, targetConfig] =
+const [sourceSkills, sourceAgents, targetHome, targetSkills, targetAgents, targetConfig, canonicalStepSource] =
   process.argv.slice(2);
 
 const ensureDir = (dirPath) => {
@@ -129,6 +140,7 @@ ensureDir(targetAgents);
 
 const installedSkills = copyContents(sourceSkills, targetSkills);
 const installedAgents = copyContents(sourceAgents, targetAgents);
+const installedStepFiles = copyContents(canonicalStepSource, path.join(targetSkills, "ba-start", "steps"));
 
 const registrations = [];
 for (const entry of installedAgents) {
@@ -146,6 +158,9 @@ if (installedSkills.length === 0) {
 }
 if (installedAgents.length === 0) {
   console.log("No agent files were found to install.");
+}
+if (installedStepFiles.length === 0) {
+  console.log("No canonical ba-start step files were copied.");
 }
 if (registrations.length > 0) {
   console.log(`Registered Codex agents in ${targetConfig}: ${registrations.join(", ")}`);

@@ -22,7 +22,8 @@ Use this command when a requirement, rule, actor, scope item, or screen behavior
 
 <execution_context>
 @$HOME/.claude/ba-kit/workflows/impact.md
-@$HOME/.claude/ba-kit/references/artifact-contract.md
+@$HOME/.claude/ba-kit/contract.yaml
+@$HOME/.claude/ba-kit/contract-behavior.md
 </execution_context>
 
 <context>

@@ -11,7 +11,7 @@ It must not mutate artifacts. It analyzes impact first, then returns the next co
 </purpose>
 
 <required_reading>
-Read the installed BA playbook and the artifact contract before doing anything else.
+Read the installed BA playbook, `contract.yaml`, and `contract-behavior.md` before doing anything else.
 </required_reading>
 
 <process>
@@ -19,7 +19,8 @@ Read the installed BA playbook and the artifact contract before doing anything e
 <step name="load_contract">
 Read:
 - the installed `ba-start` skill from the same runtime
-- `artifact-contract.md` from the installed BA core
+- `contract.yaml` from the installed BA core
+- `contract-behavior.md` from the installed BA core
 
 Use the `impact` subcommand contract in `ba-start` as the authoritative decision logic.
 </step>

@@ -5,7 +5,7 @@ This is a dispatcher. It should not do the downstream BA work itself.
 </purpose>
 
 <required_reading>
-Read the installed BA playbook and artifact contract before routing.
+Read the installed BA playbook, `contract.yaml`, and `contract-behavior.md` before routing.
 </required_reading>
 
 <process>

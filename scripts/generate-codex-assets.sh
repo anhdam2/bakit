@@ -1,3 +1,13 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+TARGET_DIR="${ROOT_DIR}/codex/skills/ba-start"
+
+mkdir -p "${TARGET_DIR}"
+
+cat > "${TARGET_DIR}/SKILL.md" <<'EOF'
 ---
 name: "ba-start"
 description: "Lifecycle engine for BA-kit. Accepts raw requirements, normalizes them, locks scope, builds a requirements backbone, emits only the necessary downstream artifacts, and packages deliverables."
@@ -47,3 +57,6 @@ The active step file depends on the resolved subcommand:
 3. Read only the matching step file.
 4. Execute that step end-to-end using the shared contract and behavior rules.
 </process>
+EOF
+
+printf 'Generated %s\n' "${TARGET_DIR}/SKILL.md"

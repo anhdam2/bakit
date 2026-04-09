@@ -1,7 +1,7 @@
 ---
 name: ba-notion
 description: Push BA-kit artifacts or other BA markdown documents to Notion through MCP. Supports creating a new page, appending to an existing page, overwriting content, or filling only missing sections.
-argument-hint: "[artifact|file] [--slug <slug>] [--date <YYMMDD-HHmm>] [--page <url|id>] [--parent <url|id>] [--mode auto|create|append|overwrite|fill-gaps]"
+argument-hint: "[artifact|file] [--slug <slug>] [--date <YYMMDD-HHmm>] [--module <module_slug>] [--page <url|id>] [--parent <url|id>] [--mode auto|create|append|overwrite|fill-gaps]"
 ---
 
 # BA Notion
@@ -11,9 +11,9 @@ Use this maintenance skill when the user wants to publish BA output into Notion 
 ## Invocation
 
 ```text
-/ba-notion srs --slug warehouse-rfp --page https://www.notion.so/... --mode overwrite
-/ba-notion frd --slug warehouse-rfp --parent https://www.notion.so/... --mode create
-/ba-notion plans/reports/final/backbone-260331-1015-warehouse-rfp.md --page https://www.notion.so/... --mode append
+/ba-notion srs --slug warehouse-rfp --module auth-flow --page https://www.notion.so/... --mode overwrite
+/ba-notion frd --slug warehouse-rfp --module auth-flow --parent https://www.notion.so/... --mode create
+/ba-notion plans/warehouse-rfp-260331-1015/02_backbone/backbone.md --page https://www.notion.so/... --mode append
 /ba-notion srs --slug warehouse-rfp --mode fill-gaps
 ```
 
@@ -36,18 +36,21 @@ When the source is an artifact alias instead of a direct file path:
 
 1. Resolve `--slug <slug>` first.
 2. Resolve `--date <YYMMDD-HHmm>` next.
-3. Use exact BA-kit artifact patterns only.
-4. Never silently choose a slug or dated set by mtime.
-5. If multiple candidates exist, stop and ask the user to choose.
+3. Require `--module <module_slug>` for `frd`, `stories`, `srs`, and `wireframe-map` aliases.
+4. Use exact modular BA-kit artifact paths only.
+5. Never silently choose a slug, dated set, or module by mtime.
+6. If multiple candidates exist, stop and ask the user to choose.
 
-Use these exact patterns:
+Use these exact paths from the shared contract:
 
-- `plans/reports/final/intake-{slug}-{date}.md`
-- `plans/reports/final/backbone-{date}-{slug}.md`
-- `plans/reports/final/frd-{date}-{slug}.md`
-- `plans/reports/final/user-stories-{date}-{slug}.md`
-- `plans/reports/final/srs-{date}-{slug}.md`
-- `plans/reports/drafts/wireframe-map-{date}-{slug}.md`
+- project scope:
+  - `plans/{slug}-{date}/01_intake/intake.md`
+  - `plans/{slug}-{date}/02_backbone/backbone.md`
+- module scope:
+  - `plans/{slug}-{date}/03_modules/{module_slug}/frd.md`
+  - `plans/{slug}-{date}/03_modules/{module_slug}/user-stories.md`
+  - `plans/{slug}-{date}/03_modules/{module_slug}/srs.md`
+  - `plans/{slug}-{date}/03_modules/{module_slug}/wireframe-map.md`
 
 ## Publish Modes
 

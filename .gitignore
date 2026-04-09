@@ -12,6 +12,7 @@ yarn-error.log*
 # Editors
 .idea/
 .vscode/
+__pycache__/
 
 # Generated artifacts
 dist/
@@ -24,6 +25,8 @@ plans/**
 !plans/README.md
 !plans/reports/
 !plans/reports/.gitkeep
+designs/**/.design-snapshot.md
+designs/**/stitch-state.json
 
 # Environment files
 .env
