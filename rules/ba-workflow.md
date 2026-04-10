@@ -16,10 +16,11 @@ BA-kit is optimized for a solo IT BA. The workflow should reduce duplicated writ
 5. Build the persisted requirements backbone
 6. Emit downstream artifacts from the backbone only when their gates are met
 7. Produce behavioral specifications only for complex or risky flows
-8. Produce technical specification slices only when integrations, NFR risk, or handoff needs justify them
-9. Capture user-approved design decisions and persist a project `DESIGN.md` before preparing any wireframe handoff pack
-10. Produce manual wireframe constraints and handoff checklists only for critical or explicitly requested screens
-11. Run quality review and package only the artifacts actually emitted for the engagement
+8. Produce the pre-wireframe screen spec (`Screen Contract Plus`) before any wireframe handoff when UI-backed scope exists
+9. Produce technical specification slices only when integrations, NFR risk, or handoff needs justify them
+10. Capture user-approved design decisions and persist a project `DESIGN.md` before preparing any wireframe handoff pack
+11. Produce manual wireframe constraints and handoff checklists only for critical or explicitly requested screens
+12. Run quality review and package only the artifacts actually emitted for the engagement
 
 ## Agent Delegation
 
@@ -66,6 +67,7 @@ BA-kit is optimized for a solo IT BA. The workflow should reduce duplicated writ
 - Delegation trackers for active sub-agent slices belong in `plans/{slug}-{date}/delegation/`.
 - Preserve traceability links between source, analysis, and final outputs.
 - Broken links and stale references must be corrected before handoff.
+- For UI-backed SRS work, lock the system-level `Portal Matrix` in `02_backbone/backbone.md` before module screen authoring.
 - For UI-backed SRS work, persist a project-specific runtime `designs/{slug}/DESIGN.md` before Step 9 wireframe handoff preparation.
 - The `wireframe-input.md` and `wireframe-map.md` artifacts belong inside the specific module folder: `plans/{slug}-{date}/03_modules/{module_slug}/`.
 - Persist the backbone as `plans/{slug}-{date}/02_backbone/backbone.md`. This is the default authoring source for downstream artifact emission.
@@ -109,7 +111,9 @@ BA-kit is optimized for a solo IT BA. The workflow should reduce duplicated writ
 - `lite` mode should stop at intake + backbone + stories unless the user explicitly asks for more.
 - `hybrid` mode is the default for solo IT BA work: backbone + targeted FRD + stories + selective SRS + critical-screen wireframe constraints when needed.
 - `formal` mode should emit the full artifact set only when governance, vendor handoff, or regulatory needs require it.
+- Pre-wireframe screen specs must lock `Portal ID`, `Nav Schema ID`, and expected active/highlight behavior before Step 9.
 - **Cross-artifact consistency check before packaging:** UC steps, screen fields/actions, and wireframe constraints or user-supplied mockup labels must use identical terminology and describe the same behavior.
+- Final screen descriptions may enrich content after Step 9, but they must not silently redefine portal ownership, global menu schema, or active/highlight behavior.
 - Reusable cross-screen rules and standard messages should be centralized once in the SRS and referenced by code from individual screen descriptions to reduce duplication and drift.
 - Shared SRS codes should follow one convention only: `CR-{TYPE}-{NN}` for rules and `MSG-{TYPE}-{NN}` for messages; do not mix local ad-hoc formats inside the same artifact set.
 - Manual wireframe linkage must be screen-to-screen ID and final SRS insertion point or external reference location.

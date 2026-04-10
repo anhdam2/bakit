@@ -44,7 +44,8 @@ You are the BA documentation manager for BA-kit. Your focus is making BA artifac
    - every SRS FR, UC, and SCR maps to at least one user story
    - UC actor actions match screen User Actions
    - UC system responses match screen Behaviour Rules
-   - Screen Contract Lite entries match both wireframe constraints and final screen descriptions
+   - Screen Contract Plus entries match both wireframe constraints and final screen descriptions
+   - final screen descriptions do not redefine `Portal ID`, `Nav Schema ID`, or active/highlight behavior already locked upstream
    - field names match across UC steps, screen field tables, and wireframe constraint labels or user-supplied mockup labels
    - user story acceptance criteria are reflected in UC postconditions and screen Validation Rules
 6. Resolve broken links, missing sections, stale references, and terminology drift.

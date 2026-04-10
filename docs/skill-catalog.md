@@ -22,10 +22,10 @@ This catalog explains the BA-kit workflow skill plus the maintenance skills that
 4. Scope lock and engagement-mode selection (`lite`, `hybrid`, `formal`)
 5. Requirements backbone production
 6. Gated FRD and user story generation
-7. Selective use case and Screen Contract Lite production when needed
+7. Selective use case and Screen Contract Plus production when needed
 8. Design decision capture and project runtime `DESIGN.md` creation when wireframe support is justified
-9. Manual wireframe constraint-pack and handoff-map production from the persisted wireframe input pack and approved `DESIGN.md`
-10. Final screen description production with the persisted wireframe constraints and optional manual handoff map
+9. Manual wireframe constraint-pack and handoff-map production from the persisted wireframe input pack, locked IA snapshot, and approved `DESIGN.md`
+10. Final screen description production as an enrich pass from the persisted wireframe constraints and optional manual handoff map
 11. Unified browser-editable HTML packaging and quality review across the emitted artifacts
 
 ## Invocation
@@ -67,8 +67,8 @@ Subcommand targeting rules:
 
 | Agent | Role in Workflow |
 | --- | --- |
-| `requirements-engineer` | Backbone, FRD, user stories, use cases, Screen Contract Lite, final screen descriptions |
-| `ui-ux-designer` | Manual wireframe constraint-pack and handoff-map preparation from use cases, screen contract, and approved `DESIGN.md` |
+| `requirements-engineer` | Backbone, FRD, user stories, use cases, Screen Contract Plus, final screen descriptions |
+| `ui-ux-designer` | Manual wireframe constraint-pack and handoff-map preparation from use cases, pre-wireframe screen spec, locked IA snapshot, and approved `DESIGN.md` |
 | `ba-documentation-manager` | Validation pack, quality review, consistency, packaging |
 | `ba-researcher` | Domain research when external context is needed |
 

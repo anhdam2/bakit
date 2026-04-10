@@ -32,6 +32,7 @@ The backbone must contain:
 - selected engagement mode (`lite`, `hybrid`, or `formal`)
 - business goals and success metrics
 - actors and feature map
+- system-level portal matrix for UI-backed scope
 - FR/NFR draft inventory
 - preliminary story map
 - UI/screen coverage assessment
@@ -42,4 +43,5 @@ Backbone rules:
 
 - treat the backbone as the primary authoring source after intake
 - do not draft FRD, stories, or SRS directly from raw intake once the backbone exists
+- when UI-backed scope exists, lock portal ownership and route-group ownership here before any module-level screen work starts
 - keep the artifact concise and decision-oriented

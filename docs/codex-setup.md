@@ -100,7 +100,7 @@ Use the installed `ba-do` skill from ~/.codex/skills/ba-do/SKILL.md.
 Route this BA request to the correct BA-kit command and then follow that workflow:
 "Parse the requirements in docs/raw/warehouse-rfp.pdf.
 Default to `hybrid` mode for a solo IT BA.
-Build the requirements backbone first, then emit FRD, user stories, use case specifications, Screen Contract Lite, manual wireframe handoff artifacts, final screen descriptions, and FRD/SRS HTML only when each artifact is justified.
+Build the requirements backbone first, then emit FRD, user stories, use case specifications, Screen Contract Plus, manual wireframe handoff artifacts, final screen descriptions, and FRD/SRS HTML only when each artifact is justified.
 If wireframe support is needed, ask me for design decisions and persist `designs/{slug}/DESIGN.md` before Step 9."
 ```
 
@@ -109,7 +109,7 @@ If wireframe support is needed, ask me for design decisions and persist `designs
 ```text
 Use AGENTS.md and skills/ba-start/SKILL.md.
 Run the equivalent of `/ba-start wireframes --slug warehouse-rfp`.
-Use the existing Screen Contract Lite artifacts only.
+Use the existing Screen Contract Plus artifacts only.
 Reuse the existing `designs/{slug}/DESIGN.md` if it is approved, otherwise ask to refresh it before preparing the manual wireframe handoff pack.
 If more than one dated set exists for `warehouse-rfp`, stop and ask me which date to use.
 Do not regenerate intake, FRD, or user stories.

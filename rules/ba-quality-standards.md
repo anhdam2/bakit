@@ -25,10 +25,15 @@ Related rules:
 - Use cases, screen descriptions, wireframe constraints, and any user-supplied wireframes must describe the **same** behavior using **identical** terminology.
 - Every detailed Use Case in the SRS must include a Process Flow (BPMN 2.0 with swimlanes) or Sequence Diagram (using Mermaid).
 - When wireframe support is requested, an approved project `DESIGN.md` must exist and the resulting manual handoff pack must follow it consistently.
-- Screen Contract Lite must be sufficient to prepare wireframe constraints before final screen descriptions are written.
+- Screen Contract Plus must be sufficient to prepare wireframe constraints before final screen descriptions are written.
+- The backbone must lock a system-level `Portal Matrix` whenever UI-backed scope exists.
+- `DESIGN.md` must define a `Navigation Schema` for every portal that appears in module-level screen specs.
 - UC actor actions must match screen User Actions — same wording, same sequence.
 - UC system responses must match screen field Behaviour Rules.
 - UC alternate flows must be reflected in screen Error/States.
+- `Portal ID`, `Nav Schema ID`, and `Expected Active Menu Item` must remain consistent between Screen Contract Plus, wireframe artifacts, final screen descriptions, and any user-supplied mockup.
+- Screens in the same portal must reuse the same navigation schema unless an explicit exception is documented.
+- If global navigation is visible on a screen, the active/highlighted menu state must be documented as both behavior and visual evidence.
 - Modal, dialog, drawer, and overlay screens with distinct interaction logic must be modeled as primary screens with their own detailed screen sections.
 - Supporting wireframe frames must reflect the parent screen's defined states and feedback rules, including empty, error, and message variants when applicable.
 - Field names must be identical across UC steps, screen field tables, and wireframe constraint labels or user-supplied mockup labels.
@@ -45,7 +50,8 @@ Related rules:
 - Inventory-only supporting screens must still be listed in the SRS screen inventory and kept aligned with the wireframe handoff checklist.
 - User story acceptance criteria must be covered by UC postconditions and screen Validation Rules.
 - FRD features must be fully traceable through user stories into SRS requirements.
-- Final screen descriptions must be derived from and remain consistent with both the wireframe constraint pack and the upstream use cases.
+- Final screen descriptions must be derived from and remain consistent with the pre-wireframe screen spec, the wireframe constraint pack, and the upstream use cases.
+- Final screen descriptions may enrich layout and interaction detail, but they must not redefine portal ownership, navigation schema, or active/highlight behavior that was already locked upstream.
 - Any user-supplied wireframe styling, density, and component treatment must remain consistent with the approved `designs/{slug}/DESIGN.md`.
 - When inconsistency is found, the upstream artifact (user story > use case > screen > wireframe) is the source of truth.
 

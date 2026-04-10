@@ -30,11 +30,12 @@ Assembly procedure:
    - confirm the edit succeeded before moving on
 3. After all groups are appended, run a cross-artifact consistency check on the file on disk:
    - every UC step maps to a screen field or action and vice versa
-   - Screen Contract Lite entries have matching manual wireframe constraints and final screen descriptions
+   - Screen Contract Plus entries have matching manual wireframe constraints and final screen descriptions
    - UC actor actions use the same wording as screen User Actions
    - UC system responses match screen Behaviour Rules
    - alternate flows are reflected in screen error states
    - user story acceptance criteria are covered by UC postconditions and screen validation rules
+   - final screen descriptions do not redefine `Portal ID`, `Nav Schema ID`, or active/highlight behavior captured in Group C or the wireframe pack
 4. Resolve placeholder references and ID conflicts inline.
 5. Verify every SCR and UC traces back to user stories.
 6. Delete group fragments only after the merged SRS is verified.

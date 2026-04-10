@@ -17,6 +17,10 @@ Decision intake must cover:
 - typography direction
 - component feel
 - layout and responsive priority
+- portal navigation schema per portal
+- active/selected menu rule
+- breadcrumb / back behavior
+- hidden or contextual navigation exceptions
 - hard constraints and explicit anti-patterns
 
 If `paths.design_doc` already exists, ask whether to:
@@ -62,14 +66,20 @@ Mode defaults inside the SRS pipeline:
 After Step 9 resolves, expand final screen descriptions from:
 
 - Use Case Specifications
-- Screen Contract Lite
+- Screen Contract Plus
 - `paths.wireframe_input` when the manual wireframe constraint pack exists
 - `paths.wireframe_map` when the manual handoff checklist exists
 - supporting frame inventory
 
-If wireframes are `skipped` or `not-applicable`, expand screen descriptions from use cases and Screen Contract Lite only.
+If wireframes are `skipped` or `not-applicable`, expand screen descriptions from use cases and Screen Contract Plus only.
 
 Do not block final screen descriptions on the user having already drawn or attached a mockup. Manual wireframe insertion into the final document is an out-of-band user action.
+
+Group E rules:
+
+- enrich the final screen descriptions from the pre-wireframe screen spec; do not redefine portal ownership
+- do not change `Nav Schema ID`, `Expected Active Menu Item`, or active/highlight behavior in Group E
+- if IA or menu behavior must change, route the change back through `impact` instead of silently rewriting Group E
 
 Output: `paths.srs_group` with `group=e`
 

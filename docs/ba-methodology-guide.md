@@ -84,7 +84,7 @@ Expected product behavior when requirements and API docs coexist:
 
 ### Greenfield Product
 
-Start with `/ba-start` and a raw requirements document. The skill produces intake, FRD, user stories with AC, SRS with screen descriptions, and a wireframe constraint pack for user-managed mockups when UI support is justified.
+Start with `/ba-start` and a raw requirements document. The skill produces intake, FRD, user stories with AC, a pre-wireframe screen spec, SRS with enriched screen descriptions, and a wireframe constraint pack for user-managed mockups when UI support is justified.
 
 ### Business Requirements Plus API Documentation
 

@@ -12,10 +12,11 @@ Run Step 9 only. This path is read-only on upstream BA artifacts and may regener
 ## Prerequisites
 
 - Resolve slug, date, and module using the shared contract.
+- If `paths.wireframe_input` is missing and fallback source 2 or 3 is needed, require the exact `paths.backbone` so the portal snapshot can be rebuilt without guessing.
 - Resolve the wireframe source in this order:
   1. `paths.wireframe_input`
   2. exact pair of `paths.srs_group` with `group=b` and `group=c`
-  3. `paths.srs` only when Use Case Specifications, Screen Contract Lite, and Screen Inventory are already assembled there
+  3. `paths.srs` only when Use Case Specifications, Screen Contract Plus, and Screen Inventory are already assembled there
 - If source 2 or 3 is used, build or refresh `paths.wireframe_input` before preparing the manual wireframe handoff.
 - If none of the sources exist, print all expected paths and stop.
 
@@ -31,7 +32,7 @@ Use `paths.wireframe_input` as the primary wireframe constraint source.
 
 If the pack is missing but fallback sources exist:
 
-- assemble the pack first from exact use case excerpts, Screen Contract Lite, and Screen Inventory
+- assemble the pack first from exact use case excerpts, Screen Contract Plus, Screen Inventory, and the exact portal snapshot from `paths.backbone`
 - save it before continuing
 
 Parse the input pack to build the handoff plan:
@@ -39,6 +40,7 @@ Parse the input pack to build the handoff plan:
 - group related screens by flow, module, or journey so the user can design them coherently
 - treat modal, dialog, and drawer overlays with flow impact as primary screens
 - derive required supporting frames from documented states, validation rules, list behavior, and feedback surfaces
+- verify each screen group has a portal snapshot, menu schema snapshot, and active-menu expectations before planning the artifact
 - carry forward the runtime design target `paths.design_doc`
 
 ## Step 9.2 - Ask for or refresh runtime DESIGN.md
@@ -57,6 +59,10 @@ Minimum decision set:
 - typography direction
 - component feel
 - layout/responsive priority
+- portal navigation schema
+- active/selected menu rule
+- breadcrumb / back behavior
+- hidden/contextual navigation exceptions
 - explicit anti-patterns
 
 After the user answers:
@@ -91,16 +97,19 @@ If wireframe handoff is expected but the pack cannot be completed:
 
 For each approved screen group:
 
-1. Read the linked use case excerpts, Screen Contract Lite entries, and Screen Inventory rows from the wireframe input pack.
+1. Read the linked use case excerpts, Screen Contract Plus entries, portal snapshots, and Screen Inventory rows from the wireframe input pack.
 2. Read `paths.design_doc`.
-3. Verify that the intended manual wireframe constraints match the same actions, flow steps, required states, and approved design decisions.
-4. Expand or refresh `paths.wireframe_input` so it contains the full constraint set the user needs to design manually or with an external tool.
-5. Persist `paths.wireframe_map` as a manual handoff checklist:
+3. Verify that the intended manual wireframe constraints match the same portal ownership, menu schema, active/highlight behavior, actions, flow steps, required states, and approved design decisions.
+4. Stop if the screen group lacks either a portal snapshot or an approved navigation schema in `DESIGN.md`; do not infer missing menu structure.
+5. Expand or refresh `paths.wireframe_input` so it contains the full constraint set the user needs to design manually or with an external tool, including menu matching checklist, active-state evidence requirements, and navigation exceptions.
+6. Persist `paths.wireframe_map` as a manual handoff checklist:
    - which primary screens must be drawn
    - which supporting states must exist
+   - which portal and navigation schema each screen must follow
+   - which screens must show active-menu evidence and which screens are allowed to hide global navigation with an explicit reason
    - where the user should attach or reference the result in the final document
    - any non-negotiable labels, actions, validation cues, and navigation regions that must remain visible in the mockup
-6. State explicitly in both artifacts that BA-kit does not generate the wireframe itself in this flow. The user is expected to design it manually and manually insert the final mockup reference into the final document.
+7. State explicitly in both artifacts that BA-kit does not generate the wireframe itself in this flow. The user is expected to design it manually and manually insert the final mockup reference into the final document.
 
 After the handoff pack is complete:
 

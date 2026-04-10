@@ -7,6 +7,7 @@ Use this directory for project runtime `DESIGN.md` files.
 - colors and typography
 - layout principles
 - navigation and information architecture
+- per-portal navigation schemas and active-state rules
 - shared components such as menu, header, footer, cards, forms, and tables
 - responsive behavior and anti-patterns
 
@@ -24,5 +25,6 @@ Instead:
 
 - Keep one `DESIGN.md` per project slug.
 - Treat `DESIGN.md` as the source of truth for shared UI patterns and global navigation.
+- Treat the backbone `Portal Matrix` plus `DESIGN.md` `Navigation Schema` as the canonical IA pair for module-level wireframe work.
 - Do not let module-level artifacts redefine shared components or the overall visual direction.
 - If a user-supplied mockup conflicts with `DESIGN.md`, update the BA artifacts deliberately instead of silently accepting visual drift.

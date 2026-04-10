@@ -25,6 +25,14 @@
 | --- | --- | --- | --- |
 | ACT-01 | [Vai trò] | [Mục tiêu] | [Ghi chú] |
 
+## Ma trận portal và sở hữu điều hướng (Portal Matrix)
+
+Chốt ở cấp hệ thống trước khi viết screen spec theo module. Đây là nguồn chuẩn để module chỉ snapshot lại, không tự định nghĩa lại menu toàn cục.
+
+| Portal ID | Portal Name | Target Actor / Access Scope | Owned Screen Families / Route Groups | Default Entry Context |
+| --- | --- | --- | --- | --- |
+| PORTAL-CSR | [CSR Portal] | [CSR / customer support / scoped access] | [Dashboard, Tickets, Customer Detail] | [Đăng nhập xong vào Dashboard] |
+
 ## Bản đồ tính năng và phạm vi (Feature Map and Scope)
 
 | Feature ID | Tính năng / Capability | Mô tả | Ưu tiên | In Scope | Ghi chú |
@@ -51,15 +59,15 @@
 
 ## UI và màn hình cần tài liệu (UI and Screen Coverage)
 
-| Screen ID | Màn hình / Luồng | Mức độ phức tạp | Cần wireframe | Ghi chú |
-| --- | --- | --- | --- | --- |
-| SCR-01 | [Màn hình] | [Low / Medium / High] | [Yes / No / Critical-only] | [Ghi chú] |
+| Screen ID | Portal ID | Màn hình / Luồng | Mức độ phức tạp | Cần wireframe | Ghi chú |
+| --- | --- | --- | --- | --- | --- |
+| SCR-01 | [PORTAL-CSR] | [Màn hình] | [Low / Medium / High] | [Yes / No / Critical-only] | [Ghi chú] |
 
 ## Hướng thiết kế UI cần chốt trước wireframe (UI Design Direction Before Wireframes)
 
 - Có cần `designs/{slug}/DESIGN.md`: [Yes / No]
 - Hướng tham chiếu ban đầu: [Tham chiếu DESIGN.md / brand / custom brief]
-- Quyết định người dùng cần chốt trước Step 9: [Màu sắc, typography, density, component feel, responsive priority, anti-patterns]
+- Quyết định người dùng cần chốt trước Step 9: [Màu sắc, typography, density, component feel, responsive priority, navigation schema theo portal, active-menu rule, breadcrumb/back behavior, anti-patterns]
 
 ## Gating quyết định artifact (Artifact Emission Gates)
 

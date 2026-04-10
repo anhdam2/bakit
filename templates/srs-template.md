@@ -17,10 +17,18 @@ Nêu phạm vi phần mềm, ranh giới hệ thống, và đối tượng đọ
 ## Kiến trúc hệ thống & Điều hướng (Information Architecture)
 Liệt kê các Portal/App trong hệ thống, đối tượng mục tiêu, và cấu trúc Menu (Sitemap) tương ứng để đảm bảo sự nhất quán trong thiết kế UI/UX và phân quyền.
 
-| Portal / App | Đối tượng mục tiêu (Target Actor) | Menu chính (Sitemap) | Pattern điều hướng |
-| --- | --- | --- | --- |
-| [Admin Portal] | [System Admin] | - Dashboard<br>- Quản lý người dùng<br>- Cài đặt | [Sidebar] |
-| [Customer App] | [Khách hàng] | - Home<br>- Đơn hàng<br>- Tài khoản | [Bottom tabs] |
+### Ma trận portal (Portal Matrix)
+
+| Portal ID | Portal / App | Đối tượng mục tiêu (Target Actor) | Access Scope | Owned Screen Families / Route Groups | Default Entry Context |
+| --- | --- | --- | --- | --- | --- |
+| [PORTAL-ADMIN] | [Admin Portal] | [System Admin] | [Full admin] | [Dashboard, User Management, Settings] | [Sau login vào Dashboard] |
+
+### Navigation Schema
+
+| Portal ID | Nav Schema ID | Menu chính (Sitemap) | Pattern điều hướng | Default Landing | Active / Selected Rule | Breadcrumb / Back Rule | Hidden / Contextual Nav Exceptions |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| [PORTAL-ADMIN] | [NAV-ADMIN-01] | - Dashboard<br>- Quản lý người dùng<br>- Cài đặt | [Sidebar] | [Dashboard] | [Highlight item theo route group] | [Breadcrumb từ cấp 2 trở xuống] | [Modal xác nhận không render menu] |
+| [PORTAL-CUSTOMER] | [NAV-CUSTOMER-01] | - Home<br>- Đơn hàng<br>- Tài khoản | [Bottom tabs] | [Home] | [Bottom tab active theo tab hiện tại] | [Back theo native/browser history] | [Checkout step có thể ẩn tabs] |
 
 ## Yêu cầu chức năng (Functional Requirements)
 | Mã (ID) | Yêu cầu (Requirement) | Ưu tiên (Priority) | Nguồn (Source) | Tiêu chí chấp nhận (Acceptance Criteria) |
@@ -71,13 +79,13 @@ sequenceDiagram
 
 > **Quy tắc nhất quán:** Hành động tác nhân trong use case này phải khớp với User Actions của màn hình tương ứng. Phản hồi hệ thống phải khớp với Behaviour Rules của các trường trên màn hình. Nếu use case nói "hệ thống kiểm tra định dạng email", trường email trên màn hình liên kết phải có Validation Rule tương ứng.
 
-## Hợp đồng màn hình rút gọn (Screen Contract Lite)
-Ghi nhận hợp đồng màn hình tối thiểu cần thiết để chuẩn bị constraint wireframe trước khi viết mô tả màn hình chi tiết.
+## Hợp đồng màn hình tiền wireframe (Screen Contract Plus)
+Ghi nhận screen spec đủ mạnh để chuẩn bị constraint wireframe trước khi viết mô tả màn hình chi tiết. Phần này khóa portal ownership và menu behavior; Group E chỉ được enrich thêm, không được tái định nghĩa.
 
-| Mã (Screen ID) | Tên (Screen Name) | Phân loại (Classification) | Màn hình cha (Parent Screen) | UC liên kết (Linked Use Cases) | Vào / Ra (Entry / Exit) | Hành động chính (Key Actions) | Trạng thái bắt buộc (Required States) | Mức tài liệu (Documentation Level) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| SCR-01 | [Màn hình] | Primary screen | [N/A] | [UC-01, UC-02] | [Vào / Ra] | [Submit, Cancel] | [Loading, Empty, Error, Success] | Detailed |
-| SCR-02 | [Modal / Drawer / Dialog] | Primary screen | [SCR-01] | [UC-03] | [Mở từ SCR-01 / trở về SCR-01] | [Confirm, Close] | [Default, Loading, Error] | Detailed |
+| Mã (Screen ID) | Tên (Screen Name) | Phân loại (Classification) | Màn hình cha (Parent Screen) | Portal ID | Access Role / Actor | Nav Schema ID | Expected Active Menu Item | Navigation Region Visible | Breadcrumb / Back Behavior | Global vs Local Navigation | UC liên kết (Linked Use Cases) | Vào / Ra (Entry / Exit) | Hành động chính (Key Actions) | Trạng thái bắt buộc (Required States) | Mức tài liệu (Documentation Level) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| SCR-01 | [Màn hình] | Primary screen | [N/A] | [PORTAL-CSR] | [CSR] | [NAV-CSR-01] | [Tickets] | [Yes] | [Breadcrumb + browser back] | [Global top bar + local tabs] | [UC-01, UC-02] | [Vào / Ra] | [Submit, Cancel] | [Loading, Empty, Error, Success] | Detailed |
+| SCR-02 | [Modal / Drawer / Dialog] | Primary screen | [SCR-01] | [PORTAL-CSR] | [CSR] | [NAV-CSR-01] | [Tickets] | [No] | [Close quay về SCR-01] | [Local overlay only] | [UC-03] | [Mở từ SCR-01 / trở về SCR-01] | [Confirm, Close] | [Default, Loading, Error] | Detailed |
 
 > Phần này là hợp đồng đầu vào cho bộ constraint wireframe. Đủ để user hoặc designer bên ngoài tự dựng wireframe/mockup trước hoặc sau khi mô tả màn hình chi tiết được mở rộng.
 
@@ -96,10 +104,18 @@ Ghi nhận mọi UI frame hoặc trạng thái cần tồn tại trong phạm vi
 > Supporting frames không bắt buộc phải có mục chi tiết đầy đủ trong SRS HTML cuối cùng. Chúng vẫn phải được liệt kê ở đây để đảm bảo truy vết bằng Screen ID và để user biết mình cần tự thiết kế hoặc annotate thêm khi cần.
 
 ## Mô tả màn hình (Screen Descriptions)
-Viết mục chi tiết màn hình đầy đủ từ use cases, Screen Contract Lite, và bộ constraint wireframe. Mọi primary screen, bao gồm modal hoặc overlay ảnh hưởng luồng người dùng, đều phải có mục chi tiết đầy đủ. User có thể tự bổ sung wireframe/mockup thủ công vào tài liệu sau; việc đó không chặn bước mô tả màn hình.
+Viết mục chi tiết màn hình đầy đủ từ use cases, Screen Contract Plus, và bộ constraint wireframe. Mọi primary screen, bao gồm modal hoặc overlay ảnh hưởng luồng người dùng, đều phải có mục chi tiết đầy đủ. User có thể tự bổ sung wireframe/mockup thủ công vào tài liệu sau; việc đó không chặn bước mô tả màn hình. Phần này chỉ enrich nội dung đã khóa ở pre-wireframe screen spec, không được tự tạo mới portal ownership hay menu behavior.
 
 ### Chi tiết màn hình (Screen Detail)
 **Mã màn hình (Screen ID):** [SCR-01]
+**Portal ID:** [PORTAL-CSR]
+**Access Role / Actor:** [CSR]
+**Nav Schema ID:** [NAV-CSR-01]
+**Expected Active Menu Item:** [Tickets]
+**Navigation Region Visible:** [Yes / No]
+**Breadcrumb / Back Behavior:** [Rule]
+**Global vs Local Navigation:** [Rule]
+**Navigation Exceptions:** [Nếu có]
 **Trạng thái gắn wireframe thủ công (Manual Wireframe Status):** [Chưa gắn | Đã gắn | Không áp dụng]
 **Tham chiếu mockup ngoài (External Mockup Reference):** [Link / file path / ghi chú]
 **Phạm vi artifact (Artifact Scope):** [Single screen / multi-screen flow / module pack]
@@ -109,7 +125,7 @@ Viết mục chi tiết màn hình đầy đủ từ use cases, Screen Contract 
 **UC liên kết (Linked Use Cases):** [UC-01, UC-02]
 **User Stories liên kết (Linked User Stories):** [US-001, US-002]
 
-> **Quy tắc nhất quán:** Màn hình này phải triển khai đúng các tương tác mô tả trong use cases liên kết. Tên trường, nhãn hành động, và trình tự luồng phải khớp giữa các bước UC và trường/hành động trên màn hình. Nếu user tự gắn wireframe/mockup, hình đó cũng phải phản ánh bảng trường và bố cục của màn hình này.
+> **Quy tắc nhất quán:** Màn hình này phải triển khai đúng các tương tác mô tả trong use cases liên kết. Tên trường, nhãn hành động, trình tự luồng, `Portal ID`, `Nav Schema ID`, và active-menu behavior phải khớp giữa Use Case, Screen Contract Plus, wireframe constraint pack, và màn hình này. Nếu user tự gắn wireframe/mockup, hình đó cũng phải phản ánh bảng trường và bố cục của màn hình này.
 >
 > Supporting frames liệt kê ở trên cũng phải được phản ánh bằng mockup, ảnh phụ, hoặc ghi chú tương ứng khi chúng được ngụ ý bởi trạng thái, validation rules, hành vi bảng/danh sách, hoặc feedback patterns của màn hình.
 

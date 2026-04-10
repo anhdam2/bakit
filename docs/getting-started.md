@@ -95,8 +95,8 @@ Default `/ba-start` handles the full BA lifecycle once routing is already clear:
 5. Gated FRD and user story generation
 6. Selective SRS production
 7. Design decision capture and project runtime `DESIGN.md` creation when wireframe support is justified
-8. Wireframe constraint-pack and manual handoff-map production from the use cases, screen contract, and approved `DESIGN.md`
-9. Final screen description production
+8. Wireframe constraint-pack and manual handoff-map production from the use cases, Screen Contract Plus, locked IA snapshot, and approved `DESIGN.md`
+9. Final screen description production as an enrich pass
 10. HTML packaging for the emitted artifact set
 
 ### Claude Example
@@ -111,7 +111,7 @@ When prompted, provide the file path or paste your requirements text. The skill 
 2. Identify gaps (missing stakeholders, unclear scope, no success criteria)
 3. Ask 3-8 clarifying questions
 4. Generate a scoped work plan
-5. Produce a requirements backbone, then emit FRD, user stories, use cases, Screen Contract Lite, project runtime `DESIGN.md`, wireframe handoff artifacts, final screen descriptions, and FRD/SRS HTML output only when their gates are open
+5. Produce a requirements backbone, then emit FRD, user stories, use cases, Screen Contract Plus, project runtime `DESIGN.md`, wireframe handoff artifacts, final screen descriptions, and FRD/SRS HTML output only when their gates are open
 
 For rerun commands:
 - pass `--slug <slug>` when more than one project exists
@@ -147,7 +147,7 @@ Instead:
 ```text
 Use AGENTS.md and skills/ba-start/SKILL.md.
 Parse the requirements in docs/raw/warehouse-rfp.pdf.
-Include use cases, Screen Contract Lite, a project runtime `DESIGN.md`, final screen descriptions, linked requirements, test cases, and wireframe constraints.
+Include use cases, Screen Contract Plus, a project runtime `DESIGN.md`, final screen descriptions, linked requirements, test cases, and wireframe constraints.
 Make the wireframe output a manual handoff pack so the user can design externally and manually attach the result to the final document.
 ```
 

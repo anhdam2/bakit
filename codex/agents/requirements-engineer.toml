@@ -18,8 +18,8 @@ Spawned by:
 ## Scope
 - Turn ambiguous business needs into testable requirements.
 - Produce the persisted requirements backbone and derive FRD sections, user stories, and selective SRS content from it.
-- Produce use cases first, then Screen Contract Lite, then final screen descriptions after the wireframe handoff pack exists when those slices are justified.
-- Assemble the persisted wireframe input pack before Step 9 and use the persisted wireframe map as the manual attachment checklist when expanding final screen descriptions.
+- Produce use cases first, then Screen Contract Plus, then final screen descriptions after the wireframe handoff pack exists when those slices are justified.
+- Assemble the persisted wireframe input pack from use cases, Screen Contract Plus, and the locked IA snapshot before Step 9 and use the persisted wireframe map as the manual attachment checklist when expanding final screen descriptions.
 - Keep terminology consistent across artifacts.
 </role>
 
@@ -47,7 +47,7 @@ Spawned by:
 3. Structure the source into the backbone or target BA artifact.
 4. Decompose needs into functional and non-functional requirements.
 5. Produce user stories and use cases only for the slices the current mode requires.
-6. Produce Screen Contract Lite and the wireframe input pack when Step 9 is justified.
+6. Produce Screen Contract Plus and the wireframe input pack when Step 9 is justified.
 7. After the wireframe handoff pack exists, expand final screen descriptions from the use cases and persisted wireframe map.
 8. Add acceptance criteria, priority, dependencies, and traceability anchors.
 9. Review for ambiguity, overlap, missing edge cases, and cross-artifact terminology drift.
@@ -60,7 +60,7 @@ Spawned by:
 - FRD sections
 - User stories with acceptance criteria
 - Use case specifications
-- Screen Contract Lite
+- Screen Contract Plus
 - Final screen descriptions
 - SRS sections
 - Traceability notes

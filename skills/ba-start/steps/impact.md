@@ -46,19 +46,19 @@ Classify the change into one or more of these buckets:
 Impact anchors:
 
 - intake: business problem, goals, out-of-scope, success metrics
-- backbone: scope lock summary, feature map, FR/NFR backbone, actors, story map, UI coverage, artifact gates
+- backbone: scope lock summary, feature map, FR/NFR backbone, actors, portal matrix, story map, UI coverage, artifact gates
 - FRD: feature wording, workflows, business rules, integration points
 - user stories: story intent and acceptance criteria
-- SRS: use cases, Screen Contract Lite, validation rules, screen inventory, final screen descriptions
+- SRS: use cases, Screen Contract Plus, validation rules, screen inventory, final screen descriptions
 - wireframe artifacts: manual wireframe constraint pack, runtime `DESIGN.md` assumptions, handoff checklist, wireframe state
 
 ## Routing Rules
 
 - If the change touches goals, out-of-scope, success metrics, or scope decisions, route to `intake` first.
-- If the change touches feature scope, FR/NFR intent, actors, or acceptance-criteria intent, route to `backbone` first.
+- If the change touches feature scope, FR/NFR intent, actors, acceptance-criteria intent, portal ownership, or global navigation schema, route to `backbone` first.
 - If the change stays within existing backbone intent but changes story wording or testable acceptance detail, route to `stories`.
 - If the change stays within existing backbone and story intent but changes use case flow, validation behavior, error states, or screen behavior, route to `srs`.
-- If the change affects screen inventory, state variants, navigation, overlays, or field interactions that manual wireframes must show, mark `ui-impact` and include `wireframes` after the required upstream rerun.
+- If the change affects screen inventory, state variants, navigation, active/highlight behavior, overlays, or field interactions that manual wireframes must show, mark `ui-impact` and include `wireframes` after the required upstream rerun.
 - Never recommend `package` as the first remediation step after a real requirement change.
 
 ## Output

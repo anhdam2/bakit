@@ -10,7 +10,7 @@ Lifecycle chuẩn của BA-kit:
 Raw input
 -> Intake + Gap Analysis
 -> Requirements Backbone
--> FRD / Stories / SRS Core
+-> FRD / Stories / Use Cases + Screen Contract Plus
 -> DESIGN.md + wireframe-input.md + wireframe-map.md
 -> User tự tạo mockup / wireframe
 -> Final SRS + HTML package
@@ -28,29 +28,29 @@ Raw input
 ## Vai trò từng artifact
 
 - `DESIGN.md`
-  Dùng để khóa design tổng thể: visual tone, màu sắc, typography, layout principles, navigation, menu/header/footer, component patterns, responsive rules, anti-patterns.
+  Dùng để khóa design tổng thể: visual tone, màu sắc, typography, layout principles, navigation schema, menu/header/footer, component patterns, responsive rules, anti-patterns.
 
 - `wireframe-input.md`
-  Dùng để khóa constraint ở mức màn hình/flow: màn hình nào phải có, state nào phải thể hiện, action/label nào là non-negotiable, layout/navigation constraints cụ thể.
+  Dùng để khóa constraint ở mức màn hình/flow: màn hình nào phải có, portal/menu schema nào phải theo, state nào phải thể hiện, action/label nào là non-negotiable, và active-menu evidence nào phải xuất hiện.
 
 - `wireframe-map.md`
   Dùng làm checklist handoff: screen nào user phải tự vẽ, supporting states nào cần có, và sau khi vẽ xong thì phải attach hình/link vào đâu trong SRS.
 
 - `SRS`
-  Là nơi chứa Use Case, Screen Contract Lite, Screen Inventory, và phần mô tả màn hình chi tiết. BA-kit/BA viết phần screen descriptions; user chỉ tự attach mockup thủ công vào section tương ứng.
+  Là nơi chứa Use Case, Screen Contract Plus, Screen Inventory, và phần mô tả màn hình chi tiết. BA-kit/BA viết phần screen descriptions; user chỉ tự attach mockup thủ công vào section tương ứng.
 
 ## Ai làm gì
 
 - BA-kit / BA:
   - viết intake, backbone, FRD, stories, SRS core
   - sinh `DESIGN.md`, `wireframe-input.md`, `wireframe-map.md`
-  - viết `Screen Descriptions` trong SRS
+  - viết `Screen Descriptions` trong SRS như pha enrich sau wireframe, không tái định nghĩa portal/menu đã khóa
 
 - User / Designer:
-  - dựa trên `DESIGN.md`, `wireframe-input.md`, Use Case, Screen Contract Lite, Screen Inventory để tự tạo wireframe/mockup
+  - dựa trên `DESIGN.md`, `wireframe-input.md`, Use Case, Screen Contract Plus, Screen Inventory để tự tạo wireframe/mockup
   - tự dán image/link/mockup vào đúng section trong SRS
 
-Mockup không phải source of truth. Source of truth vẫn là backbone, Use Case, Screen Contract Lite, Screen Inventory, và Screen Descriptions trong SRS.
+Mockup không phải source of truth. Source of truth vẫn là backbone, Use Case, Screen Contract Plus, Screen Inventory, và Screen Descriptions trong SRS.
 
 ## Cấu trúc thư mục
 
@@ -88,7 +88,7 @@ BA-kit hỗ trợ làm việc nhóm bằng Git theo 2 tầng:
 
 Quy tắc quan trọng:
 - Các module không được tự định nghĩa global navigation, portal actors, hay UX direction riêng.
-- Những quyết định dùng chung phải được khóa ở `02_backbone` và `designs/{slug}/DESIGN.md`.
+- Những quyết định dùng chung phải được khóa ở `02_backbone` qua `Portal Matrix` và ở `designs/{slug}/DESIGN.md` qua `Navigation Schema`.
 - `/ba-start wireframes --module ...` chỉ chuẩn bị constraint/handoff cho module đó; nó không tự sinh mockup.
 
 ## Cài đặt nhanh

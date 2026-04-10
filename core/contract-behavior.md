@@ -94,7 +94,7 @@ Use the resolution order from `resolution.*`.
 - Use `commands.<name>.requires` plus `paths.*` to resolve the exact prerequisite file(s).
 - If any required artifact is missing, print the exact missing path, the exact prior command to run, and stop.
 - For `package`, block only when wireframe state is `missing`.
-- If no wireframe-state marker exists, treat it as `not-applicable` only when the SRS set has no UI-backed screens or Screen Contract Lite section. Otherwise treat it as `missing`.
+- If no wireframe-state marker exists, treat it as `not-applicable` only when the SRS set has no UI-backed screens or Screen Contract Plus section. Otherwise treat it as `missing`.
 
 ## Overwrite Behavior
 
