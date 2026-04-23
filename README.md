@@ -175,6 +175,7 @@ ba-kit update
 
 ## Tài liệu nên đọc tiếp
 
+- [GitBook-ready Docs](gitbook/README.md)
 - [Getting Started](docs/getting-started.md)
 - [Codex Setup](docs/codex-setup.md)
 - [Skill Catalog](docs/skill-catalog.md)
