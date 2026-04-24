@@ -5,6 +5,20 @@ This step requires:
 - `core/contract.yaml`
 - `core/contract-behavior.md`
 
+## Memory Read Scope
+
+- **Must read:** `core/contract.yaml`, `core/contract-behavior.md`, `paths.backbone`, `paths.stories`
+- **May read:** `paths.project_memory` or (`paths.memory_hot_vocabulary` + `paths.memory_hot_decisions`) when shard mode active; module `warm/` shard; `paths.frd` when exists
+- **Must NOT read:** `log.md`, `cold/`, other module shards
+
+## Governance Gate
+
+Before mutating this artifact:
+1. **Skip this gate for first-pass creation** (when `paths.srs` does not yet exist).
+2. For reruns (artifact already exists): verify write authority and confirm an approved impact run (skip only for `wording-only` changes).
+3. If either check fails on a rerun: emit `GOVERNANCE_BLOCK: {reason}` and stop.
+4. After mutation completes: offer to file the change into canonical memory using `templates/project-memory-fileback-record-template.md`.
+
 ## Scope
 
 Run Steps 8-11 only. This path is intentionally split to avoid loading the full SRS contract at once.

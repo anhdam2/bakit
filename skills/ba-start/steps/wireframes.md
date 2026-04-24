@@ -14,9 +14,9 @@ This step requires:
 ## Governance Gate
 
 Before mutating this artifact:
-1. Verify you have write authority for this artifact scope.
-2. Confirm an impact run is completed and approved (skip only for `wording-only` changes).
-3. If either check fails: emit `GOVERNANCE_BLOCK: {reason}` and stop.
+1. **Skip this gate for first-pass creation** (when `paths.wireframe_map` does not yet exist).
+2. For reruns (artifact already exists): verify write authority and confirm an approved impact run (skip only for `wording-only` changes).
+3. If either check fails on a rerun: emit `GOVERNANCE_BLOCK: {reason}` and stop.
 4. After mutation completes: offer to file the change into canonical memory using `templates/project-memory-fileback-record-template.md`.
 
 ## Scope

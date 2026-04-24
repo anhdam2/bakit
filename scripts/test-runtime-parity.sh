@@ -174,12 +174,13 @@ case "${1:-}" in
         run_fixture ALL
         echo ""
         echo "All fixture checks complete. Status: PENDING (runtime adapters not implemented)."
-        exit 0
+        echo "NOTE: Exiting 2 — parity not verified yet. 0=pass, 1=structural error, 2=pending."
+        exit 2
         ;;
     f0[0-9])
         check_structure || exit 1
         run_fixture "$1"
-        exit 0
+        exit 2
         ;;
     *)
         echo "Unknown option: $1"
