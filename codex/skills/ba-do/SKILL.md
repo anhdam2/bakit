@@ -39,5 +39,5 @@ This is a dispatcher. It should not do the downstream BA work itself.
 
 <process>
 Execute the BA routing workflow from @$HOME/.codex/ba-kit/workflows/do.md end-to-end.
-Dispatch to `ba-impact`, `ba-next`, `ba-start`, or `ba-notion`.
+Dispatch to `ba-impact`, `ba-next`, `ba-start`, `ba-collab`, or `ba-notion`.
 </process>

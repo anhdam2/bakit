@@ -65,7 +65,7 @@ create_workflow_ki() {
   ensure_dir "${artifacts_dir}"
 
   create_ki_metadata "${BA_KIT_KI}" \
-    "BA-kit workflow reference for Antigravity. Covers the BA lifecycle, prompt patterns for invoking BA-kit commands without slash commands, agent roles, template mapping, and artifact conventions." \
+    "BA-kit workflow reference for Antigravity. Covers BA-friendly resume prompts, PROJECT-HOME.md usage, lifecycle routing, agent roles, template mapping, and artifact conventions." \
     "BA-kit Workflow Reference"
 
   cat > "${artifacts_dir}/workflow-reference.md" <<'KIEOF'
@@ -76,14 +76,35 @@ create_workflow_ki() {
 ## BA Lifecycle
 
 1. Accept input → Parse into intake form
-2. Gap analysis → Clarifying questions
-3. Scope lock → Select mode (lite/hybrid/formal)
-4. Build requirements backbone (source of truth)
-5. Emit downstream artifacts only when gates are open:
+2. Create or refresh PROJECT-HOME.md as the BA-facing dashboard
+3. Gap analysis → Clarifying questions
+4. Scope lock → Select mode (lite/hybrid/formal)
+5. Build requirements backbone (source of truth)
+6. Emit downstream artifacts only when gates are open:
    - FRD, user stories, selective SRS, wireframe constraints
-6. Manual wireframe handoff preparation from persisted input pack
-7. Final screen descriptions with the wireframe handoff map
-8. Quality review and HTML packaging
+7. Manual wireframe handoff preparation from persisted input pack
+8. Final screen descriptions with the wireframe handoff map
+9. Quality review and HTML packaging
+
+## BA-Friendly Entrypoints
+
+Prefer natural Vietnamese intent first, then map to the internal workflow:
+
+| BA says | Internal workflow |
+|---------|-------------------|
+| "Tạo dự án mới từ tài liệu này" | intake/full lifecycle |
+| "Tiếp tục dự án này" | read PROJECT-HOME.md, then ba-next |
+| "Tôi nên làm gì tiếp?" | ba-next |
+| "Đánh giá thay đổi này" | impact |
+| "Chuẩn bị handoff UI" | wireframes/manual handoff pack |
+| "Xuất gói bàn giao" | package |
+| "Kiểm tra trạng thái" | status |
+| "Tôi nhận module X" | ba-collab claim |
+| "Gửi module X cho Lead BA review" | ba-collab review packet |
+| "Tạo PR cho module X" | ba-collab GitHub handoff; approval required |
+
+PROJECT-HOME.md is a dashboard only. Use it to orient the user, but verify the contract artifacts before mutating anything.
+COLLAB-HOME.md and MODULE-HOME.md are BA-facing collaboration dashboards. GitHub commit/push/PR/merge requires explicit user approval.
 
 ## Prompt Patterns (Antigravity has no slash commands)
 
@@ -101,6 +122,7 @@ create_workflow_ki() {
 | `/ba-start impact --slug X` | "Read skills/ba-start/SKILL.md and run impact for slug X" |
 | `/ba-do <description>` | "Read skills/ba-do/SKILL.md and route: <description>" |
 | `/ba-next --slug X` | "Read skills/ba-next/SKILL.md and inspect slug X" |
+| `/ba-collab <description>` | "Read skills/ba-collab/SKILL.md and run collaboration workflow: <description>" |
 
 ## Agent Roles (reference only — no auto-delegation in Antigravity)
 
@@ -116,6 +138,10 @@ create_workflow_ki() {
 | Artifact | Template |
 |----------|----------|
 | Intake form | templates/intake-form-template.md |
+| Project Home / BA dashboard | templates/project-home-template.md |
+| Collab Home / BA collaboration dashboard | templates/collab-home-template.md |
+| Module Home | templates/module-home-template.md |
+| Module review packet | templates/review-packet-template.md |
 | Requirements backbone | templates/requirements-backbone-template.md |
 | FRD | templates/frd-template.md |
 | User stories | templates/user-story-template.md |

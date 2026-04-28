@@ -57,7 +57,9 @@ BA Next
 
 Project: {slug}
 Date set: {date}
+Project Home: {PROJECT-HOME.md exists/missing}
 Next command: /ba-start ...
+BA-facing next step: ...
 Reason: ...
 ```
 

@@ -23,6 +23,7 @@ Usage:
   ba-kit stitch-state <init|show|upsert> --slug <slug> [options]
   ba-kit chunk-write --file <target_file>
   ba-kit status [--slug <slug>] [--date <YYMMDD-HHmm>] [--module <module_slug>]
+  ba-kit collab status [--slug <slug>] [--date <YYMMDD-HHmm>] [--module <module_slug>]
 
 Commands:
   doctor          Check BA-kit runtime readiness, installed manifests, and optional MCP/tool dependencies.
@@ -36,6 +37,7 @@ Commands:
   stitch-state    Legacy utility: manage old Stitch-backed state files.
   chunk-write     Append incoming STDIN safely to <target_file> for large artifact mitigation.
   status          Inspect BA-kit modular artifacts and delegated worker trackers from the registered source repo.
+  collab status   Inspect BA collaboration dashboard, module homes, and review packets.
 EOF
 }
 
@@ -639,6 +641,61 @@ print_delegation_status() {
   shopt -u nullglob
 }
 
+collab_command() {
+  local subcommand="${1:-}" slug="" date_token="" module="" repo modules module_name
+
+  [[ -n "${subcommand}" ]] || fail "Usage: ba-kit collab status [--slug ... --date ... --module ...]"
+  shift || true
+  [[ "${subcommand}" == "status" ]] || fail "Unsupported collab subcommand: ${subcommand}"
+
+  while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+      --slug)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --slug"
+        slug="$2"
+        shift 2
+        ;;
+      --date)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --date"
+        date_token="$2"
+        shift 2
+        ;;
+      --module)
+        [[ "$#" -ge 2 ]] || fail "Missing value for --module"
+        module="$2"
+        shift 2
+        ;;
+      *)
+        fail "Unsupported argument for 'collab status': $1"
+        ;;
+    esac
+  done
+
+  repo="$(resolve_registered_repo)"
+  slug="$(require_unique_slug "${repo}" "${slug}")"
+  date_token="$(require_unique_date "${repo}" "${slug}" "${date_token}")"
+
+  printf 'BA Collaboration\n\n'
+  printf 'Project: %s\n' "${slug}"
+  printf 'Date set: %s\n\n' "${date_token}"
+
+  printf '[Collab]\n'
+  print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "collab_home" "${slug}" "${date_token}")" "COLLAB-HOME.md"
+
+  modules="${module}"
+  if [[ -z "${modules}" ]]; then
+    modules="$(collect_modules "${repo}" "${slug}" "${date_token}")"
+  fi
+  if [[ -n "${modules}" ]]; then
+    while IFS= read -r module_name; do
+      [[ -n "${module_name}" ]] || continue
+      printf '\n[Module: %s]\n' "${module_name}"
+      print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "module_home" "${slug}" "${date_token}" "${module_name}")" "03_modules/${module_name}/MODULE-HOME.md"
+      print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "review_packet" "${slug}" "${date_token}" "${module_name}")" "delegation/review-packets/${module_name}.md"
+    done <<<"${modules}"
+  fi
+}
+
 print_installations() {
   local installations="$1"
   local line runtime repo manifest_path
@@ -1046,6 +1103,8 @@ status_command() {
   print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "source_summary" "${slug}" "${date_token}")" "00_source/summary.md"
 
   printf '\n[Core]\n'
+  print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "project_home" "${slug}" "${date_token}")" "PROJECT-HOME.md (BA-facing dashboard)"
+  print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "collab_home" "${slug}" "${date_token}")" "COLLAB-HOME.md (BA collaboration dashboard)"
   print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "intake" "${slug}" "${date_token}")" "01_intake/intake.md"
   print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "plan" "${slug}" "${date_token}")" "01_intake/plan.md"
   print_artifact_status_line "${repo}/$(render_contract_path "${repo}" "backbone" "${slug}" "${date_token}")" "02_backbone/backbone.md"
@@ -1178,7 +1237,7 @@ check_prereq_command() {
 }
 
 next_command() {
-  local slug="" date_token="" module="" repo story_path srs_path wireframe_input_path wireframe_state_path compiled_frd compiled_srs
+  local slug="" date_token="" module="" repo story_path srs_path wireframe_input_path wireframe_state_path compiled_frd compiled_srs project_home_path
 
   while [[ "$#" -gt 0 ]]; do
     case "$1" in
@@ -1206,13 +1265,24 @@ next_command() {
   repo="$(resolve_registered_repo)"
   slug="$(require_unique_slug "${repo}" "${slug}")"
   date_token="$(require_unique_date "${repo}" "${slug}" "${date_token}")"
+  project_home_path="${repo}/$(render_contract_path "${repo}" "project_home" "${slug}" "${date_token}")"
+
+  printf 'Project: %s\n' "${slug}"
+  printf 'Date set: %s\n' "${date_token}"
+  if [[ -f "${project_home_path}" ]]; then
+    printf 'Project Home: exists (%s)\n\n' "$(stat_mtime_pretty "${project_home_path}")"
+  else
+    printf 'Project Home: missing\n\n'
+  fi
 
   if [[ ! -f "${repo}/$(render_contract_path "${repo}" "intake" "${slug}" "${date_token}")" ]]; then
+    printf 'BA-facing next step: Tạo phiếu tiếp nhận yêu cầu từ input gốc.\n'
     printf 'Next command: ba-start intake\n'
     printf 'Reason: intake is missing.\n'
     return 0
   fi
   if [[ ! -f "${repo}/$(render_contract_path "${repo}" "backbone" "${slug}" "${date_token}")" ]]; then
+    printf 'BA-facing next step: Chốt khung yêu cầu làm source of truth.\n'
     printf 'Next command: ba-start backbone --slug %s\n' "${slug}"
     printf 'Reason: backbone is missing.\n'
     return 0
@@ -1229,26 +1299,31 @@ next_command() {
   compiled_srs="${repo}/$(render_contract_path "${repo}" "compiled_srs" "${slug}" "${date_token}")"
 
   if [[ ! -f "${story_path}" ]]; then
+    printf 'BA-facing next step: Viết user stories cho module %s.\n' "${module}"
     printf 'Next command: ba-start stories --slug %s --module %s\n' "${slug}" "${module}"
     printf 'Reason: user stories are missing.\n'
     return 0
   fi
   if [[ ! -f "${srs_path}" ]]; then
+    printf 'BA-facing next step: Viết SRS/use case/screen spec cho module %s.\n' "${module}"
     printf 'Next command: ba-start srs --slug %s --module %s\n' "${slug}" "${module}"
     printf 'Reason: SRS is missing for the resolved module.\n'
     return 0
   fi
   if [[ -f "${wireframe_input_path}" && ! -f "${wireframe_state_path}" ]]; then
+    printf 'BA-facing next step: Chuẩn bị handoff UI thủ công cho module %s.\n' "${module}"
     printf 'Next command: ba-start wireframes --slug %s --module %s\n' "${slug}" "${module}"
     printf 'Reason: wireframe constraint pack exists but wireframe handoff state is missing.\n'
     return 0
   fi
   if [[ ! -f "${compiled_frd}" || ! -f "${compiled_srs}" ]]; then
+    printf 'BA-facing next step: Xuất gói bàn giao HTML cho stakeholder.\n'
     printf 'Next command: ba-start package --slug %s\n' "${slug}"
     printf 'Reason: compiled HTML is missing.\n'
     return 0
   fi
 
+  printf 'BA-facing next step: Kiểm tra trạng thái hoặc review chất lượng trước khi bàn giao.\n'
   printf 'Next command: ba-start status --slug %s\n' "${slug}"
   printf 'Reason: required artifacts already exist for the resolved module.\n'
 }
@@ -1556,6 +1631,9 @@ main() {
       ;;
     chunk-write)
       chunk_write_command "$@"
+      ;;
+    collab)
+      collab_command "$@"
       ;;
     status)
       status_command "$@"

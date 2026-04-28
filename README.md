@@ -9,6 +9,7 @@ Lifecycle chuẩn của BA-kit:
 ```text
 Raw input
 -> Intake + Gap Analysis
+-> PROJECT-HOME.md (BA-facing dashboard)
 -> Requirements Backbone
 -> FRD / Stories / Use Cases + Screen Contract Plus
 -> DESIGN.md + wireframe-input.md + wireframe-map.md
@@ -17,6 +18,8 @@ Raw input
 ```
 
 Điểm quan trọng:
+- `PROJECT-HOME.md` là trang điều phối dạng markdown cho BA non-tech: trạng thái hiện tại, bước tiếp theo, câu hỏi cần chốt, và prompt nhanh cho Claude/Codex/Antigravity.
+- `PROJECT-HOME.md` không phải source of truth; source of truth vẫn là intake/backbone/module artifacts.
 - `/ba-start wireframes` vẫn giữ nguyên tên command để tương thích ngược.
 - Nhưng Step 9 không còn gọi MCP để generate UI.
 - Step 9 chỉ chuẩn bị bộ handoff cho wireframe thủ công:
@@ -57,6 +60,7 @@ Mockup không phải source of truth. Source of truth vẫn là backbone, Use Ca
 ```text
 plans/
   {slug}-{date}/
+    PROJECT-HOME.md
     01_intake/
     02_backbone/
     03_modules/
@@ -90,6 +94,7 @@ Quy tắc quan trọng:
 - Các module không được tự định nghĩa global navigation, portal actors, hay UX direction riêng.
 - Những quyết định dùng chung phải được khóa ở `02_backbone` qua `Portal Matrix` và ở `designs/{slug}/DESIGN.md` qua `Navigation Schema`.
 - `/ba-start wireframes --module ...` chỉ chuẩn bị constraint/handoff cho module đó; nó không tự sinh mockup.
+- BA non-tech không cần dùng Git trực tiếp. Dùng `ba-collab` hoặc câu NLP như "Tôi nhận module auth-flow", "Gửi module payment cho Lead BA review", "Tạo PR cho module auth-flow". Agent tạo/update `COLLAB-HOME.md`, `MODULE-HOME.md`, review packet, và chỉ commit/push/PR/merge khi user approve rõ.
 
 ## Cài đặt nhanh
 
@@ -134,11 +139,23 @@ Script này:
 ### Claude Code
 
 ```text
+/ba-do Tôi có tài liệu yêu cầu mới, hãy tạo dự án BA
+/ba-do Tiếp tục dự án warehouse-rfp, cho tôi bước tiếp theo
+/ba-do Đánh giá thay đổi: Export CSV phải có audit log
+/ba-do Tôi nhận module auth-flow
+/ba-do Gửi module auth-flow cho Lead BA review
+```
+
+Command-level fallback:
+
+```text
 /ba-start
 /ba-start backbone --slug hr-app
 /ba-start srs --slug hr-app --module auth-flow
 /ba-start wireframes --slug hr-app --module auth-flow
 /ba-start status --slug hr-app
+/ba-collab Tôi nhận module auth-flow
+/ba-collab Gửi module auth-flow cho Lead BA review
 ```
 
 Ý nghĩa của bước `wireframes`:
@@ -151,17 +168,16 @@ Script này:
 ### Codex
 
 ```text
-Use AGENTS.md and skills/ba-start/SKILL.md.
-Build the requirements backbone first, then emit FRD, stories, SRS core, and manual wireframe handoff artifacts.
-Do not generate wireframes directly. Let the user create and attach the final mockup manually.
+Use AGENTS.md.
+Read PROJECT-HOME.md when present, then continue the BA workflow for slug warehouse-rfp.
+Explain the next step in BA-friendly Vietnamese first, then show the internal BA-kit command equivalent.
 ```
 
 ### Antigravity
 
 ```text
-Read skills/ba-start/SKILL.md and run srs for slug warehouse-rfp module auth-flow.
-Then run wireframes for the same target, but only prepare DESIGN.md, wireframe-input.md, and wireframe-map.md.
-The user will create and attach the mockup manually.
+Đọc PROJECT-HOME.md của dự án warehouse-rfp và cho tôi biết bước BA tiếp theo.
+Nếu cần chạy tiếp, dùng workflow an toàn tương ứng trong BA-kit.
 ```
 
 ## Nâng cấp

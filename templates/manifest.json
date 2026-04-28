@@ -65,6 +65,42 @@
       }
     }
   },
+  "project-home-template.md": {
+    "groups": {
+      "all": {
+        "headings": [
+          "# Trang điều phối dự án BA (Project Home)"
+        ]
+      }
+    }
+  },
+  "collab-home-template.md": {
+    "groups": {
+      "all": {
+        "headings": [
+          "# Trang cộng tác BA (Collab Home)"
+        ]
+      }
+    }
+  },
+  "module-home-template.md": {
+    "groups": {
+      "all": {
+        "headings": [
+          "# Trang module BA (Module Home)"
+        ]
+      }
+    }
+  },
+  "review-packet-template.md": {
+    "groups": {
+      "all": {
+        "headings": [
+          "# Gói gửi review module (Module Review Packet)"
+        ]
+      }
+    }
+  },
   "user-story-template.md": {
     "groups": {
       "all": {

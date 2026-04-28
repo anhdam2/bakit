@@ -21,6 +21,7 @@ Use this file as the canonical LLM policy layer for BA-kit.
 - Use exact artifact matching only. Never infer from "closest looking" filenames.
 - Never silently choose a slug, dated set, or module by mtime.
 - Keep module-scoped authoring inside `paths.module_root` and project-scoped compiled output inside `paths.compiled_root`.
+- Treat `paths.project_home` as the BA-facing dashboard for resume/status guidance. It is not a source of truth and must not override `backbone`, `intake`, or module artifacts.
 
 ## Argument Parsing
 
@@ -38,11 +39,13 @@ Parse arguments before doing any work.
    - `wireframes`
    - `package`
    - `status`
-4. If no subcommand is present, run the full lifecycle from intake.
-5. For `intake`, allow one free argument as the source path hint.
-6. For `impact`, allow one free argument as the change file path hint.
-7. For `frd`, `stories`, `srs`, and `wireframes`, enforce `commands.<name>.module_required`.
-8. Reject unknown subcommands and unexpected free arguments instead of guessing.
+   - `next`
+4. Friendly aliases may be translated before execution: "continue/resume" -> `next`, "đánh giá thay đổi" -> `impact`, "chuẩn bị handoff UI" -> `wireframes`, "xuất gói bàn giao" -> `package`, "kiểm tra trạng thái" -> `status`.
+5. If no subcommand is present, run the full lifecycle from intake.
+6. For `intake`, allow one free argument as the source path hint.
+7. For `impact`, allow one free argument as the change file path hint.
+8. For `frd`, `stories`, `srs`, and `wireframes`, enforce `commands.<name>.module_required`.
+9. Reject unknown subcommands and unexpected free arguments instead of guessing.
 
 ## Natural-Language Routing
 
@@ -58,6 +61,8 @@ Also infer `impact` when:
 - the user sends a bare correction statement without explicitly asking to update, overwrite, regenerate, or rerun a named artifact
 
 Do not mutate artifacts directly from a bare correction statement. Route to impact first.
+
+Collaboration intent such as module claim, review handoff, conflict check, PR, commit, push, or merge routes to `ba-collab`. GitHub actions are external side effects and require explicit approval after showing files and action plan.
 
 ## Resolution Rules
 
@@ -303,7 +308,7 @@ Every command has deterministic read scope. Commands must navigate: summary → 
 | srs | contract.yaml, contract-behavior.md, paths.backbone, paths.stories | paths.project_memory or hot shards, module warm shard, paths.frd (if exists) | log.md, cold/, other module shards |
 | wireframes | contract.yaml, contract-behavior.md, paths.wireframe_input | paths.project_memory or paths.memory_hot_decisions, paths.design_doc, module warm shard | log.md, cold/, other module shards |
 | package | contract.yaml, contract-behavior.md | paths.project_memory (compact, consistency check), paths.memory_index (health overview) | log.md, cold/, warm/ shards |
-| status | contract.yaml, contract-behavior.md | paths.project_memory header, paths.memory_index (activation + freshness) | log.md (unless --audit), warm/ shards, cold/ |
+| status | contract.yaml, contract-behavior.md | paths.project_home, paths.project_memory header, paths.memory_index (activation + freshness) | log.md (unless --audit), warm/ shards, cold/ |
 
 ### Index-First Navigation Rule
 

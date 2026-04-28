@@ -89,6 +89,16 @@ Incorporate the answers back into the intake form.
 
 Produce a scoped work plan and save it to `paths.plan`.
 
+Also create or refresh `paths.project_home` using [../../../templates/project-home-template.md](../../../templates/project-home-template.md).
+
+Project Home rules:
+
+- write it in Vietnamese unless the user explicitly requested English
+- translate technical command names into BA-facing labels
+- show the current lifecycle state, the recommended next step, and decisions the user must make
+- include runtime-specific quick prompts for Claude Code, Codex, and Antigravity
+- do not treat Project Home as source of truth; it is a navigation dashboard over the contract artifacts
+
 Deliverable selection:
 
 - Always after scope lock: requirements backbone

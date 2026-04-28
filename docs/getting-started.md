@@ -4,6 +4,8 @@
 
 This guide shows how to install BA-kit and use it in Claude Code and Codex.
 
+For BA non-tech usage, start from natural-language requests and `PROJECT-HOME.md`. Commands remain available for precise reruns, but they should not be the first thing a BA has to learn.
+
 ## 1. Clone The Repository
 
 ```bash
@@ -64,6 +66,18 @@ Full workflow:
 /ba-start
 ```
 
+BA-friendly workflow:
+
+```text
+/ba-do Tôi có tài liệu yêu cầu mới, hãy tạo dự án BA
+/ba-do Tiếp tục dự án warehouse-rfp, bước tiếp theo là gì?
+/ba-do Đánh giá thay đổi: Export CSV phải có audit log
+/ba-do Chuẩn bị handoff UI cho module auth-flow
+/ba-do Tôi nhận module auth-flow
+/ba-do Gửi module auth-flow cho Lead BA review
+/ba-do Xuất gói bàn giao cho stakeholder
+```
+
 Step-level reruns:
 
 ```text
@@ -85,6 +99,7 @@ Router and deterministic helpers:
 /ba-do dang lam do SRS thi them yeu cau nay
 /ba-impact --slug warehouse-rfp Khong co nhom admin user
 /ba-next --slug warehouse-rfp
+/ba-collab Tôi nhận module auth-flow
 ```
 
 Default `/ba-start` handles the full BA lifecycle once routing is already clear:
@@ -110,8 +125,9 @@ When prompted, provide the file path or paste your requirements text. The skill 
 1. Parse and normalize the input into a structured intake form
 2. Identify gaps (missing stakeholders, unclear scope, no success criteria)
 3. Ask 3-8 clarifying questions
-4. Generate a scoped work plan
-5. Produce a requirements backbone, then emit FRD, user stories, use cases, Screen Contract Plus, project runtime `DESIGN.md`, wireframe handoff artifacts, final screen descriptions, and FRD/SRS HTML output only when their gates are open
+4. Generate `PROJECT-HOME.md` so the BA can resume from a plain-language dashboard
+5. Generate a scoped work plan
+6. Produce a requirements backbone, then emit FRD, user stories, use cases, Screen Contract Plus, project runtime `DESIGN.md`, wireframe handoff artifacts, final screen descriptions, and FRD/SRS HTML output only when their gates are open
 
 For rerun commands:
 - pass `--slug <slug>` when more than one project exists
@@ -149,6 +165,14 @@ Use AGENTS.md and skills/ba-start/SKILL.md.
 Parse the requirements in docs/raw/warehouse-rfp.pdf.
 Include use cases, Screen Contract Plus, a project runtime `DESIGN.md`, final screen descriptions, linked requirements, test cases, and wireframe constraints.
 Make the wireframe output a manual handoff pack so the user can design externally and manually attach the result to the final document.
+```
+
+BA-friendly Codex resume prompt:
+
+```text
+Use AGENTS.md.
+Read PROJECT-HOME.md for slug warehouse-rfp if it exists.
+Tell me the next BA step in Vietnamese first, then run the safe BA-kit workflow for that step.
 ```
 
 If the Codex conversion is installed, you can point Codex directly at the bundled skill:
@@ -247,6 +271,10 @@ A full `/ba-start` engagement produces final BA deliverables plus runtime artifa
 
 | Deliverable | Template | Location |
 | --- | --- | --- |
+| Project Home / BA dashboard | `project-home-template.md` | `plans/{slug}-{date}/PROJECT-HOME.md` |
+| Collab Home / BA collaboration dashboard | `collab-home-template.md` | `plans/{slug}-{date}/COLLAB-HOME.md` |
+| Module Home | `module-home-template.md` | `plans/{slug}-{date}/03_modules/{module_slug}/MODULE-HOME.md` |
+| Module review packet | `review-packet-template.md` | `plans/{slug}-{date}/delegation/review-packets/{module_slug}.md` |
 | Intake form | `intake-form-template.md` | `plans/{slug}-{date}/01_intake/intake.md` |
 | Requirements backbone | `requirements-backbone-template.md` | `plans/{slug}-{date}/02_backbone/backbone.md` |
 | FRD | `frd-template.md` | `plans/{slug}-{date}/03_modules/{module_slug}/frd.md` |

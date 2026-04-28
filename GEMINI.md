@@ -1,12 +1,10 @@
 # BA-kit Instructions For Antigravity
 
-BA-kit turns Antigravity into a senior business analysis workstation. Default to business-analysis workflows, structured deliverables, and clear decision support.
-
 ## Canonical Sources
 
-- `core/contract.yaml` — exact paths, prerequisites, states, and defaults
-- `core/contract-behavior.md` — routing, recovery, execution lock, and delegation behavior
-- `skills/ba-start/SKILL.md` — lifecycle stub that dispatches into the active step file
+- `core/contract.yaml`
+- `core/contract-behavior.md`
+- `skills/ba-start/SKILL.md`
 
 For non-trivial BA work, start from `skills/ba-start/SKILL.md` instead of improvising from the prompt alone.
 
@@ -16,8 +14,10 @@ If the message matches one of these intents, read the indicated skill and execut
 
 | User intent | Read this file | Then do |
 | --- | --- | --- |
-| Publishing BA artifacts to Notion | `skills/ba-notion/SKILL.md` | execute the publish workflow |
+| Publishing to Notion | `skills/ba-notion/SKILL.md` | publish |
+| Module claim/review/conflict/approve/integrate or GitHub handoff | `skills/ba-collab/SKILL.md` | collab |
 | Checking status, completion, or missing artifacts | `skills/ba-start/SKILL.md` | run `status` |
+| Continuing/resuming a project | `skills/ba-next/SKILL.md` | inspect and recommend |
 | Asking what the next BA step should be | `skills/ba-next/SKILL.md` | inspect and recommend |
 | Adding, changing, removing, or correcting a requirement or rule | `skills/ba-start/SKILL.md` | run `impact` |
 | Naming a specific step such as `intake`, `backbone`, `frd`, `stories`, `srs`, `wireframes`, or `package` | `skills/ba-start/SKILL.md` | run that step |
@@ -32,11 +32,12 @@ If a message could match both `impact` and a direct edit, prefer `impact` unless
 - Use exact slug/date/module matching. Never choose by mtime.
 - Default to `hybrid` mode for solo IT BA work.
 - Treat the backbone as the source of truth after intake.
-- Treat `plans/{slug}-{date}/02_backbone/project-memory.md` as the persisted project memory layer (compact mode). In shard mode, navigate via `project-memory/index.md` first, then load only targeted hot/warm shards.
+- Treat `plans/{slug}-{date}/PROJECT-HOME.md` as the BA-facing dashboard, not source of truth.
+- Treat `plans/{slug}-{date}/02_backbone/project-memory.md` as persisted memory. In shard mode, read `project-memory/index.md` first.
 - Keep module-scoped artifacts inside `plans/{slug}-{date}/03_modules/{module_slug}/`.
 - When UI-backed scope needs wireframe support, prepare a manual wireframe constraint pack and let the user create and attach the actual mockup themselves.
 - Use **incremental section-by-section writes** for large artifacts to avoid output token truncation.
-- Preserve the same HITL guarantees as the other runtimes: granular artifact intervention, active push-back on material ambiguity, and fail-closed routing instead of plausible guessing.
+- Preserve HITL guarantees: granular intervention, active push-back, fail-closed routing.
 
 ## Delivery Expectations
 
@@ -44,3 +45,9 @@ If a message could match both `impact` and a direct edit, prefer `impact` unless
 - Keep final compiled HTML under `plans/{slug}-{date}/04_compiled/`.
 - Keep active delegation trackers under `plans/{slug}-{date}/delegation/`.
 - Prefer narrow handoff context to sub-agents instead of dumping full upstream documents.
+
+## BA-Friendly Language
+
+Accept Vietnamese first, then show internal step: tạo dự án -> intake; tiếp tục -> next; thay đổi -> impact; handoff UI -> wireframes; bàn giao -> package; trạng thái -> status.
+
+Collab NLP -> `ba-collab`; GitHub commit/push/PR/merge requires explicit approval.

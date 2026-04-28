@@ -31,9 +31,13 @@
     "source_manifest": "plans/{slug}-{date}/00_source/manifest.json",
     "source_summary": "plans/{slug}-{date}/00_source/summary.md",
     "source_chunks_dir": "plans/{slug}-{date}/00_source/chunks",
+    "project_home": "plans/{slug}-{date}/PROJECT-HOME.md",
     "design_root": "designs/{slug}",
     "compiled_root": "plans/{slug}-{date}/04_compiled",
     "delegation_root": "plans/{slug}-{date}/delegation",
+    "collab_home": "plans/{slug}-{date}/COLLAB-HOME.md",
+    "module_home": "plans/{slug}-{date}/03_modules/{module_slug}/MODULE-HOME.md",
+    "review_packet": "plans/{slug}-{date}/delegation/review-packets/{module_slug}.md",
     "intake": "plans/{slug}-{date}/01_intake/intake.md",
     "plan": "plans/{slug}-{date}/01_intake/plan.md",
     "backbone": "plans/{slug}-{date}/02_backbone/backbone.md",
@@ -101,6 +105,7 @@
       "mutable": true,
       "requires": [],
       "outputs": [
+        "project_home",
         "intake",
         "plan"
       ]
@@ -120,6 +125,7 @@
         "intake"
       ],
       "outputs": [
+        "project_home",
         "backbone",
         "project_memory"
       ]

@@ -34,6 +34,7 @@ Run Step 5 only.
 
 ## Output
 
+- `paths.project_home`
 - `paths.backbone`
 - `paths.project_memory`
 
@@ -55,6 +56,10 @@ The backbone must contain:
 - assumptions, risks, and open questions
 
 After writing the backbone, initialize or refresh `paths.project_memory` using [../../../templates/project-memory-template.md](../../../templates/project-memory-template.md).
+
+Also refresh `paths.project_home` using [../../../templates/project-home-template.md](../../../templates/project-home-template.md) so non-technical BAs can resume without understanding slug/date/module internals.
+
+Project Home refresh must summarize scope lock, artifact gates, next safe step, and runtime quick prompts. It is a dashboard only; do not duplicate full requirements or replace `backbone.md`.
 
 The project memory must persist only the reusable anti-hallucination layer:
 

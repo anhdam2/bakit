@@ -25,6 +25,7 @@ For non-trivial BA work, read `skills/ba-start/SKILL.md` first, then the contrac
 - Optimize for Solo IT BA with `hybrid` mode as the default.
 - Use Shadcn UI only as the fallback baseline when the approved runtime `DESIGN.md` does not override it.
 - Treat the backbone as the primary authoring source once it exists.
+- Treat `plans/{slug}-{date}/PROJECT-HOME.md` as the BA-facing dashboard, never source of truth over backbone/intake/module artifacts.
 - Treat `plans/{slug}-{date}/02_backbone/project-memory.md` as persisted support memory (compact mode). In shard mode, navigate memory via `project-memory/index.md` first, then load only the targeted hot/warm shards. Do not rely on Codex chat memory as authoritative project memory.
 - Route requirement changes through `impact` first unless the edit is clearly wording-only.
 - Use **incremental section-by-section writes** for large artifacts to avoid output token truncation.
@@ -44,9 +45,16 @@ For non-trivial BA work, read `skills/ba-start/SKILL.md` first, then the contrac
 - Explicit lifecycle execution: `skills/ba-start/SKILL.md`
 - Requirement-change triage: `skills/ba-impact/SKILL.md`
 - Next-step detection: `skills/ba-next/SKILL.md`
+- BA collaboration/GitHub handoff: `skills/ba-collab/SKILL.md`
 - Notion publishing: `skills/ba-notion/SKILL.md`
 
 When the user provides a short correction statement in an existing project context, treat it as `impact` input instead of mutating artifacts directly.
+
+## BA-Friendly UX
+
+For non-technical BAs, lead with friendly labels, then command: tạo dự án mới -> intake; tiếp tục dự án -> `ba-next`; đánh giá thay đổi -> impact; chuẩn bị handoff UI -> wireframes; xuất gói bàn giao -> package.
+
+Collab NLP maps to `ba-collab`; PR/commit/merge require explicit approval.
 
 ## Quality Bar
 

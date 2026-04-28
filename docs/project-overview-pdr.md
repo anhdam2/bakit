@@ -2,7 +2,7 @@
 
 ## Summary
 
-BA-kit is a reusable toolkit that equips Claude Code and Codex for professional business analysis work. It standardizes a solo-IT-BA-friendly lifecycle from raw input to packaged deliverables through a single unified skill, focused agent roles, reusable templates, and workflow rules.
+BA-kit is a reusable toolkit that equips Claude Code, Codex, and Antigravity for professional business analysis work. It standardizes a solo-IT-BA-friendly lifecycle from raw input to packaged deliverables through unified skills, focused agent roles, reusable templates, workflow rules, a BA-facing Project Home dashboard, and module collaboration dashboards.
 
 ## Problem Statement
 
@@ -32,6 +32,8 @@ BA-kit closes that gap with a BA-first operating model.
 | `agents/` | 4 specialized delegation roles for parallel execution |
 | `rules/` | Workflow and quality standards |
 | `templates/` | BA deliverable structures including the requirements backbone |
+| `plans/{slug}-{date}/PROJECT-HOME.md` | BA-facing dashboard generated per engagement for resume, next-step guidance, and runtime prompts |
+| `plans/{slug}-{date}/COLLAB-HOME.md` | BA-facing collaboration dashboard for module ownership, review, blockers, and GitHub handoff state |
 | `designs/` | Project runtime `DESIGN.md` files that constrain manual wireframing and external design handoff |
 | `AGENTS.md` | Persistent Codex repository instructions |
 | `CLAUDE.md` | Claude Code project instructions |
@@ -64,6 +66,8 @@ BA-kit closes that gap with a BA-first operating model.
 ## Success Metrics
 
 - Users can start with `/ba-start` and receive a complete BA workflow
+- Non-technical BAs can resume from `PROJECT-HOME.md` without understanding command syntax first
+- Non-technical BAs can claim modules and request review without learning commit/branch/PR first
 - Every requirement has acceptance criteria
 - Installation takes less than five minutes
 - Codex can use the repo immediately through `AGENTS.md`
@@ -77,6 +81,8 @@ BA-kit closes that gap with a BA-first operating model.
 5. Mermaid is the standard diagram syntax for portability in markdown.
 6. Hybrid methodology is the default for solo IT BA work.
 7. SRS and wireframes are gated by real handoff, UI, and risk needs instead of always being emitted in full.
+8. `PROJECT-HOME.md` is a dashboard, not a source of truth; source-of-truth precedence remains backbone then intake.
+9. GitHub is an optional transport layer; BA-facing collaboration state lives in Collab Home, Module Home, and review packets.
 
 ## Acceptance Criteria
 

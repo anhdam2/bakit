@@ -13,7 +13,7 @@ This step requires:
 
 ## Scope
 
-Inspect the selected project set and print a checklist with artifact status, last-modified date, and any active delegated worker slices.
+Inspect the project set and print artifact status, dates, Project Home, and delegated slices.
 
 ## Prerequisites
 
@@ -28,13 +28,12 @@ Print a checklist like this:
 Project: {slug}
 Date set: {date}
 
-[System Paths]
+[Core]
+- [x] PROJECT-HOME.md (BA-facing dashboard) — 2026-03-26
 - [x] 01_intake/intake.md — 2026-03-26
-- [x] 01_intake/plan.md — 2026-03-26
 - [x] 02_backbone/backbone.md — 2026-03-26
 
 [Module: auth-flow]
-- [x] 03_modules/auth-flow/frd.md — 2026-03-26
 - [x] 03_modules/auth-flow/user-stories.md — 2026-03-26
 - [ ] 03_modules/auth-flow/srs.md — missing
 - [ ] 03_modules/auth-flow/wireframe-input.md — missing
@@ -47,10 +46,6 @@ Date set: {date}
 - [ ] designs/{slug}/DESIGN.md — missing
 - [!] wireframe handoff — skipped — 2026-03-26
 
-[Memory]
-- [x] 02_backbone/project-memory.md — 2026-03-26
-- [x] 02_backbone/project-memory/index.md — 2026-03-26
-- [ ] delegation/packets — not initialized
 ```
 
 Status rules:

@@ -29,6 +29,7 @@ Use this skill when the BA lifecycle step is explicit. Treat `ba-do` as the free
 /ba-start wireframes --slug <slug> --module <module_slug>
 /ba-start package --slug <slug>
 /ba-start status --slug <slug>
+/ba-start next --slug <slug>
 ```
 
 ## Step Dispatch
@@ -45,6 +46,7 @@ Use this skill when the BA lifecycle step is explicit. Treat `ba-do` as the free
 | `wireframes` | `steps/wireframes.md` | Step 9 standalone |
 | `package` | `steps/package.md` | Step 12 |
 | `status` | `steps/status.md` | inspection only |
+| `next` | `../../core/workflows/next.md` | BA-facing next-step recommendation; no mutation |
 
 ## Fast Execution Contract
 

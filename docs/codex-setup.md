@@ -55,35 +55,37 @@ Or ask Codex to run:
 /ba-do dang lam do SRS thi them yeu cau nay
 /ba-impact --slug warehouse-rfp Khong co nhom admin user
 /ba-next --slug warehouse-rfp
+/ba-collab Toi nhan module auth-flow
 /ba-notion srs --slug warehouse-rfp --page https://www.notion.so/... --mode overwrite
 ```
 
 ## Recommended Codex Workflow
 
-1. Start with the business outcome or artifact you need.
+1. Start with the business outcome or artifact you need, not command names.
 2. For freeform BA requests, use `ba-do` as the router first.
-3. Tell Codex to use the BA playbook for the resolved step.
+3. Tell Codex to read `PROJECT-HOME.md` when present, then use the BA playbook for the resolved step.
 4. If UI is involved, point it at the relevant project `DESIGN.md` and the module `wireframe-input.md` / `wireframe-map.md` artifacts.
-5. Use `/ba-start` for full workflow runs and the matching explicit subcommand for reruns.
-6. For rerun commands, pass `--slug <slug>` when more than one project may exist.
-7. If one slug has multiple dated artifact sets, Codex should stop and ask which date to use instead of silently taking the latest set.
-8. When a requirement or rule changes during `frd`, `stories`, `srs`, `wireframes`, or `package`, route through `/ba-start impact --slug <slug>` before mutating downstream artifacts unless the edit is clearly wording-only.
-9. If the user describes a change in natural language without naming a subcommand, infer the equivalent of `impact` when the project set already exists.
-10. If the user sends only a short correction statement such as `Không có nhóm admin user`, treat it as change evidence for `impact`, not as permission to edit artifacts directly.
-11. Ask for assumptions, open questions, and a draft output.
-12. If you installed the Codex conversion, ask Codex to use `ba-do` from `~/.codex/skills/ba-do/SKILL.md` for freeform routing, `ba-start` from `~/.codex/skills/ba-start/SKILL.md` for explicit lifecycle execution, and the registered BA agents from `~/.codex/agents`.
-13. Unless you explicitly override it, BA-kit should use Shadcn UI as the default component baseline for wireframe constraints and UI handoff.
-14. Before Step 9 is run, BA-kit should ask for or confirm the design decisions needed to persist the project runtime artifact `designs/{slug}/DESIGN.md`, then use that file as the system design document.
-15. Unless you explicitly override it, BA deliverables should be written in Vietnamese.
-16. Treat the dated artifact-set token as `YYMMDD-HHmm` across both report filenames and `plans/{date}-{slug}/plan.md`.
-17. When delegating, pass only narrow artifact slices and exact excerpts, not full upstream documents.
-18. If a delegated worker reports missing context or `NEEDS_REPARTITION`, split the scope and rerun only that slice.
-19. For non-trivial delegation, use the packet structure from `templates/sub-agent-handoff-template.md` or the equivalent snippet embedded in `ba-start`.
-20. For `srs`, resolve the exact backbone and user-stories artifacts first and pull the FRD only when it exists or is required instead of scanning every report in `plans/reports/final/` and `plans/reports/drafts/`.
-21. For `frd` and `stories`, resolve the exact backbone prerequisite first and begin authoring from that file instead of scanning every report in `plans/reports/final/`.
-22. If only legacy report names like `002-intake-form.md` exist, stop and migrate or rerun them explicitly; do not infer the current slug/date from legacy filenames.
-23. If context truncation happens after the target workflow was already confirmed, recover from the resolved command and exact artifacts on disk instead of asking the user to restate the original task.
-24. Once the user explicitly approves a mutating rerun step, keep that step locked for the current run and do not fall back to generic "what do you want me to do with this document?" prompts.
+5. For collaboration, use `ba-collab` for module claims, review packets, conflict checks, and approval-gated GitHub handoff.
+6. Use `/ba-start` for full workflow runs and the matching explicit subcommand for reruns.
+7. For rerun commands, pass `--slug <slug>` when more than one project may exist.
+8. If one slug has multiple dated artifact sets, Codex should stop and ask which date to use instead of silently taking the latest set.
+9. When a requirement or rule changes during `frd`, `stories`, `srs`, `wireframes`, or `package`, route through `/ba-start impact --slug <slug>` before mutating downstream artifacts unless the edit is clearly wording-only.
+10. If the user describes a change in natural language without naming a subcommand, infer the equivalent of `impact` when the project set already exists.
+11. If the user sends only a short correction statement such as `Không có nhóm admin user`, treat it as change evidence for `impact`, not as permission to edit artifacts directly.
+12. Ask for assumptions, open questions, and a draft output.
+13. If you installed the Codex conversion, ask Codex to use `ba-do` from `~/.codex/skills/ba-do/SKILL.md` for freeform routing, `ba-start` from `~/.codex/skills/ba-start/SKILL.md` for explicit lifecycle execution, and the registered BA agents from `~/.codex/agents`.
+14. Unless you explicitly override it, BA-kit should use Shadcn UI as the default component baseline for wireframe constraints and UI handoff.
+15. Before Step 9 is run, BA-kit should ask for or confirm the design decisions needed to persist the project runtime artifact `designs/{slug}/DESIGN.md`, then use that file as the system design document.
+16. Unless you explicitly override it, BA deliverables should be written in Vietnamese.
+17. Treat the dated artifact-set token as `YYMMDD-HHmm` across both report filenames and `plans/{date}-{slug}/plan.md`.
+18. When delegating, pass only narrow artifact slices and exact excerpts, not full upstream documents.
+19. If a delegated worker reports missing context or `NEEDS_REPARTITION`, split the scope and rerun only that slice.
+20. For non-trivial delegation, use the packet structure from `templates/sub-agent-handoff-template.md` or the equivalent snippet embedded in `ba-start`.
+21. For `srs`, resolve the exact backbone and user-stories artifacts first and pull the FRD only when it exists or is required instead of scanning every report in `plans/reports/final/` and `plans/reports/drafts/`.
+22. For `frd` and `stories`, resolve the exact backbone prerequisite first and begin authoring from that file instead of scanning every report in `plans/reports/final/`.
+23. If only legacy report names like `002-intake-form.md` exist, stop and migrate or rerun them explicitly; do not infer the current slug/date from legacy filenames.
+24. If context truncation happens after the target workflow was already confirmed, recover from the resolved command and exact artifacts on disk instead of asking the user to restate the task.
+25. Once the user explicitly approves a mutating rerun step, keep that step locked for the current run and do not fall back to generic "what do you want me to do with this document?" prompts.
 25. For non-trivial delegated work, create a dedicated tracker under `plans/{date}-{slug}/delegation/` and pass its path into the worker packet.
 26. Treat a delegated slice as likely stalled when its tracker has no heartbeat for more than 10 minutes and the target artifact has not advanced.
 
@@ -134,6 +136,23 @@ If the change is only wording-only, say so explicitly and keep the rerun path na
 Use the installed `ba-do` skill from ~/.codex/skills/ba-do/SKILL.md.
 Route this BA request to the right BA-kit command:
 "Dang lam do SRS thi them yeu cau moi ve audit log."
+```
+
+### BA-Friendly Resume
+
+```text
+Use AGENTS.md.
+Read PROJECT-HOME.md for slug warehouse-rfp if it exists.
+Tell me the next step in BA-friendly Vietnamese first.
+Then show the internal BA-kit command equivalent and run it only if safe.
+```
+
+### BA Collaboration
+
+```text
+Use AGENTS.md and skills/ba-collab/SKILL.md.
+I claim module auth-flow.
+Create or update the collaboration artifacts, but do not commit, push, create PR, or merge without my explicit approval.
 ```
 
 ### BA Next
@@ -229,6 +248,8 @@ If the user manually inserts wireframe images or links into the markdown source,
 
 You are set up correctly when Codex can:
 - follow `AGENTS.md` without extra repo explanation
+- use `PROJECT-HOME.md` as a BA-facing resume dashboard without treating it as source of truth
+- use `COLLAB-HOME.md`, `MODULE-HOME.md`, and review packets for BA collaboration without exposing Git first
 - read the BA playbook from `skills/ba-start/SKILL.md`
 - draft a structured artifact from `templates/`
 - reference manual wireframe handoff artifacts and user-supplied mockups consistently from the SRS

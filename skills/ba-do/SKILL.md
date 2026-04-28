@@ -17,6 +17,8 @@ Use this command when you know what you want to do in a BA workflow but do not k
 ```text
 /ba-do xem next step cho project nay
 /ba-do dang lam do SRS thi them yeu cau nay
+/ba-do toi nhan module auth-flow
+/ba-do gui module payment cho Lead BA review
 /ba-do publish SRS len Notion
 ```
 
@@ -30,5 +32,5 @@ $ARGUMENTS
 
 <process>
 Execute the BA routing workflow from `core/workflows/do.md` end-to-end.
-Dispatch to `ba-impact`, `ba-next`, `ba-start`, or `ba-notion`.
+Dispatch to `ba-impact`, `ba-next`, `ba-start`, `ba-collab`, or `ba-notion`.
 </process>

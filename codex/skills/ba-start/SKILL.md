@@ -35,6 +35,7 @@ The active step file depends on the resolved subcommand:
 - `wireframes` -> `wireframes.md`
 - `package` -> `package.md`
 - `status` -> `status.md`
+- `next` -> `@$HOME/.codex/ba-kit/workflows/next.md`
 </required_reading>
 
 <context>

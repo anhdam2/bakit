@@ -1,11 +1,9 @@
 # BA-kit Instructions For Claude Code
 
-BA-kit turns Claude Code into a senior business-analysis workstation focused on structured deliverables and deterministic lifecycle routing.
-
 ## Canonical Sources
 
-- `core/contract.yaml` — exact paths, prerequisites, states, and defaults
-- `core/contract-behavior.md` — routing, recovery, execution lock, and delegation behavior
+- `core/contract.yaml`
+- `core/contract-behavior.md`
 - `skills/ba-start/SKILL.md` — lifecycle stub that dispatches into the active step file
 
 For non-trivial BA work, start from `skills/ba-start/SKILL.md` instead of improvising from the prompt alone.
@@ -24,15 +22,16 @@ For non-trivial BA work, start from `skills/ba-start/SKILL.md` instead of improv
 ## Artifact Model
 
 - Project root: `plans/{slug}-{date}/`
+- Project Home: `PROJECT-HOME.md` — BA-facing dashboard
 - Intake: `01_intake/intake.md`
 - Plan: `01_intake/plan.md`
 - Backbone: `02_backbone/backbone.md`
 - Project memory (compact): `02_backbone/project-memory.md`
-- Project memory (shard tree, optional): `02_backbone/project-memory/` — index, hot shards, warm module shards, cold archive, log
+- Project memory shards: `02_backbone/project-memory/`
 - Module artifacts: `03_modules/{module_slug}/`
 - Compiled HTML: `04_compiled/`
-- Delegation trackers: `delegation/`
-- Delegation packets: `delegation/packets/`
+- Delegation: `delegation/`, `delegation/packets/`
+- Collaboration: `COLLAB-HOME.md`, `MODULE-HOME.md`, `delegation/review-packets/`
 
 ## Delegation
 
@@ -44,3 +43,9 @@ Use agent roles under `agents/` when delegation improves quality or throughput.
 - `ba-researcher` for domain research
 
 Always pass narrow packets: exact path, write scope, trace IDs, and targeted excerpts. Do not attach full merged artifacts when exact sections are enough.
+
+## BA-Friendly UX
+
+Use `PROJECT-HOME.md` to resume, lead with friendly labels, then show commands: tạo dự án mới -> intake; tiếp tục -> next; thay đổi -> impact; handoff UI -> wireframes; bàn giao -> package. Verify source-of-truth before mutation.
+
+Route module collaboration NLP to `ba-collab`. Commit/push/PR/merge require explicit approval.

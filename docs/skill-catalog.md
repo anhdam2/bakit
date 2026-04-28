@@ -8,7 +8,8 @@ This catalog explains the BA-kit workflow skill plus the maintenance skills that
 
 | Skill | When to Use | Related Templates | Related Agents | Typical Output |
 | --- | --- | --- | --- | --- |
-| `ba-start` | Full BA engagement or resumable step-level reruns from raw input to packaged deliverables | `intake-form-template.md`, `requirements-backbone-template.md`, `frd-template.md`, `user-story-template.md`, `srs-template.md`, `design-md-template.md`, `wireframe-input-template.md`, `wireframe-map-template.md` | `requirements-engineer`, `ui-ux-designer`, `ba-documentation-manager`, `ba-researcher` | Intake form, requirements backbone, gated FRD/stories/SRS artifacts, project runtime `DESIGN.md`, wireframe constraint pack, manual wireframe handoff map, FRD/SRS HTML, quality review, artifact status |
+| `ba-start` | Full BA engagement or resumable step-level reruns from raw input to packaged deliverables | `project-home-template.md`, `intake-form-template.md`, `requirements-backbone-template.md`, `frd-template.md`, `user-story-template.md`, `srs-template.md`, `design-md-template.md`, `wireframe-input-template.md`, `wireframe-map-template.md` | `requirements-engineer`, `ui-ux-designer`, `ba-documentation-manager`, `ba-researcher` | Project Home dashboard, intake form, requirements backbone, gated FRD/stories/SRS artifacts, project runtime `DESIGN.md`, wireframe constraint pack, manual wireframe handoff map, FRD/SRS HTML, quality review, artifact status |
+| `ba-collab` | Module ownership, review packets, conflict checks, and approval-gated GitHub handoff | `collab-home-template.md`, `module-home-template.md`, `review-packet-template.md` | Lead BA / Module BA roles | Collab Home, Module Home, review packet, optional approved PR handoff |
 | `ba-kit-update` | Update the installed BA-kit runtime assets from the registered source repo | None | None | One-command fast-forward update and reinstall |
 | `ba-notion` | Publish an exact BA markdown artifact into Notion via MCP | None | None | Notion page created or updated from BA source content |
 
@@ -18,15 +19,16 @@ This catalog explains the BA-kit workflow skill plus the maintenance skills that
 
 1. Accept raw input (file or text)
 2. Parse and normalize into intake form
-3. Gap analysis and clarifying questions
-4. Scope lock and engagement-mode selection (`lite`, `hybrid`, `formal`)
-5. Requirements backbone production
-6. Gated FRD and user story generation
-7. Selective use case and Screen Contract Plus production when needed
-8. Design decision capture and project runtime `DESIGN.md` creation when wireframe support is justified
-9. Manual wireframe constraint-pack and handoff-map production from the persisted wireframe input pack, locked IA snapshot, and approved `DESIGN.md`
-10. Final screen description production as an enrich pass from the persisted wireframe constraints and optional manual handoff map
-11. Unified browser-editable HTML packaging and quality review across the emitted artifacts
+3. Create or refresh `PROJECT-HOME.md` as the BA-facing dashboard
+4. Gap analysis and clarifying questions
+5. Scope lock and engagement-mode selection (`lite`, `hybrid`, `formal`)
+6. Requirements backbone production
+7. Gated FRD and user story generation
+8. Selective use case and Screen Contract Plus production when needed
+9. Design decision capture and project runtime `DESIGN.md` creation when wireframe support is justified
+10. Manual wireframe constraint-pack and handoff-map production from the persisted wireframe input pack, locked IA snapshot, and approved `DESIGN.md`
+11. Final screen description production as an enrich pass from the persisted wireframe constraints and optional manual handoff map
+12. Unified browser-editable HTML packaging and quality review across the emitted artifacts
 
 ## Invocation
 
@@ -47,8 +49,8 @@ This catalog explains the BA-kit workflow skill plus the maintenance skills that
 
 | Command | Purpose | Prerequisite |
 | --- | --- | --- |
-| `intake` | Parse input, normalize intake, and save the work plan | Raw file or pasted text |
-| `backbone` | Build the persisted source-of-truth artifact after scope lock | Matching intake artifact |
+| `intake` | Parse input, normalize intake, save Project Home, and save the work plan | Raw file or pasted text |
+| `backbone` | Build the persisted source-of-truth artifact after scope lock and refresh Project Home | Matching intake artifact |
 | `frd` | Produce the FRD and FRD HTML only when the gate is open | Matching backbone artifact |
 | `stories` | Produce user stories only | Matching backbone artifact |
 | `srs` | Produce grouped SRS artifacts, wireframe constraint pack, gated wireframe handoff map, and merged SRS | Matching backbone and user stories |
@@ -83,7 +85,7 @@ Packaged HTML artifacts are meant to be edited in the browser. Update copy, swap
 
 If the user manually inserts wireframe images or links into the markdown source, the packaged HTML preserves those references. Mermaid diagrams are rendered explicitly after the DOM is ready for more reliable visualization in stakeholder copies.
 
-`/ba-start status` reports regular artifacts as exists or missing with last-modified dates, including the persisted backbone. Wireframe handoff is reported as `completed`, `skipped`, `not-applicable`, or `missing` from the explicit wireframe-state marker, and completed runs should expose the project runtime `DESIGN.md` together with the persisted wireframe input pack and wireframe map. Delegated slices should also appear from their trackers, with likely stalled slices flagged when heartbeats go stale.
+`/ba-start status` reports `PROJECT-HOME.md` first as the BA-facing dashboard, then regular artifacts as exists or missing with last-modified dates, including the persisted backbone. Wireframe handoff is reported as `completed`, `skipped`, `not-applicable`, or `missing` from the explicit wireframe-state marker, and completed runs should expose the project runtime `DESIGN.md` together with the persisted wireframe input pack and wireframe map. Delegated slices should also appear from their trackers, with likely stalled slices flagged when heartbeats go stale.
 
 ## Expected Quality Bar
 
